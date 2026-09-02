@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: org.adi_il.ticking 1.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/adi-IL/ticking-plasmoid/issues\n"
-"POT-Creation-Date: 2026-09-02 20:11+0000\n"
+"POT-Creation-Date: 2026-09-02 20:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <kde-i18n-doc@kde.org>\n"
@@ -116,200 +116,216 @@ msgstr ""
 msgid "Lap %1"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:86
+#: contents/ui/configGeneral.qml:109
 msgctxt "@label:textbox"
 msgid "Milestone title:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:93
+#: contents/ui/configGeneral.qml:116
 msgctxt "@title:group"
-msgid "Target Horizon Date & Time"
+msgid "Target Horizon Date (00:00 End)"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:98
+#: contents/ui/configGeneral.qml:121
 msgctxt "@label:date"
-msgid "Target date:"
+msgid "End date:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:105
+#: contents/ui/configGeneral.qml:128
+#: contents/ui/configGeneral.qml:180
 msgctxt "@item:month"
 msgid "Jan"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:105
+#: contents/ui/configGeneral.qml:128
+#: contents/ui/configGeneral.qml:180
 msgctxt "@item:month"
 msgid "Feb"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:106
+#: contents/ui/configGeneral.qml:129
+#: contents/ui/configGeneral.qml:181
 msgctxt "@item:month"
 msgid "Mar"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:106
+#: contents/ui/configGeneral.qml:129
+#: contents/ui/configGeneral.qml:181
 msgctxt "@item:month"
 msgid "Apr"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:107
+#: contents/ui/configGeneral.qml:130
+#: contents/ui/configGeneral.qml:182
 msgctxt "@item:month"
 msgid "May"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:107
+#: contents/ui/configGeneral.qml:130
+#: contents/ui/configGeneral.qml:182
 msgctxt "@item:month"
 msgid "Jun"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:108
+#: contents/ui/configGeneral.qml:131
+#: contents/ui/configGeneral.qml:183
 msgctxt "@item:month"
 msgid "Jul"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:108
+#: contents/ui/configGeneral.qml:131
+#: contents/ui/configGeneral.qml:183
 msgctxt "@item:month"
 msgid "Aug"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:109
+#: contents/ui/configGeneral.qml:132
+#: contents/ui/configGeneral.qml:184
 msgctxt "@item:month"
 msgid "Sep"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:109
+#: contents/ui/configGeneral.qml:132
+#: contents/ui/configGeneral.qml:184
 msgctxt "@item:month"
 msgid "Oct"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:110
+#: contents/ui/configGeneral.qml:133
+#: contents/ui/configGeneral.qml:185
 msgctxt "@item:month"
 msgid "Nov"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:110
+#: contents/ui/configGeneral.qml:133
+#: contents/ui/configGeneral.qml:185
 msgctxt "@item:month"
 msgid "Dec"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:139
-msgctxt "@label:time"
-msgid "Target time (UTC):"
+#: contents/ui/configGeneral.qml:160
+#: contents/ui/configGeneral.qml:212
+msgctxt "@info:time"
+msgid "@ 00:00"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:178
+#: contents/ui/configGeneral.qml:168
+msgctxt "@title:group"
+msgid "Journey Start Date (00:00 Start)"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:173
+msgctxt "@label:date"
+msgid "Start date:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:218
+msgctxt "@action:button"
+msgid "Today"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:228
+msgctxt "@action:button"
+msgid "Jan 1"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:238
+msgctxt "@label:summary"
+msgid "Journey span:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:247
+msgid "total days"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:247
+msgid "Invalid range (end before start)"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:257
 msgctxt "@label:presets"
 msgid "Quick presets:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:182
+#: contents/ui/configGeneral.qml:261
 msgctxt "@action:button"
 msgid "New Year 2027"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:194
+#: contents/ui/configGeneral.qml:276
 msgctxt "@action:button"
 msgid "End of 2026"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:206
+#: contents/ui/configGeneral.qml:291
+msgctxt "@action:button"
+msgid "100-Day Goal"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:308
 msgctxt "@action:button"
 msgid "Oct 25, 2026"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:220
-msgctxt "@title:group"
-msgid "Journey Progress & Baseline"
-msgstr ""
-
-#: contents/ui/configGeneral.qml:226
-msgctxt "@label:combobox"
-msgid "Journey baseline:"
-msgstr ""
-
-#: contents/ui/configGeneral.qml:228
-msgctxt "@item:baseline"
-msgid "Start of current year (Standard)"
-msgstr ""
-
-#: contents/ui/configGeneral.qml:229
-msgctxt "@item:baseline"
-msgid "Widget installation time"
-msgstr ""
-
-#: contents/ui/configGeneral.qml:230
-msgctxt "@item:baseline"
-msgid "Custom start date"
-msgstr ""
-
-#: contents/ui/configGeneral.qml:242
-msgctxt "@label:textbox"
-msgid "Custom start:"
-msgstr ""
-
-#: contents/ui/configGeneral.qml:254
-msgctxt "@action:button"
-msgid "Set to Now"
-msgstr ""
-
-#: contents/ui/configGeneral.qml:265
+#: contents/ui/configGeneral.qml:325
 msgctxt "@title:group"
 msgid "Display & Aesthetic"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:271
+#: contents/ui/configGeneral.qml:331
 msgctxt "@label:combobox"
 msgid "Visual theme:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:273
+#: contents/ui/configGeneral.qml:333
 msgctxt "@item:theme"
 msgid "Vercel Obsidian Glass (Dark HUD)"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:274
+#: contents/ui/configGeneral.qml:334
 msgctxt "@item:theme"
 msgid "Plasma System Theme Adaptive"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:285
+#: contents/ui/configGeneral.qml:345
 msgctxt "@label:textbox"
 msgid "Accent color:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:307
+#: contents/ui/configGeneral.qml:367
 msgctxt "@label:swatches"
 msgid "Vercel presets:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:345
+#: contents/ui/configGeneral.qml:405
 msgctxt "@label:slider"
 msgid "Glass opacity:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:367
+#: contents/ui/configGeneral.qml:427
 msgctxt "@label:checkbox"
 msgid "Precision:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:368
+#: contents/ui/configGeneral.qml:428
 msgid "Show sub-second milliseconds ticker"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:373
+#: contents/ui/configGeneral.qml:433
 msgctxt "@label:checkbox"
 msgid "Progress bar:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:374
+#: contents/ui/configGeneral.qml:434
 msgid "Display journey percentage progress bar"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:379
+#: contents/ui/configGeneral.qml:439
 msgctxt "@label:checkbox"
 msgid "Clock format:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:380
+#: contents/ui/configGeneral.qml:440
 msgid "Use 24-hour clock format"
 msgstr ""
 

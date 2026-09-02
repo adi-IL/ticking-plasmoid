@@ -10,7 +10,7 @@
             <label>Target ISO timestamp for countdown horizon</label>
         </entry>
         <entry name="startTimestamp" type="String">
-            <default></default>
+            <default>2026-01-01T00:00:00Z</default>
             <label>Baseline ISO timestamp for elapsed calculation</label>
         </entry>
         <entry name="customTitle" type="String">

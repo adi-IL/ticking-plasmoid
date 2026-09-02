@@ -143,7 +143,11 @@ PlasmoidItem {
     }
 
     function resetBaselineToNow() {
-        Plasmoid.configuration.startTimestamp = new Date().toISOString();
+        var now = new Date();
+        var y = now.getUTCFullYear();
+        var m = now.getUTCMonth() + 1;
+        var d = now.getUTCDate();
+        Plasmoid.configuration.startTimestamp = y + "-" + pad2(m) + "-" + pad2(d) + "T00:00:00Z";
         updateAllMetrics();
     }
 
@@ -160,35 +164,16 @@ PlasmoidItem {
             targetMs = targetDate.getTime();
         }
 
-        // 2. Baseline Date Calculation (Universal start of year, custom, or installation)
-        var baseMode = Plasmoid.configuration.baselineMode || "year_start";
-        var startMs = 0;
-        if (baseMode === "year_start") {
-            var targetYear = targetDate.getFullYear();
-            var baseYear = (targetYear <= now.getFullYear()) ? now.getFullYear() : (now.getFullYear());
-            startMs = new Date(baseYear, 0, 1, 0, 0, 0).getTime();
-            if (startMs >= targetMs) {
-                startMs = nowMs - (1000 * 60 * 60 * 24 * 30); // 30 days baseline if target is Jan 1
-            }
-        } else if (baseMode === "custom") {
-            var customStart = Plasmoid.configuration.startTimestamp;
-            startMs = customStart ? new Date(customStart).getTime() : 0;
-            if (isNaN(startMs) || startMs <= 0 || startMs >= targetMs) {
-                startMs = nowMs - (1000 * 60 * 60 * 24);
-            }
-        } else { // "install"
-            var startIso = Plasmoid.configuration.startTimestamp;
-            if (!startIso || startIso === "") {
-                startIso = now.toISOString();
-                Plasmoid.configuration.startTimestamp = startIso;
-            }
-            startMs = new Date(startIso).getTime();
-            if (isNaN(startMs)) {
-                startMs = nowMs;
-            }
+        // 2. Start Date parsing (Default: 2026-01-01T00:00:00Z)
+        var startIso = Plasmoid.configuration.startTimestamp || "2026-01-01T00:00:00Z";
+        var startDate = new Date(startIso);
+        var startMs = startDate.getTime();
+        if (isNaN(startMs)) {
+            startDate = new Date("2026-01-01T00:00:00Z");
+            startMs = startDate.getTime();
         }
 
-        // 2. Countdown Calculations
+        // 3. Countdown Calculations
         var diffMs = targetMs - nowMs;
         var isExpired = diffMs <= 0;
 
@@ -201,11 +186,15 @@ PlasmoidItem {
             ms = Math.floor((diffMs % 1000) / 10);
         }
 
-        // Total Journey Progress Calculation (Start -> Target)
+        // 4. Total Journey Progress Calculation (Start Date 00:00 -> Target Date 00:00)
         var totalSpan = targetMs - startMs;
         var elapsedSpan = nowMs - startMs;
-        var ratio = isExpired ? 1.0 : 0.0;
-        if (!isExpired && totalSpan > 0) {
+        var ratio = 0.0;
+        if (isExpired) {
+            ratio = 1.0;
+        } else if (nowMs <= startMs) {
+            ratio = 0.0;
+        } else if (totalSpan > 0) {
             ratio = Math.max(0.0, Math.min(1.0, elapsedSpan / totalSpan));
         }
 

@@ -12,7 +12,6 @@ KCM.SimpleKCM {
     property alias cfg_targetTimestamp: targetField.text
     property alias cfg_startTimestamp: startField.text
     property alias cfg_themeMode: themeHolder.text
-    property alias cfg_baselineMode: baselineHolder.text
     property alias cfg_showMilliseconds: msCheck.checked
     property alias cfg_showProgress: progressCheck.checked
     property alias cfg_translucency: opacitySlider.value
@@ -26,7 +25,6 @@ KCM.SimpleKCM {
         QQC2.TextField { id: targetField }
         QQC2.TextField { id: startField }
         QQC2.TextField { id: themeHolder; text: "obsidian" }
-        QQC2.TextField { id: baselineHolder; text: "year_start" }
     }
 
     function pad2(n) {
@@ -37,6 +35,7 @@ KCM.SimpleKCM {
         return new Date(y, m + 1, 0).getDate();
     }
 
+    // Both start and end dates automatically assume 00:00:00 UTC
     function updateTargetIso() {
         if (internalSyncing) return;
         var y = targetYearSpin.value;
@@ -44,38 +43,62 @@ KCM.SimpleKCM {
         var maxD = daysInMonth(y, m);
         if (targetDaySpin.value > maxD) targetDaySpin.value = maxD;
         var d = targetDaySpin.value;
-        var hh = targetHourSpin.value;
-        var mm = targetMinSpin.value;
 
-        var iso = y + "-" + pad2(m + 1) + "-" + pad2(d) + "T" + pad2(hh) + ":" + pad2(mm) + ":00Z";
-        targetField.text = iso;
+        targetField.text = y + "-" + pad2(m + 1) + "-" + pad2(d) + "T00:00:00Z";
     }
 
-    function syncFromTargetIso() {
-        if (!targetField.text || targetField.text === "") return;
-        var d = new Date(targetField.text);
-        if (isNaN(d.getTime())) return;
+    function updateStartIso() {
+        if (internalSyncing) return;
+        var y = startYearSpin.value;
+        var m = startMonthCombo.currentIndex;
+        var maxD = daysInMonth(y, m);
+        if (startDaySpin.value > maxD) startDaySpin.value = maxD;
+        var d = startDaySpin.value;
+
+        startField.text = y + "-" + pad2(m + 1) + "-" + pad2(d) + "T00:00:00Z";
+    }
+
+    function syncFromIso() {
         internalSyncing = true;
-        targetYearSpin.value = d.getUTCFullYear();
-        targetMonthCombo.currentIndex = d.getUTCMonth();
-        targetDaySpin.value = d.getUTCDate();
-        targetHourSpin.value = d.getUTCHours();
-        targetMinSpin.value = d.getUTCMinutes();
+
+        // Parse Target Date
+        var targetText = targetField.text || "2026-10-25T00:00:00Z";
+        var td = new Date(targetText);
+        if (!isNaN(td.getTime())) {
+            targetYearSpin.value = td.getUTCFullYear();
+            targetMonthCombo.currentIndex = td.getUTCMonth();
+            targetDaySpin.value = td.getUTCDate();
+        }
+
+        // Parse Start Date
+        var startText = startField.text || "2026-01-01T00:00:00Z";
+        var sd = new Date(startText);
+        if (!isNaN(sd.getTime())) {
+            startYearSpin.value = sd.getUTCFullYear();
+            startMonthCombo.currentIndex = sd.getUTCMonth();
+            startDaySpin.value = sd.getUTCDate();
+        }
+
         internalSyncing = false;
     }
 
     property bool internalSyncing: false
 
     Component.onCompleted: {
-        syncFromTargetIso();
+        syncFromIso();
     }
 
     Connections {
         target: targetField
         function onTextChanged() {
-            if (!internalSyncing) {
-                configPage.syncFromTargetIso();
-            }
+            if (!internalSyncing) configPage.syncFromIso();
+        }
+    }
+
+    Connections {
+        target: startField
+        function onTextChanged() {
+            if (!internalSyncing) configPage.syncFromIso();
         }
     }
 
@@ -90,12 +113,12 @@ KCM.SimpleKCM {
 
         Kirigami.Separator {
             Kirigami.FormData.isSection: true
-            Kirigami.FormData.label: i18nc("@title:group", "Target Horizon Date & Time")
+            Kirigami.FormData.label: i18nc("@title:group", "Target Horizon Date (00:00 End)")
         }
 
-        // GUI Date Selector: Month, Day, Year
+        // Target Date Selector: Month, Day, Year (00:00 assumed automatically)
         RowLayout {
-            Kirigami.FormData.label: i18nc("@label:date", "Target date:")
+            Kirigami.FormData.label: i18nc("@label:date", "End date:")
             Layout.fillWidth: true
             spacing: 6
 
@@ -132,44 +155,100 @@ KCM.SimpleKCM {
                 Layout.preferredWidth: 90
                 onValueChanged: configPage.updateTargetIso()
             }
+
+            Text {
+                text: i18nc("@info:time", "@ 00:00")
+                color: Kirigami.Theme.disabledTextColor
+                font.pixelSize: 11
+            }
         }
 
-        // GUI Time Selector: Hour, Minute
+        Kirigami.Separator {
+            Kirigami.FormData.isSection: true
+            Kirigami.FormData.label: i18nc("@title:group", "Journey Start Date (00:00 Start)")
+        }
+
+        // Start Date Selector: Month, Day, Year (00:00 assumed automatically)
         RowLayout {
-            Kirigami.FormData.label: i18nc("@label:time", "Target time (UTC):")
+            Kirigami.FormData.label: i18nc("@label:date", "Start date:")
             Layout.fillWidth: true
             spacing: 6
 
-            QQC2.SpinBox {
-                id: targetHourSpin
-                from: 0
-                to: 23
-                value: 0
-                editable: true
-                Layout.preferredWidth: 70
-                onValueChanged: configPage.updateTargetIso()
-            }
-
-            Text {
-                text: ":"
-                color: Kirigami.Theme.textColor
-                font.weight: Font.Bold
+            QQC2.ComboBox {
+                id: startMonthCombo
+                model: [
+                    i18nc("@item:month", "Jan"), i18nc("@item:month", "Feb"),
+                    i18nc("@item:month", "Mar"), i18nc("@item:month", "Apr"),
+                    i18nc("@item:month", "May"), i18nc("@item:month", "Jun"),
+                    i18nc("@item:month", "Jul"), i18nc("@item:month", "Aug"),
+                    i18nc("@item:month", "Sep"), i18nc("@item:month", "Oct"),
+                    i18nc("@item:month", "Nov"), i18nc("@item:month", "Dec")
+                ]
+                Layout.preferredWidth: 80
+                onCurrentIndexChanged: configPage.updateStartIso()
             }
 
             QQC2.SpinBox {
-                id: targetMinSpin
-                from: 0
-                to: 59
-                value: 0
+                id: startDaySpin
+                from: 1
+                to: configPage.daysInMonth(startYearSpin.value, startMonthCombo.currentIndex)
+                value: 1
                 editable: true
                 Layout.preferredWidth: 70
-                onValueChanged: configPage.updateTargetIso()
+                onValueChanged: configPage.updateStartIso()
+            }
+
+            QQC2.SpinBox {
+                id: startYearSpin
+                from: 2020
+                to: 2099
+                value: 2026
+                editable: true
+                Layout.preferredWidth: 90
+                onValueChanged: configPage.updateStartIso()
             }
 
             Text {
-                text: "UTC"
+                text: i18nc("@info:time", "@ 00:00")
                 color: Kirigami.Theme.disabledTextColor
-                font.pixelSize: 10
+                font.pixelSize: 11
+            }
+
+            QQC2.Button {
+                text: i18nc("@action:button", "Today")
+                onClicked: {
+                    var now = new Date();
+                    startYearSpin.value = now.getUTCFullYear();
+                    startMonthCombo.currentIndex = now.getUTCMonth();
+                    startDaySpin.value = now.getUTCDate();
+                }
+            }
+
+            QQC2.Button {
+                text: i18nc("@action:button", "Jan 1")
+                onClicked: {
+                    startMonthCombo.currentIndex = 0;
+                    startDaySpin.value = 1;
+                }
+            }
+        }
+
+        // Live Total Days Calculator Indicator
+        RowLayout {
+            Kirigami.FormData.label: i18nc("@label:summary", "Journey span:")
+            spacing: 6
+
+            Text {
+                text: {
+                    var s = new Date(startField.text);
+                    var t = new Date(targetField.text);
+                    if (isNaN(s.getTime()) || isNaN(t.getTime())) return "--";
+                    var diffDays = Math.round((t.getTime() - s.getTime()) / (1000 * 60 * 60 * 24));
+                    return diffDays > 0 ? (diffDays + " " + i18n("total days")) : i18n("Invalid range (end before start)");
+                }
+                color: Kirigami.Theme.highlightColor
+                font.weight: Font.DemiBold
+                font.pixelSize: 11
             }
         }
 
@@ -181,11 +260,14 @@ KCM.SimpleKCM {
             QQC2.Button {
                 text: i18nc("@action:button", "New Year 2027")
                 onClicked: {
+                    startYearSpin.value = 2026;
+                    startMonthCombo.currentIndex = 0;
+                    startDaySpin.value = 1;
+
                     targetYearSpin.value = 2027;
                     targetMonthCombo.currentIndex = 0;
                     targetDaySpin.value = 1;
-                    targetHourSpin.value = 0;
-                    targetMinSpin.value = 0;
+
                     titleField.text = "NEW YEAR 2027";
                 }
             }
@@ -193,69 +275,47 @@ KCM.SimpleKCM {
             QQC2.Button {
                 text: i18nc("@action:button", "End of 2026")
                 onClicked: {
+                    startYearSpin.value = 2026;
+                    startMonthCombo.currentIndex = 0;
+                    startDaySpin.value = 1;
+
                     targetYearSpin.value = 2026;
                     targetMonthCombo.currentIndex = 11;
                     targetDaySpin.value = 31;
-                    targetHourSpin.value = 23;
-                    targetMinSpin.value = 59;
+
                     titleField.text = "END OF 2026";
+                }
+            }
+
+            QQC2.Button {
+                text: i18nc("@action:button", "100-Day Goal")
+                onClicked: {
+                    var now = new Date();
+                    startYearSpin.value = now.getUTCFullYear();
+                    startMonthCombo.currentIndex = now.getUTCMonth();
+                    startDaySpin.value = now.getUTCDate();
+
+                    var targetD = new Date(now.getTime() + (100 * 24 * 60 * 60 * 1000));
+                    targetYearSpin.value = targetD.getUTCFullYear();
+                    targetMonthCombo.currentIndex = targetD.getUTCMonth();
+                    targetDaySpin.value = targetD.getUTCDate();
+
+                    titleField.text = "100-DAY GOAL";
                 }
             }
 
             QQC2.Button {
                 text: i18nc("@action:button", "Oct 25, 2026")
                 onClicked: {
+                    startYearSpin.value = 2026;
+                    startMonthCombo.currentIndex = 0;
+                    startDaySpin.value = 1;
+
                     targetYearSpin.value = 2026;
                     targetMonthCombo.currentIndex = 9;
                     targetDaySpin.value = 25;
-                    targetHourSpin.value = 0;
-                    targetMinSpin.value = 0;
+
                     titleField.text = "OCTOBER 25, 2026 HORIZON";
-                }
-            }
-        }
-
-        Kirigami.Separator {
-            Kirigami.FormData.isSection: true
-            Kirigami.FormData.label: i18nc("@title:group", "Journey Progress & Baseline")
-        }
-
-        // Baseline Calculation Mode
-        QQC2.ComboBox {
-            id: baselineCombo
-            Kirigami.FormData.label: i18nc("@label:combobox", "Journey baseline:")
-            model: [
-                { text: i18nc("@item:baseline", "Start of current year (Standard)"), value: "year_start" },
-                { text: i18nc("@item:baseline", "Widget installation time"), value: "install" },
-                { text: i18nc("@item:baseline", "Custom start date"), value: "custom" }
-            ]
-            textRole: "text"
-            currentIndex: baselineHolder.text === "install" ? 1 : (baselineHolder.text === "custom" ? 2 : 0)
-            onCurrentIndexChanged: {
-                baselineHolder.text = model[currentIndex].value;
-            }
-        }
-
-        // Custom start timestamp (if custom selected)
-        RowLayout {
-            visible: baselineCombo.currentIndex === 2
-            Kirigami.FormData.label: i18nc("@label:textbox", "Custom start:")
-            Layout.fillWidth: true
-
-            QQC2.TextField {
-                id: customStartField
-                text: startField.text
-                placeholderText: "YYYY-MM-DDTHH:MM:SSZ"
-                Layout.fillWidth: true
-                onTextChanged: startField.text = text
-            }
-
-            QQC2.Button {
-                text: i18nc("@action:button", "Set to Now")
-                onClicked: {
-                    var nowIso = new Date().toISOString();
-                    customStartField.text = nowIso;
-                    startField.text = nowIso;
                 }
             }
         }
