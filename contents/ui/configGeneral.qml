@@ -69,6 +69,7 @@ KCM.SimpleKCM {
         RowLayout {
             Kirigami.FormData.label: i18nc("@label:textbox", "Accent color:")
             Layout.fillWidth: true
+            spacing: 6
 
             QQC2.TextField {
                 id: accentField
@@ -83,6 +84,44 @@ KCM.SimpleKCM {
                 color: accentField.text || "#00E599"
                 border.width: 1
                 border.color: "#FFFFFF"
+            }
+        }
+
+        // Vercel Color Palette Presets
+        RowLayout {
+            Kirigami.FormData.label: i18nc("@label:swatches", "Vercel presets:")
+            spacing: 8
+
+            Repeater {
+                model: [
+                    { name: "Emerald", hex: "#00E599" },
+                    { name: "Cyan", hex: "#50E3C2" },
+                    { name: "Blue", hex: "#0070F3" },
+                    { name: "Purple", hex: "#7928CA" },
+                    { name: "Amber", hex: "#F5A623" },
+                    { name: "Crimson", hex: "#FF0080" },
+                    { name: "White", hex: "#FFFFFF" }
+                ]
+
+                Rectangle {
+                    width: 22
+                    height: 22
+                    radius: 11
+                    color: modelData.hex
+                    border.width: accentField.text.toUpperCase() === modelData.hex ? 2 : 1
+                    border.color: accentField.text.toUpperCase() === modelData.hex ? "#FFFFFF" : Qt.rgba(1, 1, 1, 0.3)
+
+                    QQC2.ToolTip.visible: swatchMouse.containsMouse
+                    QQC2.ToolTip.text: modelData.name + " (" + modelData.hex + ")"
+
+                    MouseArea {
+                        id: swatchMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: accentField.text = modelData.hex
+                    }
+                }
             }
         }
 

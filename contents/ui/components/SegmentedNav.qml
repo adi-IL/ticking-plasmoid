@@ -10,8 +10,8 @@ Kirigami.ShadowedRectangle {
 
     readonly property var tabs: [
         { name: i18nc("@title:tab", "COUNTDOWN"), icon: "chronometer" },
-        { name: i18nc("@title:tab", "CLOCK"), icon: "preferences-system-time" },
-        { name: i18nc("@title:tab", "STOPWATCH"), icon: "appointment-recurring" }
+        { name: i18nc("@title:tab", "CLOCK"), icon: "clock" },
+        { name: i18nc("@title:tab", "STOPWATCH"), icon: "chronometer-start" }
     ]
 
     Layout.fillWidth: true
