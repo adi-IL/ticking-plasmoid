@@ -10,11 +10,11 @@
         "BugReportUrl": "https://github.com/adi-IL/ticking-plasmoid/issues",
         "Category": "Date and Time",
         "Description": "Vercel-inspired translucent desktop countdown, live clock, and precision stopwatch",
-        "Icon": "preferences-system-time",
+        "Icon": "org.adi_il.ticking",
         "Id": "org.adi_il.ticking",
         "License": "GPL-3.0-or-later",
-        "Name": "Ticking — Horizon & Time HUD",
-        "Version": "1.0.0",
+        "Name": "Ticking - Horizon & Time HUD",
+        "Version": "1.1.0",
         "Website": "https://github.com/adi-IL/ticking-plasmoid"
     },
     "X-Plasma-API-Minimum-Version": "6.0"

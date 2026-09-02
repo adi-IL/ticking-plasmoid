@@ -1,4 +1,4 @@
-# Ticking — Horizon & Time HUD (KDE Plasma 6)
+# Ticking - Horizon & Time HUD (KDE Plasma 6)
 
 A high-aesthetic, Vercel-inspired desktop and panel widget for KDE Plasma 6. Designed for precision tracking toward the **October 25, 2026** horizon, live digital world time, and high-precision stopwatch metrics.
 
@@ -8,20 +8,22 @@ Developed by **Aditya Gaurav** ([`adi-IL`](https://github.com/adi-IL)).
 
 ## Features
 
-- **Vercel Obsidian Glass Aesthetic:** Ultra-dark translucent surfaces, sub-pixel specular borders, and glowing accents.
+- **Vercel Obsidian Glass Aesthetic:** Ultra-dark translucent surfaces, sub-pixel specular borders, interactive dynamic specular lighting, and glowing accents.
 - **Horizon Countdown (Target: October 25, 2026):**
   - Modular tabular cards: Days, Hours, Minutes, Seconds, and live Sub-second Milliseconds.
-  - Live journey progress track with 3-decimal percentage completion resolution.
+  - Live journey progress track with 3-decimal percentage completion resolution and milestone reached celebration state.
 - **Precision Live Clock:**
-  - Full date string, 12h/24h time, UTC offset timezone indicator, and day-of-year counter.
+  - Full date string, 12h/24h time, UTC offset timezone indicator, day-of-year, and week-of-year counter.
 - **Digital Stopwatch:**
-  - Millisecond-accurate stopwatch with Start / Pause / Lap / Reset controls.
-  - Lap history table with split time calculations.
+  - Millisecond-accurate stopwatch with hour/minute/second support and Start / Pause / Lap / Reset controls.
+  - Lap history table with split time calculations and balanced empty-state guidance.
 - **Desktop & Panel Versatility:**
   - Desktop Mode: Full floating HUD card.
-  - Panel Mode: Sleek minimal icon with remaining time badge that expands into the full HUD on click.
+  - Panel Mode: Sleek minimal icon with remaining time badge that expands into the full HUD on click, with adaptive vertical/horizontal panel support.
+- **Adaptive Battery Throttling:**
+  - Intelligent timer throttling (1000ms when idle or in panel, 40ms high-precision when actively viewed or tracking).
 - **KConfigXT Settings:**
-  - Customizable target date, custom milestone title, accent color, and glass opacity slider.
+  - Customizable target date, custom milestone title, Vercel accent color presets palette, and glass opacity slider.
 
 ---
 
