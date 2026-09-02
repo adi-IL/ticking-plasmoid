@@ -34,16 +34,33 @@ ColumnLayout {
         border.width: 1
         border.color: Qt.rgba(1, 1, 1, 0.08)
 
+        // Top specular line
+        Rectangle {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 1
+            height: 1
+            radius: 1
+            gradient: Gradient {
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.04) }
+                GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, 0.20) }
+                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.04) }
+            }
+        }
+
         RowLayout {
             anchors.centerIn: parent
             spacing: Kirigami.Units.smallSpacing
 
             Text {
-                text: stopwatchRoot.stopwatchData.minutes + ":" + stopwatchRoot.stopwatchData.seconds
+                text: (stopwatchRoot.stopwatchData.hasHours ? (stopwatchRoot.stopwatchData.hours + ":") : "")
+                    + stopwatchRoot.stopwatchData.minutes + ":" + stopwatchRoot.stopwatchData.seconds
                 color: "#FFFFFF"
                 font.family: "monospace"
                 font.weight: Font.Bold
-                font.pixelSize: 36
+                font.pixelSize: stopwatchRoot.stopwatchData.hasHours ? 28 : 36
                 font.features: { "tnum": 1 }
             }
 
@@ -52,7 +69,7 @@ ColumnLayout {
                 color: stopwatchRoot.accentColor
                 font.family: "monospace"
                 font.weight: Font.Bold
-                font.pixelSize: 28
+                font.pixelSize: stopwatchRoot.stopwatchData.hasHours ? 22 : 28
                 font.features: { "tnum": 1 }
                 Layout.alignment: Qt.AlignBaseline
             }
@@ -78,7 +95,7 @@ ColumnLayout {
                 anchors.centerIn: parent
                 spacing: 6
                 Kirigami.Icon {
-                    source: stopwatchRoot.stopwatchData.running ? "media-playback-pause" : "media-playback-start"
+                    source: stopwatchRoot.stopwatchData.running ? "chronometer-pause" : "chronometer-start"
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 14
                     color: "#000000"
@@ -123,7 +140,7 @@ ColumnLayout {
                 anchors.centerIn: parent
                 spacing: 6
                 Kirigami.Icon {
-                    source: "flag"
+                    source: "chronometer-lap"
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 14
                     color: "#FFFFFF"
@@ -162,7 +179,7 @@ ColumnLayout {
                 anchors.centerIn: parent
                 spacing: 6
                 Kirigami.Icon {
-                    source: "edit-clear"
+                    source: "chronometer-reset"
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 14
                     color: "#D4D4D8"
@@ -183,6 +200,38 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: stopwatchRoot.resetRequested()
+            }
+        }
+    }
+
+    // Empty state placeholder when no laps have been recorded
+    Kirigami.ShadowedRectangle {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.minimumHeight: Kirigami.Units.gridUnit * 3.5
+        visible: stopwatchRoot.stopwatchData.laps.length === 0
+        radius: 6
+        color: Qt.rgba(0.04, 0.04, 0.04, 0.5)
+        border.width: 1
+        border.color: Qt.rgba(1, 1, 1, 0.04)
+
+        ColumnLayout {
+            anchors.centerIn: parent
+            spacing: 6
+            Kirigami.Icon {
+                source: "chronometer-lap"
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: 18
+                Layout.preferredHeight: 18
+                color: "#52525B"
+            }
+            Text {
+                Layout.alignment: Qt.AlignHCenter
+                text: i18nc("@info:placeholder", "Press LAP while running to record split times")
+                color: "#52525B"
+                font.family: "sans-serif"
+                font.pixelSize: 10
+                font.weight: Font.Medium
             }
         }
     }

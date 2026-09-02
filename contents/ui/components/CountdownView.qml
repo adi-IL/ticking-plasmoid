@@ -61,6 +61,35 @@ ColumnLayout {
         }
     }
 
+    // Milestone Reached Banner
+    Kirigami.ShadowedRectangle {
+        visible: countdownRoot.timeData.isExpired
+        Layout.fillWidth: true
+        Layout.preferredHeight: 30
+        radius: 6
+        color: Qt.rgba(0.0, 0.9, 0.6, 0.15)
+        border.width: 1
+        border.color: countdownRoot.accentColor
+
+        RowLayout {
+            anchors.centerIn: parent
+            spacing: 8
+            Kirigami.Icon {
+                source: "emblem-checked"
+                Layout.preferredWidth: 14
+                Layout.preferredHeight: 14
+                color: countdownRoot.accentColor
+            }
+            Text {
+                text: i18nc("@label:status", "HORIZON REACHED - 100.000% COMPLETED")
+                color: countdownRoot.accentColor
+                font.weight: Font.Bold
+                font.pixelSize: 10
+                font.letterSpacing: 1.2
+            }
+        }
+    }
+
     // Progress Bar Track
     ProgressTrack {
         visible: countdownRoot.showProgress

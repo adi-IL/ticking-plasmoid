@@ -9,18 +9,22 @@ Kirigami.ShadowedRectangle {
     property string unit: "UNIT"
     property color accentColor: "#00E599"
     property bool isHighlighted: false
-    property bool isCompact: false
+    property bool isCompact: cardRoot.width < Kirigami.Units.gridUnit * 4.2
 
     Layout.fillWidth: true
     Layout.fillHeight: true
-    Layout.minimumWidth: isCompact ? Kirigami.Units.gridUnit * 3 : Kirigami.Units.gridUnit * 4
-    Layout.minimumHeight: isCompact ? Kirigami.Units.gridUnit * 3.5 : Kirigami.Units.gridUnit * 5
+    Layout.minimumWidth: isCompact ? Kirigami.Units.gridUnit * 2.5 : Kirigami.Units.gridUnit * 3.2
+    Layout.minimumHeight: isCompact ? Kirigami.Units.gridUnit * 3.2 : Kirigami.Units.gridUnit * 4.5
 
     radius: 8
-    color: mouseArea.containsMouse ? Qt.rgba(0.12, 0.12, 0.12, 0.95) : Qt.rgba(0.06, 0.06, 0.06, 0.85)
+    color: mouseArea.containsMouse ? Qt.rgba(0.12, 0.12, 0.12, 0.96) : Qt.rgba(0.06, 0.06, 0.06, 0.88)
+
+    Behavior on color { ColorAnimation { duration: 150 } }
 
     border.width: 1
-    border.color: mouseArea.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.08)
+    border.color: mouseArea.containsMouse ? Qt.rgba(1, 1, 1, 0.24) : Qt.rgba(1, 1, 1, 0.08)
+
+    Behavior on border.color { ColorAnimation { duration: 150 } }
 
     shadow.size: mouseArea.containsMouse ? 12 : 4
     shadow.color: mouseArea.containsMouse ? Qt.rgba(0, 0, 0, 0.6) : Qt.rgba(0, 0, 0, 0.3)
@@ -33,8 +37,13 @@ Kirigami.ShadowedRectangle {
         anchors.right: parent.right
         anchors.margins: 1
         height: 1
-        color: mouseArea.containsMouse ? Qt.rgba(1, 1, 1, 0.35) : Qt.rgba(1, 1, 1, 0.15)
         radius: 1
+        gradient: Gradient {
+            orientation: Gradient.Horizontal
+            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.04) }
+            GradientStop { position: 0.5; color: mouseArea.containsMouse ? Qt.rgba(1, 1, 1, 0.45) : Qt.rgba(1, 1, 1, 0.20) }
+            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.04) }
+        }
     }
 
     MouseArea {

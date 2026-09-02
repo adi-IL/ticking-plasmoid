@@ -22,13 +22,30 @@ ColumnLayout {
 
     // Big Digital Time Card
     Kirigami.ShadowedRectangle {
+        id: clockCard
         Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.minimumHeight: Kirigami.Units.gridUnit * 6
+        Layout.minimumHeight: Kirigami.Units.gridUnit * 5.5
         radius: 8
         color: Qt.rgba(0.06, 0.06, 0.06, 0.85)
         border.width: 1
         border.color: Qt.rgba(1, 1, 1, 0.08)
+
+        // Top edge specular line
+        Rectangle {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 1
+            height: 1
+            radius: 1
+            gradient: Gradient {
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.04) }
+                GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, 0.22) }
+                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.04) }
+            }
+        }
 
         ColumnLayout {
             anchors.centerIn: parent
@@ -39,12 +56,14 @@ ColumnLayout {
                 Layout.alignment: Qt.AlignHCenter
                 spacing: Kirigami.Units.smallSpacing
 
+                readonly property int responsiveFontSize: Math.min(42, Math.max(26, clockCard.width * 0.11))
+
                 Text {
                     text: clockRoot.clockData.hours
                     color: "#FFFFFF"
                     font.family: "monospace"
                     font.weight: Font.Bold
-                    font.pixelSize: 42
+                    font.pixelSize: parent.responsiveFontSize
                     font.features: { "tnum": 1 }
                 }
 
@@ -53,7 +72,7 @@ ColumnLayout {
                     color: clockRoot.accentColor
                     font.family: "monospace"
                     font.weight: Font.Bold
-                    font.pixelSize: 42
+                    font.pixelSize: parent.responsiveFontSize
                 }
 
                 Text {
@@ -61,7 +80,7 @@ ColumnLayout {
                     color: "#FFFFFF"
                     font.family: "monospace"
                     font.weight: Font.Bold
-                    font.pixelSize: 42
+                    font.pixelSize: parent.responsiveFontSize
                     font.features: { "tnum": 1 }
                 }
 
@@ -70,7 +89,7 @@ ColumnLayout {
                     color: clockRoot.accentColor
                     font.family: "monospace"
                     font.weight: Font.Bold
-                    font.pixelSize: 42
+                    font.pixelSize: parent.responsiveFontSize
                 }
 
                 Text {
@@ -78,7 +97,7 @@ ColumnLayout {
                     color: clockRoot.accentColor
                     font.family: "monospace"
                     font.weight: Font.Bold
-                    font.pixelSize: 42
+                    font.pixelSize: parent.responsiveFontSize
                     font.features: { "tnum": 1 }
                 }
 
@@ -88,9 +107,9 @@ ColumnLayout {
                     color: "#A1A1AA"
                     font.family: "sans-serif"
                     font.weight: Font.Bold
-                    font.pixelSize: 14
+                    font.pixelSize: 13
                     Layout.alignment: Qt.AlignBottom
-                    Layout.bottomMargin: 8
+                    Layout.bottomMargin: 6
                 }
             }
 
@@ -101,7 +120,7 @@ ColumnLayout {
                 color: "#A1A1AA"
                 font.family: "sans-serif"
                 font.weight: Font.DemiBold
-                font.pixelSize: 12
+                font.pixelSize: 11
                 font.letterSpacing: 1.2
                 font.capitalization: Font.AllUppercase
             }
@@ -125,7 +144,7 @@ ColumnLayout {
             RowLayout {
                 anchors.centerIn: parent
                 spacing: 6
-                Text { text: i18nc("@label:time", "ZONE:"); color: "#71717A"; font.pixelSize: 10; font.weight: Font.Bold }
+                Text { text: i18nc("@label:time", "ZONE:"); color: "#71717A"; font.pixelSize: 9; font.weight: Font.Bold }
                 Text { text: clockRoot.clockData.timeZone; color: "#D4D4D8"; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
             }
         }
@@ -142,8 +161,25 @@ ColumnLayout {
             RowLayout {
                 anchors.centerIn: parent
                 spacing: 6
-                Text { text: i18nc("@label:time", "DAY OF YEAR:"); color: "#71717A"; font.pixelSize: 10; font.weight: Font.Bold }
+                Text { text: i18nc("@label:time", "DAY:"); color: "#71717A"; font.pixelSize: 9; font.weight: Font.Bold }
                 Text { text: "" + clockRoot.clockData.dayOfYear; color: "#D4D4D8"; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
+            }
+        }
+
+        // Week of Year Pill
+        Kirigami.ShadowedRectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 28
+            radius: 6
+            color: Qt.rgba(0.1, 0.1, 0.1, 0.8)
+            border.width: 1
+            border.color: Qt.rgba(1, 1, 1, 0.08)
+
+            RowLayout {
+                anchors.centerIn: parent
+                spacing: 6
+                Text { text: i18nc("@label:time", "WEEK:"); color: "#71717A"; font.pixelSize: 9; font.weight: Font.Bold }
+                Text { text: "#" + clockRoot.clockData.weekOfYear; color: "#D4D4D8"; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
             }
         }
     }
