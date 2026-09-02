@@ -4,24 +4,39 @@ A high-aesthetic, Vercel-inspired desktop and panel widget for KDE Plasma 6. Des
 
 Developed by **Aditya Gaurav** ([`adi-IL`](https://github.com/adi-IL)).
 
+![Ticking Desktop HUD](assets/desktop-hero.png)
+
 ---
 
-## Features
+## Visual Gallery
+
+| Horizon Countdown | Live World Clock | Precision Stopwatch |
+| :---: | :---: | :---: |
+| ![Countdown View](assets/countdown-view.png) | ![Clock View](assets/clock-view.png) | ![Stopwatch View](assets/stopwatch-view.png) |
+| Tabular cards, sub-second ticker, and journey progress | 12h/24h time, UTC offset, Day of Year, and Week # | Millisecond timer, hour support, and lap history |
+
+### Minimal Panel Integration
+
+![Panel Mode](assets/panel-mode.png)
+
+Sleek minimal icon with remaining time badge that expands into the full HUD on click, with adaptive support for both horizontal docks and vertical panels.
+
+---
+
+## Key Features
 
 - **Obsidian Glass & Plasma Adaptive Themes:**
-  - Vercel Obsidian Glass Mode: Ultra-dark translucent surfaces, sub-pixel specular borders, and interactive cursor-tracking specular lighting.
-  - Plasma System Adaptive Mode: Automatically harmonizes with your active KDE Plasma color scheme (Breeze, Breeze Dark, Catppuccin, Nord).
+  - **Vercel Obsidian Glass Mode:** Ultra-dark translucent surfaces, sub-pixel specular borders, and interactive cursor-tracking specular lighting.
+  - **Plasma System Adaptive Mode:** Automatically harmonizes with your active KDE Plasma color scheme (Breeze, Breeze Dark, Catppuccin, Nord).
+- **Dual Start & End Date Normalization:**
+  - Graphical Month, Day, and Year selectors for both Start Date (00:00) and End Date (00:00).
+  - Automatically assumes 00:00:00 midnight normalization without requiring manual time inputs.
+  - Live journey span indicator calculating total elapsed days and percentage progress.
+  - One-click presets: *New Year 2027*, *End of 2026*, *100-Day Goal*, and *October 25, 2026 Horizon*.
 - **Universal Horizon Countdown:**
   - Modular tabular cards: Days, Hours, Minutes, Seconds, and live Sub-second Milliseconds.
   - Tabular monospace numerals to ensure jitter-free ticking.
   - Milestone celebration banner when the target horizon is reached.
-- **Objective Journey Progress Tracking:**
-  - Configurable journey baseline: Start of Current Year (standard), Widget Installation Time, or Custom Project Kickoff Date.
-  - 3-decimal percentage completion resolution.
-- **Graphical Date & Time Configuration:**
-  - Full GUI Year, Month, Day, Hour, and Minute controls in settings.
-  - One-click presets: *New Year 2027*, *End of 2026*, *100-Day Goal*, and *October 25, 2026 Horizon*.
-  - Curated Vercel accent color palette presets (Emerald, Cyan, Blue, Purple, Amber, Crimson, White).
 - **Precision Live Clock:**
   - Full date string, 12h/24h time, UTC offset timezone indicator, day-of-year, and week-of-year counter.
 - **Digital Stopwatch:**
@@ -29,7 +44,7 @@ Developed by **Aditya Gaurav** ([`adi-IL`](https://github.com/adi-IL)).
   - Lap history table with split time calculations and balanced empty-state guidance.
 - **Desktop & Panel Versatility:**
   - Desktop Mode: Floating HUD card with zero outer container border (`NoBackground` integration).
-  - Panel Mode: Sleek minimal icon with remaining time badge that expands into the full HUD on click, with adaptive vertical and horizontal panel support.
+  - Panel Mode: Sleek minimal icon with remaining time badge that expands into the full HUD on click.
 - **Adaptive Battery Throttling:**
   - Intelligent timer throttling (1000ms when idle or in panel, 40ms high-precision when actively viewed or tracking).
 - **Internationalization (i18n):**
