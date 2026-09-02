@@ -10,7 +10,7 @@
         "BugReportUrl": "https://github.com/adi-IL/ticking-plasmoid/issues",
         "Category": "Date and Time",
         "Description": "Precision countdown horizon, live world clock, and millisecond stopwatch for KDE Plasma 6",
-        "Icon": "org.adi_il.ticking",
+        "Icon": "chronometer",
         "Id": "org.adi_il.ticking",
         "License": "GPL-3.0-or-later",
         "Name": "Ticking - Horizon & Time HUD",
