@@ -2,8 +2,6 @@
 
 A high-aesthetic, Vercel-inspired desktop and panel widget for KDE Plasma 6. Designed for precision tracking toward custom event horizons, milestone deadlines, live digital world time, and high-precision stopwatch metrics.
 
-Developed by **Aditya Gaurav** ([`adi-IL`](https://github.com/adi-IL)).
-
 ![Ticking Desktop HUD](assets/desktop-hero.png)
 
 ---
@@ -110,4 +108,8 @@ python3 scripts/extract-messages.py
 
 ## License
 
-GNU General Public License v3.0 or later ([GPL-3.0-or-later](LICENSES/GPL-3.0-or-later.txt)).
+GNU General Public License v3.0 or later ([GPL-3.0-or-later](LICENSE)).
+
+---
+
+Developed with ❤️ by **Aditya Gaurav** ([`adi-IL`](https://github.com/adi-IL))
