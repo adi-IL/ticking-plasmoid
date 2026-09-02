@@ -17,9 +17,9 @@ Kirigami.ShadowedRectangle {
     Layout.fillWidth: true
     Layout.preferredHeight: 36
     radius: 8
-    color: Qt.rgba(0.06, 0.06, 0.06, 0.8)
+    color: root.themeColors.subCardBg
     border.width: 1
-    border.color: Qt.rgba(1, 1, 1, 0.08)
+    border.color: root.themeColors.cardBorder
 
     RowLayout {
         anchors.fill: parent
@@ -42,10 +42,10 @@ Kirigami.ShadowedRectangle {
                     anchors.fill: parent
                     radius: 6
                     color: tabItem.isSelected
-                        ? Qt.rgba(0.18, 0.18, 0.18, 0.95)
-                        : (tabItem.isHovered ? Qt.rgba(0.12, 0.12, 0.12, 0.6) : "transparent")
+                        ? (root.isSystemTheme ? Qt.rgba(Kirigami.Theme.highlightColor.r, Kirigami.Theme.highlightColor.g, Kirigami.Theme.highlightColor.b, 0.22) : Qt.rgba(0.18, 0.18, 0.18, 0.95))
+                        : (tabItem.isHovered ? root.themeColors.subCardHover : "transparent")
                     border.width: tabItem.isSelected ? 1 : 0
-                    border.color: Qt.rgba(1, 1, 1, 0.12)
+                    border.color: tabItem.isSelected ? root.themeColors.cardBorderHover : "transparent"
 
                     Behavior on color {
                         ColorAnimation { duration: 150 }
@@ -60,12 +60,12 @@ Kirigami.ShadowedRectangle {
                         source: modelData.icon
                         Layout.preferredWidth: 12
                         Layout.preferredHeight: 12
-                        color: tabItem.isSelected ? "#FFFFFF" : (tabItem.isHovered ? "#D4D4D8" : "#71717A")
+                        color: tabItem.isSelected ? root.themeColors.textPrimary : (tabItem.isHovered ? root.themeColors.textSecondary : root.themeColors.textMuted)
                     }
 
                     Text {
                         text: modelData.name
-                        color: tabItem.isSelected ? "#FFFFFF" : (tabItem.isHovered ? "#D4D4D8" : "#71717A")
+                        color: tabItem.isSelected ? root.themeColors.textPrimary : (tabItem.isHovered ? root.themeColors.textSecondary : root.themeColors.textMuted)
                         font.family: "sans-serif"
                         font.weight: tabItem.isSelected ? Font.Bold : Font.DemiBold
                         font.pixelSize: 10

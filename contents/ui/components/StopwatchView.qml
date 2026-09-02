@@ -30,9 +30,9 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: Kirigami.Units.gridUnit * 5
         radius: 8
-        color: Qt.rgba(0.06, 0.06, 0.06, 0.85)
+        color: root.themeColors.subCardBg
         border.width: 1
-        border.color: Qt.rgba(1, 1, 1, 0.08)
+        border.color: root.themeColors.cardBorder
 
         // Top specular line
         Rectangle {
@@ -45,7 +45,7 @@ ColumnLayout {
             gradient: Gradient {
                 orientation: Gradient.Horizontal
                 GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.04) }
-                GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, 0.20) }
+                GradientStop { position: 0.5; color: root.themeColors.specularGlint }
                 GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.04) }
             }
         }
@@ -57,7 +57,7 @@ ColumnLayout {
             Text {
                 text: (stopwatchRoot.stopwatchData.hasHours ? (stopwatchRoot.stopwatchData.hours + ":") : "")
                     + stopwatchRoot.stopwatchData.minutes + ":" + stopwatchRoot.stopwatchData.seconds
-                color: "#FFFFFF"
+                color: root.themeColors.textPrimary
                 font.family: "monospace"
                 font.weight: Font.Bold
                 font.pixelSize: stopwatchRoot.stopwatchData.hasHours ? 28 : 36

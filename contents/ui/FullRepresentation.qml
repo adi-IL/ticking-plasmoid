@@ -20,12 +20,12 @@ Item {
         anchors.margins: 4
         radius: 12
 
-        color: Qt.rgba(0.03, 0.03, 0.03, Plasmoid.configuration.translucency || 0.88)
+        color: root.themeColors.cardBg
         border.width: 1
-        border.color: mouseTracker.containsMouse ? Qt.rgba(1, 1, 1, 0.16) : Qt.rgba(1, 1, 1, 0.09)
+        border.color: mouseTracker.containsMouse ? root.themeColors.cardBorderHover : root.themeColors.cardBorder
 
         shadow.size: 20
-        shadow.color: Qt.rgba(0, 0, 0, 0.75)
+        shadow.color: root.isSystemTheme ? Qt.rgba(0, 0, 0, 0.25) : Qt.rgba(0, 0, 0, 0.75)
         shadow.yOffset: 6
 
         // Mouse hover tracking for vgpu-inspired specular beam reflection
@@ -47,12 +47,12 @@ Item {
             radius: 1
             gradient: Gradient {
                 orientation: Gradient.Horizontal
-                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.06) }
+                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.04) }
                 GradientStop {
                     position: Math.max(0.05, Math.min(0.95, mouseTracker.mouseX / Math.max(1, hudCard.width)))
-                    color: Qt.rgba(1, 1, 1, mouseTracker.containsMouse ? 0.55 : 0.25)
+                    color: mouseTracker.containsMouse ? root.themeColors.specularGlint : Qt.rgba(1, 1, 1, 0.20)
                 }
-                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.06) }
+                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.04) }
             }
         }
 
@@ -85,7 +85,7 @@ Item {
                             width: 6
                             height: 6
                             radius: 3
-                            color: Plasmoid.configuration.accentColor || "#00E599"
+                            color: root.themeColors.accentColor
 
                             SequentialAnimation on opacity {
                                 running: true
@@ -97,7 +97,7 @@ Item {
 
                         Text {
                             text: i18nc("@label:status", "LIVE")
-                            color: Plasmoid.configuration.accentColor || "#00E599"
+                            color: root.themeColors.accentColor
                             font.family: "sans-serif"
                             font.weight: Font.Bold
                             font.pixelSize: 9
@@ -108,8 +108,8 @@ Item {
 
                 // Milestone Headline
                 Text {
-                    text: Plasmoid.configuration.customTitle || "OCTOBER 25, 2026 HORIZON"
-                    color: "#D4D4D8"
+                    text: Plasmoid.configuration.customTitle || "NEW HORIZON"
+                    color: root.themeColors.textPrimary
                     font.family: "sans-serif"
                     font.weight: Font.DemiBold
                     font.pixelSize: 11
@@ -124,7 +124,7 @@ Item {
                     source: "configure"
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 14
-                    color: settingsMouse.containsMouse ? "#FFFFFF" : "#71717A"
+                    color: settingsMouse.containsMouse ? root.themeColors.textPrimary : root.themeColors.textMuted
 
                     MouseArea {
                         id: settingsMouse

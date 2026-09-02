@@ -20,9 +20,11 @@ Item {
         anchors.fill: parent
         anchors.margins: inPanel ? 1 : 2
         radius: 6
-        color: mouseArea.containsMouse ? Qt.rgba(0.2, 0.2, 0.2, 0.8) : Qt.rgba(0.08, 0.08, 0.08, 0.6)
-        border.width: 1
-        border.color: mouseArea.containsMouse ? Qt.rgba(1, 1, 1, 0.2) : Qt.rgba(1, 1, 1, 0.08)
+        color: inPanel
+            ? (mouseArea.containsMouse ? (root.isSystemTheme ? Qt.rgba(Kirigami.Theme.highlightColor.r, Kirigami.Theme.highlightColor.g, Kirigami.Theme.highlightColor.b, 0.22) : Qt.rgba(0.18, 0.18, 0.18, 0.7)) : "transparent")
+            : (mouseArea.containsMouse ? root.themeColors.subCardHover : root.themeColors.subCardBg)
+        border.width: inPanel ? 0 : 1
+        border.color: mouseArea.containsMouse ? root.themeColors.cardBorderHover : root.themeColors.cardBorder
 
         RowLayout {
             id: compactLayout
@@ -34,12 +36,12 @@ Item {
                 fallback: "chronometer"
                 Layout.preferredWidth: inPanel ? Kirigami.Units.iconSizes.small : Kirigami.Units.iconSizes.medium
                 Layout.preferredHeight: Layout.preferredWidth
-                color: Plasmoid.configuration.accentColor || "#00E599"
+                color: root.themeColors.accentColor
             }
 
             Text {
                 text: root.countdownData.days + "d " + root.countdownData.hours + "h"
-                color: "#FFFFFF"
+                color: root.themeColors.textPrimary
                 font.family: "monospace"
                 font.weight: Font.Bold
                 font.pixelSize: 11

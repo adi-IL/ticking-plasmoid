@@ -18,7 +18,7 @@ ColumnLayout {
 
         Text {
             text: i18nc("@label:progress", "JOURNEY TO HORIZON")
-            color: "#71717A"
+            color: root.themeColors.textMuted
             font.family: "sans-serif"
             font.weight: Font.DemiBold
             font.pixelSize: 10
@@ -45,9 +45,9 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 6
         radius: 3
-        color: Qt.rgba(0.12, 0.12, 0.12, 0.9)
+        color: root.isSystemTheme ? Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.08) : Qt.rgba(0.12, 0.12, 0.12, 0.9)
         border.width: 1
-        border.color: Qt.rgba(1, 1, 1, 0.08)
+        border.color: root.themeColors.cardBorder
 
         // Filled active bar
         Rectangle {

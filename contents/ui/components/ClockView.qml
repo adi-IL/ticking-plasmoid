@@ -27,9 +27,9 @@ ColumnLayout {
         Layout.fillHeight: true
         Layout.minimumHeight: Kirigami.Units.gridUnit * 5.5
         radius: 8
-        color: Qt.rgba(0.06, 0.06, 0.06, 0.85)
+        color: root.themeColors.subCardBg
         border.width: 1
-        border.color: Qt.rgba(1, 1, 1, 0.08)
+        border.color: root.themeColors.cardBorder
 
         // Top edge specular line
         Rectangle {
@@ -42,7 +42,7 @@ ColumnLayout {
             gradient: Gradient {
                 orientation: Gradient.Horizontal
                 GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.04) }
-                GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, 0.22) }
+                GradientStop { position: 0.5; color: root.themeColors.specularGlint }
                 GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.04) }
             }
         }
@@ -60,7 +60,7 @@ ColumnLayout {
 
                 Text {
                     text: clockRoot.clockData.hours
-                    color: "#FFFFFF"
+                    color: root.themeColors.textPrimary
                     font.family: "monospace"
                     font.weight: Font.Bold
                     font.pixelSize: parent.responsiveFontSize
@@ -77,7 +77,7 @@ ColumnLayout {
 
                 Text {
                     text: clockRoot.clockData.minutes
-                    color: "#FFFFFF"
+                    color: root.themeColors.textPrimary
                     font.family: "monospace"
                     font.weight: Font.Bold
                     font.pixelSize: parent.responsiveFontSize
@@ -104,7 +104,7 @@ ColumnLayout {
                 Text {
                     visible: clockRoot.clockData.amPm !== ""
                     text: clockRoot.clockData.amPm
-                    color: "#A1A1AA"
+                    color: root.themeColors.textSecondary
                     font.family: "sans-serif"
                     font.weight: Font.Bold
                     font.pixelSize: 13
@@ -117,7 +117,7 @@ ColumnLayout {
             Text {
                 Layout.alignment: Qt.AlignHCenter
                 text: clockRoot.clockData.dateString
-                color: "#A1A1AA"
+                color: root.themeColors.textSecondary
                 font.family: "sans-serif"
                 font.weight: Font.DemiBold
                 font.pixelSize: 11
@@ -137,15 +137,15 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 28
             radius: 6
-            color: Qt.rgba(0.1, 0.1, 0.1, 0.8)
+            color: root.themeColors.subCardBg
             border.width: 1
-            border.color: Qt.rgba(1, 1, 1, 0.08)
+            border.color: root.themeColors.cardBorder
 
             RowLayout {
                 anchors.centerIn: parent
                 spacing: 6
-                Text { text: i18nc("@label:time", "ZONE:"); color: "#71717A"; font.pixelSize: 9; font.weight: Font.Bold }
-                Text { text: clockRoot.clockData.timeZone; color: "#D4D4D8"; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
+                Text { text: i18nc("@label:time", "ZONE:"); color: root.themeColors.textMuted; font.pixelSize: 9; font.weight: Font.Bold }
+                Text { text: clockRoot.clockData.timeZone; color: root.themeColors.textPrimary; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
             }
         }
 
@@ -154,15 +154,15 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 28
             radius: 6
-            color: Qt.rgba(0.1, 0.1, 0.1, 0.8)
+            color: root.themeColors.subCardBg
             border.width: 1
-            border.color: Qt.rgba(1, 1, 1, 0.08)
+            border.color: root.themeColors.cardBorder
 
             RowLayout {
                 anchors.centerIn: parent
                 spacing: 6
-                Text { text: i18nc("@label:time", "DAY:"); color: "#71717A"; font.pixelSize: 9; font.weight: Font.Bold }
-                Text { text: "" + clockRoot.clockData.dayOfYear; color: "#D4D4D8"; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
+                Text { text: i18nc("@label:time", "DAY:"); color: root.themeColors.textMuted; font.pixelSize: 9; font.weight: Font.Bold }
+                Text { text: "" + clockRoot.clockData.dayOfYear; color: root.themeColors.textPrimary; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
             }
         }
 
@@ -171,15 +171,15 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 28
             radius: 6
-            color: Qt.rgba(0.1, 0.1, 0.1, 0.8)
+            color: root.themeColors.subCardBg
             border.width: 1
-            border.color: Qt.rgba(1, 1, 1, 0.08)
+            border.color: root.themeColors.cardBorder
 
             RowLayout {
                 anchors.centerIn: parent
                 spacing: 6
-                Text { text: i18nc("@label:time", "WEEK:"); color: "#71717A"; font.pixelSize: 9; font.weight: Font.Bold }
-                Text { text: "#" + clockRoot.clockData.weekOfYear; color: "#D4D4D8"; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
+                Text { text: i18nc("@label:time", "WEEK:"); color: root.themeColors.textMuted; font.pixelSize: 9; font.weight: Font.Bold }
+                Text { text: "#" + clockRoot.clockData.weekOfYear; color: root.themeColors.textPrimary; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
             }
         }
     }
