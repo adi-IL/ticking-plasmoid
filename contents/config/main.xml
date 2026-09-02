@@ -14,8 +14,16 @@
             <label>Baseline ISO timestamp for elapsed calculation</label>
         </entry>
         <entry name="customTitle" type="String">
-            <default>OCTOBER 25, 2026 HORIZON</default>
+            <default>NEW HORIZON</default>
             <label>Custom headline for target milestone</label>
+        </entry>
+        <entry name="themeMode" type="String">
+            <default>obsidian</default>
+            <label>Visual theme style (obsidian or system)</label>
+        </entry>
+        <entry name="baselineMode" type="String">
+            <default>year_start</default>
+            <label>Progress baseline calculation mode (year_start, install, or custom)</label>
         </entry>
         <entry name="showMilliseconds" type="Bool">
             <default>true</default>

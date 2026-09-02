@@ -11,6 +11,9 @@ PlasmoidItem {
     switchWidth: Kirigami.Units.gridUnit * 14
     switchHeight: Kirigami.Units.gridUnit * 14
 
+    // Eliminate outer container frame so custom HUD floats seamlessly
+    Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
+
     preferredRepresentation: {
         if (Plasmoid.formFactor === PlasmaCore.Types.Planar) {
             return fullRepresentation;
@@ -18,8 +21,36 @@ PlasmoidItem {
         return compactRepresentation;
     }
 
+    // Theme Palette Adaptation (Obsidian Glass vs Plasma System Adaptive)
+    readonly property bool isSystemTheme: Plasmoid.configuration.themeMode === "system"
+
+    readonly property var themeColors: ({
+        cardBg: isSystemTheme
+            ? Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, Plasmoid.configuration.translucency || 0.88)
+            : Qt.rgba(0.03, 0.03, 0.03, Plasmoid.configuration.translucency || 0.88),
+        cardBorder: isSystemTheme
+            ? Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.12)
+            : Qt.rgba(1, 1, 1, 0.09),
+        cardBorderHover: isSystemTheme
+            ? Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.25)
+            : Qt.rgba(1, 1, 1, 0.18),
+        specularGlint: isSystemTheme
+            ? Qt.rgba(Kirigami.Theme.highlightColor.r, Kirigami.Theme.highlightColor.g, Kirigami.Theme.highlightColor.b, 0.35)
+            : Qt.rgba(1, 1, 1, 0.45),
+        textPrimary: isSystemTheme ? Kirigami.Theme.textColor : "#EDEDED",
+        textSecondary: isSystemTheme ? Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.72) : "#A1A1AA",
+        textMuted: isSystemTheme ? Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.45) : "#71717A",
+        subCardBg: isSystemTheme
+            ? Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.95)
+            : Qt.rgba(0.06, 0.06, 0.06, 0.88),
+        subCardHover: isSystemTheme
+            ? Qt.rgba(Kirigami.Theme.highlightColor.r, Kirigami.Theme.highlightColor.g, Kirigami.Theme.highlightColor.b, 0.18)
+            : Qt.rgba(0.12, 0.12, 0.12, 0.96),
+        accentColor: Plasmoid.configuration.accentColor || "#00E599"
+    })
+
     // Tooltip Integration
-    toolTipMainText: Plasmoid.configuration.customTitle || "OCTOBER 25, 2026 HORIZON"
+    toolTipMainText: Plasmoid.configuration.customTitle || "NEW HORIZON"
     toolTipSubText: root.countdownData.isExpired
         ? i18nc("@info:tooltip", "Horizon reached - 100.000% completed")
         : i18n("%1 Days, %2 Hours remaining", root.countdownData.days, root.countdownData.hours)
@@ -120,26 +151,41 @@ PlasmoidItem {
         var now = new Date();
         var nowMs = now.getTime();
 
-        // 1. Initial Start Timestamp Setup (First Run baseline)
-        var startIso = Plasmoid.configuration.startTimestamp;
-        if (!startIso || startIso === "") {
-            startIso = now.toISOString();
-            Plasmoid.configuration.startTimestamp = startIso;
-        }
-
-        var startDate = new Date(startIso);
-        var startMs = startDate.getTime();
-        if (isNaN(startMs)) {
-            startMs = nowMs - (1000 * 60 * 60 * 24); // fallback 1 day baseline
-        }
-
-        // Target Date parsing (Default: 2026-10-25T00:00:00Z)
+        // 1. Target Date parsing (Default: 2026-10-25T00:00:00Z)
         var targetIso = Plasmoid.configuration.targetTimestamp || "2026-10-25T00:00:00Z";
         var targetDate = new Date(targetIso);
         var targetMs = targetDate.getTime();
         if (isNaN(targetMs)) {
             targetDate = new Date("2026-10-25T00:00:00Z");
             targetMs = targetDate.getTime();
+        }
+
+        // 2. Baseline Date Calculation (Universal start of year, custom, or installation)
+        var baseMode = Plasmoid.configuration.baselineMode || "year_start";
+        var startMs = 0;
+        if (baseMode === "year_start") {
+            var targetYear = targetDate.getFullYear();
+            var baseYear = (targetYear <= now.getFullYear()) ? now.getFullYear() : (now.getFullYear());
+            startMs = new Date(baseYear, 0, 1, 0, 0, 0).getTime();
+            if (startMs >= targetMs) {
+                startMs = nowMs - (1000 * 60 * 60 * 24 * 30); // 30 days baseline if target is Jan 1
+            }
+        } else if (baseMode === "custom") {
+            var customStart = Plasmoid.configuration.startTimestamp;
+            startMs = customStart ? new Date(customStart).getTime() : 0;
+            if (isNaN(startMs) || startMs <= 0 || startMs >= targetMs) {
+                startMs = nowMs - (1000 * 60 * 60 * 24);
+            }
+        } else { // "install"
+            var startIso = Plasmoid.configuration.startTimestamp;
+            if (!startIso || startIso === "") {
+                startIso = now.toISOString();
+                Plasmoid.configuration.startTimestamp = startIso;
+            }
+            startMs = new Date(startIso).getTime();
+            if (isNaN(startMs)) {
+                startMs = nowMs;
+            }
         }
 
         // 2. Countdown Calculations
