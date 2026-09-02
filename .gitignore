@@ -27,3 +27,6 @@ widget-debug.log
 /tmp/
 *.bak
 *.orig
+
+# Duplicate skills and extensions
+extend/
