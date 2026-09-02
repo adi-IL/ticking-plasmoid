@@ -1,0 +1,29 @@
+# Build and packaging artifacts
+*.plasmoid
+*.zip
+*.tar.gz
+*.tar.xz
+build/
+build-*/
+cmake-build-*/
+.cmake/
+
+# QML caching & logs
+*.qmlc
+*.jsc
+debug.log
+widget-debug.log
+
+# Editor and IDE configurations
+.idea/
+.vscode/
+*.kdev4
+.kateconfig
+*.swp
+*~
+.DS_Store
+
+# Temporary & backup files
+/tmp/
+*.bak
+*.orig

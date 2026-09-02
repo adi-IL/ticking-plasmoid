@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "mr.x.l.r.8.pride@gmail.com",
+                "Name": "Aditya Gaurav"
+            }
+        ],
+        "BugReportUrl": "https://github.com/adi-IL/ticking-plasmoid/issues",
+        "Category": "Date and Time",
+        "Description": "Vercel-inspired translucent desktop countdown, live clock, and precision stopwatch",
+        "Icon": "preferences-system-time",
+        "Id": "org.adi_il.ticking",
+        "License": "GPL-3.0-or-later",
+        "Name": "Ticking — Horizon & Time HUD",
+        "Version": "1.0.0",
+        "Website": "https://github.com/adi-IL/ticking-plasmoid"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

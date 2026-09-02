@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+    <kcfgfile name=""/>
+    <group name="General">
+        <entry name="targetTimestamp" type="String">
+            <default>2026-10-25T00:00:00Z</default>
+            <label>Target ISO timestamp for countdown horizon</label>
+        </entry>
+        <entry name="startTimestamp" type="String">
+            <default></default>
+            <label>Baseline ISO timestamp for elapsed calculation</label>
+        </entry>
+        <entry name="customTitle" type="String">
+            <default>OCTOBER 25, 2026 HORIZON</default>
+            <label>Custom headline for target milestone</label>
+        </entry>
+        <entry name="showMilliseconds" type="Bool">
+            <default>true</default>
+            <label>Display live sub-second milliseconds ticker</label>
+        </entry>
+        <entry name="translucency" type="Double">
+            <default>0.88</default>
+            <min>0.2</min>
+            <max>1.0</max>
+            <label>Surface glass opacity factor</label>
+        </entry>
+        <entry name="activeTab" type="Int">
+            <default>0</default>
+            <min>0</min>
+            <max>2</max>
+            <label>Default active view mode (0: Countdown, 1: Clock, 2: Stopwatch)</label>
+        </entry>
+        <entry name="hourFormat24" type="Bool">
+            <default>true</default>
+            <label>Use 24-hour time format in Clock view</label>
+        </entry>
+        <entry name="accentColor" type="String">
+            <default>#00E599</default>
+            <label>Vercel accent glow color</label>
+        </entry>
+        <entry name="showProgress" type="Bool">
+            <default>true</default>
+            <label>Display target completion progress bar</label>
+        </entry>
+    </group>
+</kcfg>
