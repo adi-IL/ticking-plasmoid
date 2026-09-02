@@ -20,7 +20,9 @@ PlasmoidItem {
 
     // Tooltip Integration
     toolTipMainText: Plasmoid.configuration.customTitle || "OCTOBER 25, 2026 HORIZON"
-    toolTipSubText: i18n("%1 Days, %2 Hours remaining", root.countdownData.days, root.countdownData.hours)
+    toolTipSubText: root.countdownData.isExpired
+        ? i18nc("@info:tooltip", "Horizon reached - 100.000% completed")
+        : i18n("%1 Days, %2 Hours remaining", root.countdownData.days, root.countdownData.hours)
 
     // Context Menu Actions
     Plasmoid.contextualActions: [
@@ -35,6 +37,15 @@ PlasmoidItem {
             icon.name: "edit-clear"
             priority: PlasmaCore.Action.LowPriorityAction
             onTriggered: root.resetStopwatch()
+        },
+        PlasmaCore.Action {
+            text: i18nc("@action:inmenu", "Configure Ticking…")
+            icon.name: "configure"
+            priority: PlasmaCore.Action.DefaultPriorityAction
+            onTriggered: {
+                var configAction = Plasmoid.internalAction("configure") || (typeof plasmoid !== "undefined" && plasmoid.action ? plasmoid.action("configure") : null);
+                if (configAction) configAction.trigger();
+            }
         }
     ]
 
@@ -63,9 +74,11 @@ PlasmoidItem {
 
     property var stopwatchData: ({
         formattedTime: "00:00.00",
+        hours: "00",
         minutes: "00",
         seconds: "00",
         hundredths: "00",
+        hasHours: false,
         running: false,
         laps: []
     })
@@ -74,10 +87,19 @@ PlasmoidItem {
     property double stopwatchLastTimestamp: 0
     property double stopwatchLastLapMs: 0
 
-    // High precision live ticker timer
+    // Adaptive Precision live ticker timer (throttled to preserve battery when idle)
     Timer {
         id: tickerTimer
-        interval: (Plasmoid.configuration.showMilliseconds && (Plasmoid.expanded || Plasmoid.formFactor === PlasmaCore.Types.Planar)) ? 50 : 1000
+        interval: {
+            var isVisible = (Plasmoid.expanded || Plasmoid.formFactor === PlasmaCore.Types.Planar);
+            if (!isVisible) {
+                return 1000;
+            }
+            if (root.stopwatchData.running || Plasmoid.configuration.showMilliseconds) {
+                return 40; // ~25 FPS high precision
+            }
+            return 1000;
+        }
         running: true
         repeat: true
         triggeredOnStart: true
@@ -107,11 +129,18 @@ PlasmoidItem {
 
         var startDate = new Date(startIso);
         var startMs = startDate.getTime();
+        if (isNaN(startMs)) {
+            startMs = nowMs - (1000 * 60 * 60 * 24); // fallback 1 day baseline
+        }
 
         // Target Date parsing (Default: 2026-10-25T00:00:00Z)
         var targetIso = Plasmoid.configuration.targetTimestamp || "2026-10-25T00:00:00Z";
         var targetDate = new Date(targetIso);
         var targetMs = targetDate.getTime();
+        if (isNaN(targetMs)) {
+            targetDate = new Date("2026-10-25T00:00:00Z");
+            targetMs = targetDate.getTime();
+        }
 
         // 2. Countdown Calculations
         var diffMs = targetMs - nowMs;
@@ -129,8 +158,8 @@ PlasmoidItem {
         // Total Journey Progress Calculation (Start -> Target)
         var totalSpan = targetMs - startMs;
         var elapsedSpan = nowMs - startMs;
-        var ratio = 0.0;
-        if (totalSpan > 0) {
+        var ratio = isExpired ? 1.0 : 0.0;
+        if (!isExpired && totalSpan > 0) {
             ratio = Math.max(0.0, Math.min(1.0, elapsedSpan / totalSpan));
         }
 
@@ -195,15 +224,19 @@ PlasmoidItem {
 
     function updateStopwatchDisplay() {
         var totalSec = Math.floor(root.stopwatchElapsedMs / 1000);
-        var min = Math.floor(totalSec / 60);
+        var hrs = Math.floor(totalSec / 3600);
+        var min = Math.floor((totalSec % 3600) / 60);
         var sec = totalSec % 60;
         var hundredths = Math.floor((root.stopwatchElapsedMs % 1000) / 10);
+        var formatted = (hrs > 0 ? (pad2(hrs) + ":") : "") + pad2(min) + ":" + pad2(sec) + "." + pad2(hundredths);
 
         root.stopwatchData = {
-            formattedTime: pad2(min) + ":" + pad2(sec) + "." + pad2(hundredths),
+            formattedTime: formatted,
+            hours: pad2(hrs),
             minutes: pad2(min),
             seconds: pad2(sec),
             hundredths: pad2(hundredths),
+            hasHours: hrs > 0,
             running: root.stopwatchData.running,
             laps: root.stopwatchData.laps
         };
@@ -237,10 +270,11 @@ PlasmoidItem {
 
         var formatMs = function(t) {
             var s = Math.floor(t / 1000);
-            var m = Math.floor(s / 60);
+            var hrs = Math.floor(s / 3600);
+            var m = Math.floor((s % 3600) / 60);
             var sc = s % 60;
             var hd = Math.floor((t % 1000) / 10);
-            return pad2(m) + ":" + pad2(sc) + "." + pad2(hd);
+            return (hrs > 0 ? (pad2(hrs) + ":") : "") + pad2(m) + ":" + pad2(sc) + "." + pad2(hd);
         };
 
         var newLap = {

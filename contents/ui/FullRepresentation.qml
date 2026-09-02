@@ -20,23 +20,40 @@ Item {
         anchors.margins: 4
         radius: 12
 
-        color: Qt.rgba(0.04, 0.04, 0.04, Plasmoid.configuration.translucency || 0.88)
+        color: Qt.rgba(0.03, 0.03, 0.03, Plasmoid.configuration.translucency || 0.88)
         border.width: 1
-        border.color: Qt.rgba(1, 1, 1, 0.1)
+        border.color: mouseTracker.containsMouse ? Qt.rgba(1, 1, 1, 0.16) : Qt.rgba(1, 1, 1, 0.09)
 
-        shadow.size: 16
-        shadow.color: Qt.rgba(0, 0, 0, 0.7)
-        shadow.yOffset: 4
+        shadow.size: 20
+        shadow.color: Qt.rgba(0, 0, 0, 0.75)
+        shadow.yOffset: 6
 
-        // Top specular line (Vercel physical edge glow)
+        // Mouse hover tracking for vgpu-inspired specular beam reflection
+        MouseArea {
+            id: mouseTracker
+            anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.NoButton
+        }
+
+        // Top specular line (vgpu-inspired analytic physical edge glow)
         Rectangle {
+            id: specularBeam
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.margins: 1
             height: 1
-            color: Qt.rgba(1, 1, 1, 0.25)
             radius: 1
+            gradient: Gradient {
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.06) }
+                GradientStop {
+                    position: Math.max(0.05, Math.min(0.95, mouseTracker.mouseX / Math.max(1, hudCard.width)))
+                    color: Qt.rgba(1, 1, 1, mouseTracker.containsMouse ? 0.55 : 0.25)
+                }
+                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.06) }
+            }
         }
 
         ColumnLayout {
@@ -114,7 +131,12 @@ Item {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: plasmoid.action("configure").trigger()
+                        onClicked: {
+                            var configAction = Plasmoid.internalAction("configure") || (typeof plasmoid !== "undefined" && plasmoid.action ? plasmoid.action("configure") : null);
+                            if (configAction) {
+                                configAction.trigger();
+                            }
+                        }
                     }
                 }
             }
