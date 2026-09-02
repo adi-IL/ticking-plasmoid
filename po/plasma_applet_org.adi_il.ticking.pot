@@ -1,0 +1,339 @@
+# Translation template for Ticking Plasma 6 widget.
+# Copyright (C) 2026 Aditya Gaurav
+# This file is distributed under the same license as the org.adi_il.ticking package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: org.adi_il.ticking 1.2.0\n"
+"Report-Msgid-Bugs-To: https://github.com/adi-IL/ticking-plasmoid/issues\n"
+"POT-Creation-Date: 2026-09-02 20:11+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <kde-i18n-doc@kde.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: contents/ui/FullRepresentation.qml:99
+msgctxt "@label:status"
+msgid "LIVE"
+msgstr ""
+
+#: contents/ui/components/ClockView.qml:147
+msgctxt "@label:time"
+msgid "ZONE:"
+msgstr ""
+
+#: contents/ui/components/ClockView.qml:164
+msgctxt "@label:time"
+msgid "DAY:"
+msgstr ""
+
+#: contents/ui/components/ClockView.qml:181
+msgctxt "@label:time"
+msgid "WEEK:"
+msgstr ""
+
+#: contents/ui/components/CountdownView.qml:33
+msgctxt "@label:timeunit"
+msgid "Days"
+msgstr ""
+
+#: contents/ui/components/CountdownView.qml:39
+msgctxt "@label:timeunit"
+msgid "Hours"
+msgstr ""
+
+#: contents/ui/components/CountdownView.qml:45
+msgctxt "@label:timeunit"
+msgid "Mins"
+msgstr ""
+
+#: contents/ui/components/CountdownView.qml:51
+msgctxt "@label:timeunit"
+msgid "Secs"
+msgstr ""
+
+#: contents/ui/components/CountdownView.qml:59
+msgctxt "@label:timeunit"
+msgid "Msec"
+msgstr ""
+
+#: contents/ui/components/CountdownView.qml:84
+msgctxt "@label:status"
+msgid "HORIZON REACHED - 100.000% COMPLETED"
+msgstr ""
+
+#: contents/ui/components/ProgressTrack.qml:20
+msgctxt "@label:progress"
+msgid "JOURNEY TO HORIZON"
+msgstr ""
+
+#: contents/ui/components/SegmentedNav.qml:12
+msgctxt "@title:tab"
+msgid "COUNTDOWN"
+msgstr ""
+
+#: contents/ui/components/SegmentedNav.qml:13
+msgctxt "@title:tab"
+msgid "CLOCK"
+msgstr ""
+
+#: contents/ui/components/SegmentedNav.qml:14
+msgctxt "@title:tab"
+msgid "STOPWATCH"
+msgstr ""
+
+#: contents/ui/components/StopwatchView.qml:104
+msgctxt "@action:button"
+msgid "PAUSE"
+msgstr ""
+
+#: contents/ui/components/StopwatchView.qml:104
+msgctxt "@action:button"
+msgid "START"
+msgstr ""
+
+#: contents/ui/components/StopwatchView.qml:149
+msgctxt "@action:button"
+msgid "LAP"
+msgstr ""
+
+#: contents/ui/components/StopwatchView.qml:188
+msgctxt "@action:button"
+msgid "RESET"
+msgstr ""
+
+#: contents/ui/components/StopwatchView.qml:230
+msgctxt "@info:placeholder"
+msgid "Press LAP while running to record split times"
+msgstr ""
+
+#: contents/ui/components/StopwatchView.qml:264
+msgid "Lap %1"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:86
+msgctxt "@label:textbox"
+msgid "Milestone title:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:93
+msgctxt "@title:group"
+msgid "Target Horizon Date & Time"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:98
+msgctxt "@label:date"
+msgid "Target date:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:105
+msgctxt "@item:month"
+msgid "Jan"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:105
+msgctxt "@item:month"
+msgid "Feb"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:106
+msgctxt "@item:month"
+msgid "Mar"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:106
+msgctxt "@item:month"
+msgid "Apr"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:107
+msgctxt "@item:month"
+msgid "May"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:107
+msgctxt "@item:month"
+msgid "Jun"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:108
+msgctxt "@item:month"
+msgid "Jul"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:108
+msgctxt "@item:month"
+msgid "Aug"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:109
+msgctxt "@item:month"
+msgid "Sep"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:109
+msgctxt "@item:month"
+msgid "Oct"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:110
+msgctxt "@item:month"
+msgid "Nov"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:110
+msgctxt "@item:month"
+msgid "Dec"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:139
+msgctxt "@label:time"
+msgid "Target time (UTC):"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:178
+msgctxt "@label:presets"
+msgid "Quick presets:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:182
+msgctxt "@action:button"
+msgid "New Year 2027"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:194
+msgctxt "@action:button"
+msgid "End of 2026"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:206
+msgctxt "@action:button"
+msgid "Oct 25, 2026"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:220
+msgctxt "@title:group"
+msgid "Journey Progress & Baseline"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:226
+msgctxt "@label:combobox"
+msgid "Journey baseline:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:228
+msgctxt "@item:baseline"
+msgid "Start of current year (Standard)"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:229
+msgctxt "@item:baseline"
+msgid "Widget installation time"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:230
+msgctxt "@item:baseline"
+msgid "Custom start date"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:242
+msgctxt "@label:textbox"
+msgid "Custom start:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:254
+msgctxt "@action:button"
+msgid "Set to Now"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:265
+msgctxt "@title:group"
+msgid "Display & Aesthetic"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:271
+msgctxt "@label:combobox"
+msgid "Visual theme:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:273
+msgctxt "@item:theme"
+msgid "Vercel Obsidian Glass (Dark HUD)"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:274
+msgctxt "@item:theme"
+msgid "Plasma System Theme Adaptive"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:285
+msgctxt "@label:textbox"
+msgid "Accent color:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:307
+msgctxt "@label:swatches"
+msgid "Vercel presets:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:345
+msgctxt "@label:slider"
+msgid "Glass opacity:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:367
+msgctxt "@label:checkbox"
+msgid "Precision:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:368
+msgid "Show sub-second milliseconds ticker"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:373
+msgctxt "@label:checkbox"
+msgid "Progress bar:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:374
+msgid "Display journey percentage progress bar"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:379
+msgctxt "@label:checkbox"
+msgid "Clock format:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:380
+msgid "Use 24-hour clock format"
+msgstr ""
+
+#: contents/ui/main.qml:55
+msgctxt "@info:tooltip"
+msgid "Horizon reached - 100.000% completed"
+msgstr ""
+
+#: contents/ui/main.qml:56
+msgid "%1 Days, %2 Hours remaining"
+msgstr ""
+
+#: contents/ui/main.qml:61
+msgctxt "@action:inmenu"
+msgid "Reset Baseline to Today"
+msgstr ""
+
+#: contents/ui/main.qml:67
+msgctxt "@action:inmenu"
+msgid "Reset Stopwatch"
+msgstr ""
+
+#: contents/ui/main.qml:73
+msgctxt "@action:inmenu"
+msgid "Configure Ticking…"
+msgstr ""
+
