@@ -7,11 +7,10 @@ import org.kde.kirigami as Kirigami
 PlasmoidItem {
     id: root
 
-    // Sizing & Representation Thresholds
     switchWidth: Kirigami.Units.gridUnit * 14
     switchHeight: Kirigami.Units.gridUnit * 14
 
-    // Eliminate outer container frame so custom HUD floats seamlessly
+    // Custom HUD draws its own card; skip the Plasma frame
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
 
     preferredRepresentation: {
@@ -21,8 +20,23 @@ PlasmoidItem {
         return compactRepresentation;
     }
 
-    // Theme Palette Adaptation (Obsidian Glass vs Plasma System Adaptive)
     readonly property bool isSystemTheme: Plasmoid.configuration.themeMode === "system"
+
+    readonly property color safeAccent: {
+        var raw = (Plasmoid.configuration.accentColor || "").toString().trim();
+        var hex = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(raw) ? raw : "#00E599";
+        // Prefer Qt.color when available; otherwise let QML coerce the hex string
+        if (typeof Qt.color === "function") {
+            return Qt.color(hex);
+        }
+        return hex;
+    }
+
+    // Dark ink on bright accents, light ink on dark ones (property binding, not object-literal block)
+    readonly property color onAccentFg: {
+        var lum = 0.2126 * safeAccent.r + 0.7152 * safeAccent.g + 0.0722 * safeAccent.b;
+        return lum > 0.55 ? "#0A0A0A" : "#FFFFFF";
+    }
 
     readonly property var themeColors: ({
         cardBg: isSystemTheme
@@ -46,41 +60,67 @@ PlasmoidItem {
         subCardHover: isSystemTheme
             ? Qt.rgba(Kirigami.Theme.highlightColor.r, Kirigami.Theme.highlightColor.g, Kirigami.Theme.highlightColor.b, 0.18)
             : Qt.rgba(0.12, 0.12, 0.12, 0.96),
-        accentColor: Plasmoid.configuration.accentColor || "#00E599"
+        dangerBg: isSystemTheme
+            ? Qt.rgba(Kirigami.Theme.negativeTextColor.r, Kirigami.Theme.negativeTextColor.g, Kirigami.Theme.negativeTextColor.b, 0.85)
+            : Qt.rgba(0.8, 0.2, 0.2, 0.8),
+        dangerBgHover: isSystemTheme
+            ? Qt.rgba(Kirigami.Theme.negativeTextColor.r, Kirigami.Theme.negativeTextColor.g, Kirigami.Theme.negativeTextColor.b, 0.95)
+            : Qt.rgba(0.9, 0.3, 0.3, 0.9),
+        successBg: Qt.rgba(safeAccent.r, safeAccent.g, safeAccent.b, isSystemTheme ? 0.88 : 0.8),
+        successBgHover: Qt.rgba(safeAccent.r, safeAccent.g, safeAccent.b, 0.95),
+        buttonBg: isSystemTheme
+            ? Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.08)
+            : Qt.rgba(0.12, 0.12, 0.12, 0.8),
+        buttonBgHover: isSystemTheme
+            ? Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.14)
+            : Qt.rgba(0.2, 0.2, 0.2, 0.9),
+        buttonFg: isSystemTheme ? Kirigami.Theme.textColor : "#FFFFFF",
+        onAccentFg: root.onAccentFg,
+        rowAlt: isSystemTheme
+            ? Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.06)
+            : Qt.rgba(0.1, 0.1, 0.1, 0.6),
+        livePillBg: Qt.rgba(safeAccent.r, safeAccent.g, safeAccent.b, 0.12),
+        livePillBorder: Qt.rgba(safeAccent.r, safeAccent.g, safeAccent.b, 0.3),
+        accentColor: safeAccent
     })
 
-    // Tooltip Integration
-    toolTipMainText: Plasmoid.configuration.customTitle || "NEW HORIZON"
+    readonly property string milestoneTitle: {
+        var t = (Plasmoid.configuration.customTitle || "").toString().trim();
+        return t.length > 0 ? t : i18nc("@title:window default milestone", "NEW HORIZON");
+    }
+
+    toolTipMainText: root.milestoneTitle
     toolTipSubText: root.countdownData.isExpired
         ? i18nc("@info:tooltip", "Horizon reached - 100.000% completed")
-        : i18n("%1 Days, %2 Hours remaining", root.countdownData.days, root.countdownData.hours)
+        : i18n("%1 days, %2 hours remaining", root.countdownData.days, root.countdownData.hours)
 
-    // Context Menu Actions
     Plasmoid.contextualActions: [
         PlasmaCore.Action {
-            text: i18nc("@action:inmenu", "Reset Baseline to Today")
+            text: i18nc("@action:inmenu", "Reset baseline to today")
             icon.name: "view-refresh"
-            priority: PlasmaCore.Action.LowPriorityAction
+            priority: PlasmaCore.Action.LowPriority
             onTriggered: root.resetBaselineToNow()
         },
         PlasmaCore.Action {
-            text: i18nc("@action:inmenu", "Reset Stopwatch")
+            text: i18nc("@action:inmenu", "Reset stopwatch")
             icon.name: "edit-clear"
-            priority: PlasmaCore.Action.LowPriorityAction
+            priority: PlasmaCore.Action.LowPriority
             onTriggered: root.resetStopwatch()
         },
         PlasmaCore.Action {
             text: i18nc("@action:inmenu", "Configure Ticking…")
             icon.name: "configure"
-            priority: PlasmaCore.Action.DefaultPriorityAction
+            priority: PlasmaCore.Action.NormalPriority
             onTriggered: {
-                var configAction = Plasmoid.internalAction("configure") || (typeof plasmoid !== "undefined" && plasmoid.action ? plasmoid.action("configure") : null);
-                if (configAction) configAction.trigger();
+                var configAction = Plasmoid.internalAction("configure")
+                    || (typeof plasmoid !== "undefined" && plasmoid.action ? plasmoid.action("configure") : null);
+                if (configAction) {
+                    configAction.trigger();
+                }
             }
         }
     ]
 
-    // Time Data Stores
     property var countdownData: ({
         days: "00",
         hours: "00",
@@ -103,6 +143,13 @@ PlasmoidItem {
         weekOfYear: 1
     })
 
+    // Plain bools so Timer.interval and button bindings always notify
+    property bool stopwatchRunning: false
+    property double stopwatchElapsedMs: 0
+    property double stopwatchLastTimestamp: 0
+    property double stopwatchLastLapMs: 0
+    property var stopwatchLaps: []
+
     property var stopwatchData: ({
         formattedTime: "00:00.00",
         hours: "00",
@@ -114,11 +161,6 @@ PlasmoidItem {
         laps: []
     })
 
-    property double stopwatchElapsedMs: 0
-    property double stopwatchLastTimestamp: 0
-    property double stopwatchLastLapMs: 0
-
-    // Adaptive Precision live ticker timer (throttled to preserve battery when idle)
     Timer {
         id: tickerTimer
         interval: {
@@ -126,8 +168,8 @@ PlasmoidItem {
             if (!isVisible) {
                 return 1000;
             }
-            if (root.stopwatchData.running || Plasmoid.configuration.showMilliseconds) {
-                return 40; // ~25 FPS high precision
+            if (root.stopwatchRunning || Plasmoid.configuration.showMilliseconds) {
+                return 40;
             }
             return 1000;
         }
@@ -138,16 +180,56 @@ PlasmoidItem {
     }
 
     function pad2(n) {
-        var num = Math.floor(n);
+        var num = Math.floor(Math.abs(Number(n)) || 0);
         return num < 10 ? "0" + num : "" + num;
     }
 
+    // Civil calendar date at local midnight.
+    // Accepts YYYY-MM-DD or legacy ...T00:00:00Z (uses the UTC Y-M-D the picker wrote).
+    function parseHorizonDate(value) {
+        var s = (value || "").toString().trim();
+        var m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (m) {
+            var y = parseInt(m[1], 10);
+            var mo = parseInt(m[2], 10) - 1;
+            var d = parseInt(m[3], 10);
+            var local = new Date(y, mo, d, 0, 0, 0, 0);
+            if (!isNaN(local.getTime())) {
+                return local;
+            }
+        }
+        return null;
+    }
+
+    function formatHorizonDate(dateObj) {
+        return dateObj.getFullYear() + "-" + pad2(dateObj.getMonth() + 1) + "-" + pad2(dateObj.getDate());
+    }
+
+    function defaultTargetDate() {
+        return new Date(2026, 9, 25, 0, 0, 0, 0);
+    }
+
+    function defaultStartDate() {
+        return new Date(2026, 0, 1, 0, 0, 0, 0);
+    }
+
+    // ISO-8601 week number (Mon-based, week 1 contains Jan 4)
+    function isoWeekNumber(dateObj) {
+        var d = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+        d.setHours(0, 0, 0, 0);
+        // Move to Thursday of this week
+        d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
+        var week1 = new Date(d.getFullYear(), 0, 4);
+        return 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
+    }
+
+    function dayOfYearLocal(dateObj) {
+        var start = new Date(dateObj.getFullYear(), 0, 1);
+        return Math.floor((dateObj.getTime() - start.getTime()) / 86400000) + 1;
+    }
+
     function resetBaselineToNow() {
-        var now = new Date();
-        var y = now.getUTCFullYear();
-        var m = now.getUTCMonth() + 1;
-        var d = now.getUTCDate();
-        Plasmoid.configuration.startTimestamp = y + "-" + pad2(m) + "-" + pad2(d) + "T00:00:00Z";
+        Plasmoid.configuration.startTimestamp = formatHorizonDate(new Date());
         updateAllMetrics();
     }
 
@@ -155,38 +237,23 @@ PlasmoidItem {
         var now = new Date();
         var nowMs = now.getTime();
 
-        // 1. Target Date parsing (Default: 2026-10-25T00:00:00Z)
-        var targetIso = Plasmoid.configuration.targetTimestamp || "2026-10-25T00:00:00Z";
-        var targetDate = new Date(targetIso);
+        var targetDate = parseHorizonDate(Plasmoid.configuration.targetTimestamp) || defaultTargetDate();
+        var startDate = parseHorizonDate(Plasmoid.configuration.startTimestamp) || defaultStartDate();
         var targetMs = targetDate.getTime();
-        if (isNaN(targetMs)) {
-            targetDate = new Date("2026-10-25T00:00:00Z");
-            targetMs = targetDate.getTime();
-        }
-
-        // 2. Start Date parsing (Default: 2026-01-01T00:00:00Z)
-        var startIso = Plasmoid.configuration.startTimestamp || "2026-01-01T00:00:00Z";
-        var startDate = new Date(startIso);
         var startMs = startDate.getTime();
-        if (isNaN(startMs)) {
-            startDate = new Date("2026-01-01T00:00:00Z");
-            startMs = startDate.getTime();
-        }
 
-        // 3. Countdown Calculations
         var diffMs = targetMs - nowMs;
         var isExpired = diffMs <= 0;
 
         var d = 0, h = 0, m = 0, s = 0, ms = 0;
         if (!isExpired) {
-            d = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-            h = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-            s = Math.floor((diffMs % (1000 * 60)) / 1000);
+            d = Math.floor(diffMs / 86400000);
+            h = Math.floor((diffMs % 86400000) / 3600000);
+            m = Math.floor((diffMs % 3600000) / 60000);
+            s = Math.floor((diffMs % 60000) / 1000);
             ms = Math.floor((diffMs % 1000) / 10);
         }
 
-        // 4. Total Journey Progress Calculation (Start Date 00:00 -> Target Date 00:00)
         var totalSpan = targetMs - startMs;
         var elapsedSpan = nowMs - startMs;
         var ratio = 0.0;
@@ -198,8 +265,6 @@ PlasmoidItem {
             ratio = Math.max(0.0, Math.min(1.0, elapsedSpan / totalSpan));
         }
 
-        var percentFormatted = (ratio * 100).toFixed(3) + "%";
-
         root.countdownData = {
             days: pad2(d),
             hours: pad2(h),
@@ -207,34 +272,31 @@ PlasmoidItem {
             seconds: pad2(s),
             milliseconds: pad2(ms),
             progressRatio: ratio,
-            progressPercent: percentFormatted,
+            progressPercent: (ratio * 100).toFixed(3) + "%",
             isExpired: isExpired
         };
 
-        // 3. Live Clock Calculations
         var hoursNum = now.getHours();
         var amPmStr = "";
         if (!Plasmoid.configuration.hourFormat24) {
             amPmStr = hoursNum >= 12 ? "PM" : "AM";
             hoursNum = hoursNum % 12;
-            if (hoursNum === 0) hoursNum = 12;
+            if (hoursNum === 0) {
+                hoursNum = 12;
+            }
         }
 
-        var monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
-        var dayNames = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+        // Date only under the big clock. LongFormat on a DateTime also embeds time.
+        var dateFormatted = Qt.formatDate(now, Locale.LongFormat);
+        if (!dateFormatted || dateFormatted.length === 0) {
+            dateFormatted = now.toLocaleDateString(Qt.locale(), Locale.LongFormat);
+        }
 
-        var dateFormatted = dayNames[now.getDay()] + ", " + monthNames[now.getMonth()] + " " + now.getDate() + ", " + now.getFullYear();
-
-        // Timezone calculation
         var tzOffsetMin = -now.getTimezoneOffset();
         var tzSign = tzOffsetMin >= 0 ? "+" : "-";
         var tzHours = Math.floor(Math.abs(tzOffsetMin) / 60);
         var tzMins = Math.abs(tzOffsetMin) % 60;
         var tzString = "UTC" + tzSign + pad2(tzHours) + ":" + pad2(tzMins);
-
-        // Day of Year calculation
-        var startOfYear = new Date(now.getFullYear(), 0, 1);
-        var dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
 
         root.clockData = {
             hours: pad2(hoursNum),
@@ -243,12 +305,11 @@ PlasmoidItem {
             amPm: amPmStr,
             dateString: dateFormatted,
             timeZone: tzString,
-            dayOfYear: dayOfYear,
-            weekOfYear: Math.ceil(dayOfYear / 7)
+            dayOfYear: dayOfYearLocal(now),
+            weekOfYear: isoWeekNumber(now)
         };
 
-        // 4. Stopwatch Live Update
-        if (root.stopwatchData.running) {
+        if (root.stopwatchRunning) {
             var currentClock = Date.now();
             var delta = currentClock - root.stopwatchLastTimestamp;
             root.stopwatchLastTimestamp = currentClock;
@@ -265,6 +326,7 @@ PlasmoidItem {
         var hundredths = Math.floor((root.stopwatchElapsedMs % 1000) / 10);
         var formatted = (hrs > 0 ? (pad2(hrs) + ":") : "") + pad2(min) + ":" + pad2(sec) + "." + pad2(hundredths);
 
+        // Whole-object replace so ListView / buttons always see a new value
         root.stopwatchData = {
             formattedTime: formatted,
             hours: pad2(hrs),
@@ -272,38 +334,40 @@ PlasmoidItem {
             seconds: pad2(sec),
             hundredths: pad2(hundredths),
             hasHours: hrs > 0,
-            running: root.stopwatchData.running,
-            laps: root.stopwatchData.laps
+            running: root.stopwatchRunning,
+            laps: root.stopwatchLaps.slice()
         };
     }
 
     function startStopwatch() {
         root.stopwatchLastTimestamp = Date.now();
-        root.stopwatchData.running = true;
+        root.stopwatchRunning = true;
         updateStopwatchDisplay();
     }
 
     function pauseStopwatch() {
-        root.stopwatchData.running = false;
+        root.stopwatchRunning = false;
         updateStopwatchDisplay();
     }
 
     function resetStopwatch() {
-        root.stopwatchData.running = false;
+        root.stopwatchRunning = false;
         root.stopwatchElapsedMs = 0;
         root.stopwatchLastLapMs = 0;
-        root.stopwatchData.laps = [];
+        root.stopwatchLaps = [];
         updateStopwatchDisplay();
     }
 
     function lapStopwatch() {
-        if (!root.stopwatchData.running) return;
+        if (!root.stopwatchRunning) {
+            return;
+        }
 
         var currentTotal = root.stopwatchElapsedMs;
         var split = currentTotal - root.stopwatchLastLapMs;
         root.stopwatchLastLapMs = currentTotal;
 
-        var formatMs = function(t) {
+        var formatMs = function (t) {
             var s = Math.floor(t / 1000);
             var hrs = Math.floor(s / 3600);
             var m = Math.floor((s % 3600) / 60);
@@ -313,13 +377,13 @@ PlasmoidItem {
         };
 
         var newLap = {
-            lapNumber: root.stopwatchData.laps.length + 1,
+            lapNumber: root.stopwatchLaps.length + 1,
             splitTime: formatMs(split),
             totalTime: formatMs(currentTotal)
         };
 
-        var updatedLaps = [newLap].concat(root.stopwatchData.laps);
-        root.stopwatchData.laps = updatedLaps;
+        root.stopwatchLaps = [newLap].concat(root.stopwatchLaps);
+        updateStopwatchDisplay();
     }
 
     compactRepresentation: CompactRepresentation {}
