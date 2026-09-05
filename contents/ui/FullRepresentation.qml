@@ -9,9 +9,9 @@ Item {
     id: fullRoot
 
     Layout.minimumWidth: Kirigami.Units.gridUnit * 18
-    Layout.minimumHeight: Kirigami.Units.gridUnit * 15
+    Layout.minimumHeight: Kirigami.Units.gridUnit * 16
     Layout.preferredWidth: Kirigami.Units.gridUnit * 22
-    Layout.preferredHeight: Kirigami.Units.gridUnit * 18.5
+    Layout.preferredHeight: Kirigami.Units.gridUnit * 20
 
     property int activeTabIndex: typeof root !== "undefined" ? root.currentViewIndex : 0
 

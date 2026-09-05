@@ -28,9 +28,9 @@ Kirigami.ShadowedRectangle {
     }
 
     Layout.fillWidth: true
-    Layout.preferredHeight: authorLabel.visible ? (quoteLabel.lineCount > 1 ? Kirigami.Units.gridUnit * 2.8 : Kirigami.Units.gridUnit * 2.3) : Kirigami.Units.gridUnit * 1.9
-    Layout.minimumHeight: Kirigami.Units.gridUnit * 1.8
-    radius: 8
+    Layout.preferredHeight: authorLabel.visible ? (quoteLabel.lineCount > 1 ? Kirigami.Units.gridUnit * 3.6 : Kirigami.Units.gridUnit * 3.0) : Kirigami.Units.gridUnit * 2.4
+    Layout.minimumHeight: Kirigami.Units.gridUnit * 2.2
+    radius: 10
     color: capsuleMouse.containsMouse ? root.themeColors.subCardHover : root.themeColors.subCardBg
     border.width: 1
     border.color: capsuleMouse.containsMouse ? root.themeColors.cardBorderHover : root.themeColors.cardBorder
@@ -65,13 +65,13 @@ Kirigami.ShadowedRectangle {
         anchors.fill: parent
         anchors.leftMargin: Kirigami.Units.largeSpacing
         anchors.rightMargin: Kirigami.Units.smallSpacing
-        anchors.topMargin: 3
-        anchors.bottomMargin: 3
+        anchors.topMargin: Kirigami.Units.smallSpacing * 1.2
+        anchors.bottomMargin: Kirigami.Units.smallSpacing * 1.2
         spacing: Kirigami.Units.smallSpacing
 
         ColumnLayout {
             Layout.fillWidth: true
-            spacing: 1
+            spacing: 2
 
             Text {
                 id: quoteLabel
@@ -79,10 +79,11 @@ Kirigami.ShadowedRectangle {
                 text: quoteBarRoot.quoteText.length > 0
                     ? ("\"" + quoteBarRoot.quoteText + "\"")
                     : i18nc("@info:placeholder", "Focus on the horizon ahead.")
-                color: root.themeColors.textSecondary
+                color: root.themeColors.textPrimary
                 font.family: "sans-serif"
-                font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
+                font.pixelSize: Math.max(13, Kirigami.Theme.defaultFont.pixelSize)
                 font.italic: true
+                lineHeight: 1.2
                 wrapMode: Text.WordWrap
                 maximumLineCount: 2
                 elide: Text.ElideRight
@@ -99,7 +100,7 @@ Kirigami.ShadowedRectangle {
                 text: quoteBarRoot.quoteAuthor.length > 0 ? ("- " + quoteBarRoot.quoteAuthor) : ""
                 color: quoteBarRoot.accentColor
                 font.family: "sans-serif"
-                font.pixelSize: Math.max(9, Kirigami.Theme.smallFont.pixelSize - 1)
+                font.pixelSize: Math.max(11, Kirigami.Theme.smallFont.pixelSize + 1)
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight
                 maximumLineCount: 1
@@ -109,8 +110,8 @@ Kirigami.ShadowedRectangle {
         Kirigami.Icon {
             id: copyIcon
             source: quoteBarRoot.isCopied ? "emblem-checked" : "edit-copy"
-            Layout.preferredWidth: 14
-            Layout.preferredHeight: 14
+            Layout.preferredWidth: 16
+            Layout.preferredHeight: 16
             color: quoteBarRoot.isCopied
                 ? quoteBarRoot.accentColor
                 : (copyMouse.containsMouse ? root.themeColors.textPrimary : root.themeColors.textMuted)
@@ -148,8 +149,8 @@ Kirigami.ShadowedRectangle {
         Kirigami.Icon {
             id: refreshIcon
             source: "view-refresh"
-            Layout.preferredWidth: 14
-            Layout.preferredHeight: 14
+            Layout.preferredWidth: 16
+            Layout.preferredHeight: 16
             color: refreshMouse.containsMouse ? root.themeColors.textPrimary : root.themeColors.textMuted
             opacity: refreshMouse.containsMouse || quoteBarRoot.isLoading ? 1.0 : (capsuleMouse.containsMouse ? 0.85 : 0.45)
             Accessible.name: i18nc("@action:button", "New quote")
