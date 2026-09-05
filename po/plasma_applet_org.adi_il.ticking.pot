@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: org.adi_il.ticking 1.2.0\n"
+"Project-Id-Version: org.adi_il.ticking 1.3.0\n"
 "Report-Msgid-Bugs-To: https://github.com/adi-IL/ticking-plasmoid/issues\n"
-"POT-Creation-Date: 2026-09-02 20:29+0000\n"
+"POT-Creation-Date: 2026-09-05 02:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <kde-i18n-doc@kde.org>\n"
@@ -17,9 +17,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: contents/ui/FullRepresentation.qml:99
+#: contents/ui/CompactRepresentation.qml:57
+msgctxt "@info:status compact panel"
+msgid "done"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml:103
 msgctxt "@label:status"
 msgid "LIVE"
+msgstr ""
+
+#: contents/ui/FullRepresentation.qml:128
+msgctxt "@action:button"
+msgid "Configure Ticking"
 msgstr ""
 
 #: contents/ui/components/ClockView.qml:147
@@ -34,7 +44,7 @@ msgstr ""
 
 #: contents/ui/components/ClockView.qml:181
 msgctxt "@label:time"
-msgid "WEEK:"
+msgid "ISO WK:"
 msgstr ""
 
 #: contents/ui/components/CountdownView.qml:33
@@ -87,268 +97,308 @@ msgctxt "@title:tab"
 msgid "STOPWATCH"
 msgstr ""
 
-#: contents/ui/components/StopwatchView.qml:104
+#: contents/ui/components/StopwatchView.qml:92
+#: contents/ui/components/StopwatchView.qml:109
 msgctxt "@action:button"
 msgid "PAUSE"
 msgstr ""
 
-#: contents/ui/components/StopwatchView.qml:104
+#: contents/ui/components/StopwatchView.qml:93
+#: contents/ui/components/StopwatchView.qml:110
 msgctxt "@action:button"
 msgid "START"
 msgstr ""
 
-#: contents/ui/components/StopwatchView.qml:149
+#: contents/ui/components/StopwatchView.qml:143
+#: contents/ui/components/StopwatchView.qml:156
 msgctxt "@action:button"
 msgid "LAP"
 msgstr ""
 
-#: contents/ui/components/StopwatchView.qml:188
+#: contents/ui/components/StopwatchView.qml:183
+#: contents/ui/components/StopwatchView.qml:196
 msgctxt "@action:button"
 msgid "RESET"
 msgstr ""
 
-#: contents/ui/components/StopwatchView.qml:230
+#: contents/ui/components/StopwatchView.qml:236
 msgctxt "@info:placeholder"
 msgid "Press LAP while running to record split times"
 msgstr ""
 
-#: contents/ui/components/StopwatchView.qml:264
+#: contents/ui/components/StopwatchView.qml:268
 msgid "Lap %1"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:109
+#: contents/ui/configGeneral.qml:120
 msgctxt "@label:textbox"
 msgid "Milestone title:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:116
-msgctxt "@title:group"
-msgid "Target Horizon Date (00:00 End)"
+#: contents/ui/configGeneral.qml:121
+#: contents/ui/main.qml:88
+msgctxt "@title:window default milestone"
+msgid "NEW HORIZON"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:121
+#: contents/ui/configGeneral.qml:127
+msgctxt "@title:group"
+msgid "Target horizon date"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:131
 msgctxt "@label:date"
 msgid "End date:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:128
-#: contents/ui/configGeneral.qml:180
+#: contents/ui/configGeneral.qml:138
+#: contents/ui/configGeneral.qml:189
 msgctxt "@item:month"
 msgid "Jan"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:128
-#: contents/ui/configGeneral.qml:180
+#: contents/ui/configGeneral.qml:138
+#: contents/ui/configGeneral.qml:189
 msgctxt "@item:month"
 msgid "Feb"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:129
-#: contents/ui/configGeneral.qml:181
+#: contents/ui/configGeneral.qml:139
+#: contents/ui/configGeneral.qml:190
 msgctxt "@item:month"
 msgid "Mar"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:129
-#: contents/ui/configGeneral.qml:181
+#: contents/ui/configGeneral.qml:139
+#: contents/ui/configGeneral.qml:190
 msgctxt "@item:month"
 msgid "Apr"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:130
-#: contents/ui/configGeneral.qml:182
+#: contents/ui/configGeneral.qml:140
+#: contents/ui/configGeneral.qml:191
 msgctxt "@item:month"
 msgid "May"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:130
-#: contents/ui/configGeneral.qml:182
+#: contents/ui/configGeneral.qml:140
+#: contents/ui/configGeneral.qml:191
 msgctxt "@item:month"
 msgid "Jun"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:131
-#: contents/ui/configGeneral.qml:183
+#: contents/ui/configGeneral.qml:141
+#: contents/ui/configGeneral.qml:192
 msgctxt "@item:month"
 msgid "Jul"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:131
-#: contents/ui/configGeneral.qml:183
+#: contents/ui/configGeneral.qml:141
+#: contents/ui/configGeneral.qml:192
 msgctxt "@item:month"
 msgid "Aug"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:132
-#: contents/ui/configGeneral.qml:184
+#: contents/ui/configGeneral.qml:142
+#: contents/ui/configGeneral.qml:193
 msgctxt "@item:month"
 msgid "Sep"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:132
-#: contents/ui/configGeneral.qml:184
+#: contents/ui/configGeneral.qml:142
+#: contents/ui/configGeneral.qml:193
 msgctxt "@item:month"
 msgid "Oct"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:133
-#: contents/ui/configGeneral.qml:185
+#: contents/ui/configGeneral.qml:143
+#: contents/ui/configGeneral.qml:194
 msgctxt "@item:month"
 msgid "Nov"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:133
-#: contents/ui/configGeneral.qml:185
+#: contents/ui/configGeneral.qml:143
+#: contents/ui/configGeneral.qml:194
 msgctxt "@item:month"
 msgid "Dec"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:160
-#: contents/ui/configGeneral.qml:212
+#: contents/ui/configGeneral.qml:170
+#: contents/ui/configGeneral.qml:221
 msgctxt "@info:time"
-msgid "@ 00:00"
+msgid "@ local 00:00"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:168
+#: contents/ui/configGeneral.qml:178
 msgctxt "@title:group"
-msgid "Journey Start Date (00:00 Start)"
+msgid "Journey start date"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:173
+#: contents/ui/configGeneral.qml:182
 msgctxt "@label:date"
 msgid "Start date:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:218
+#: contents/ui/configGeneral.qml:227
 msgctxt "@action:button"
 msgid "Today"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:228
+#: contents/ui/configGeneral.qml:237
 msgctxt "@action:button"
 msgid "Jan 1"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:238
+#: contents/ui/configGeneral.qml:246
 msgctxt "@label:summary"
 msgid "Journey span:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:247
-msgid "total days"
-msgstr ""
-
-#: contents/ui/configGeneral.qml:247
+#: contents/ui/configGeneral.qml:259
 msgid "Invalid range (end before start)"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:257
+#: contents/ui/configGeneral.qml:272
+msgctxt "@info"
+msgid "Dates are calendar days in your local timezone. The countdown hits zero at local midnight on the end date."
+msgstr ""
+
+#: contents/ui/configGeneral.qml:276
 msgctxt "@label:presets"
 msgid "Quick presets:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:261
+#: contents/ui/configGeneral.qml:280
 msgctxt "@action:button"
 msgid "New Year 2027"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:276
+#: contents/ui/configGeneral.qml:293
 msgctxt "@action:button"
 msgid "End of 2026"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:291
+#: contents/ui/configGeneral.qml:306
 msgctxt "@action:button"
 msgid "100-Day Goal"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:308
+#: contents/ui/configGeneral.qml:321
 msgctxt "@action:button"
 msgid "Oct 25, 2026"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:325
+#: contents/ui/configGeneral.qml:336
 msgctxt "@title:group"
-msgid "Display & Aesthetic"
+msgid "Display and aesthetic"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:331
+#: contents/ui/configGeneral.qml:341
 msgctxt "@label:combobox"
 msgid "Visual theme:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:333
+#: contents/ui/configGeneral.qml:343
 msgctxt "@item:theme"
 msgid "Vercel Obsidian Glass (Dark HUD)"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:334
+#: contents/ui/configGeneral.qml:344
 msgctxt "@item:theme"
 msgid "Plasma System Theme Adaptive"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:345
+#: contents/ui/configGeneral.qml:355
+msgctxt "@label:combobox"
+msgid "Default view:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:357
+msgctxt "@item:tab"
+msgid "Countdown"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:358
+msgctxt "@item:tab"
+msgid "Clock"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:359
+msgctxt "@item:tab"
+msgid "Stopwatch"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:377
 msgctxt "@label:textbox"
 msgid "Accent color:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:367
+#: contents/ui/configGeneral.qml:404
 msgctxt "@label:swatches"
 msgid "Vercel presets:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:405
+#: contents/ui/configGeneral.qml:443
 msgctxt "@label:slider"
 msgid "Glass opacity:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:427
+#: contents/ui/configGeneral.qml:464
 msgctxt "@label:checkbox"
 msgid "Precision:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:428
+#: contents/ui/configGeneral.qml:465
 msgid "Show sub-second milliseconds ticker"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:433
+#: contents/ui/configGeneral.qml:470
 msgctxt "@label:checkbox"
 msgid "Progress bar:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:434
+#: contents/ui/configGeneral.qml:471
 msgid "Display journey percentage progress bar"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:439
+#: contents/ui/configGeneral.qml:476
+msgctxt "@label:checkbox"
+msgid "Panel badge:"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:477
+msgid "Show remaining time text on horizontal panels"
+msgstr ""
+
+#: contents/ui/configGeneral.qml:482
 msgctxt "@label:checkbox"
 msgid "Clock format:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:440
+#: contents/ui/configGeneral.qml:483
 msgid "Use 24-hour clock format"
 msgstr ""
 
-#: contents/ui/main.qml:55
+#: contents/ui/main.qml:93
 msgctxt "@info:tooltip"
 msgid "Horizon reached - 100.000% completed"
 msgstr ""
 
-#: contents/ui/main.qml:56
-msgid "%1 Days, %2 Hours remaining"
+#: contents/ui/main.qml:94
+msgid "%1 days, %2 hours remaining"
 msgstr ""
 
-#: contents/ui/main.qml:61
+#: contents/ui/main.qml:98
 msgctxt "@action:inmenu"
-msgid "Reset Baseline to Today"
+msgid "Reset baseline to today"
 msgstr ""
 
-#: contents/ui/main.qml:67
+#: contents/ui/main.qml:104
 msgctxt "@action:inmenu"
-msgid "Reset Stopwatch"
+msgid "Reset stopwatch"
 msgstr ""
 
-#: contents/ui/main.qml:73
+#: contents/ui/main.qml:110
 msgctxt "@action:inmenu"
 msgid "Configure Ticking…"
 msgstr ""
