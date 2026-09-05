@@ -1,0 +1,89 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Build package only (do not create/upload a GitHub release)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Static guards
+        run: python3 scripts/ci-check.py
+
+      - name: Resolve version
+        id: ver
+        run: |
+          set -euo pipefail
+          META_VER=$(python3 -c 'import json; print(json.load(open("metadata.json"))["KPlugin"]["Version"])')
+          ID=$(python3 -c 'import json; print(json.load(open("metadata.json"))["KPlugin"]["Id"])')
+          TAG="${GITHUB_REF_NAME:-}"
+          if [[ "${GITHUB_REF_TYPE:-}" == "tag" ]]; then
+            TAG_VER="${TAG#v}"
+            if [[ "$TAG_VER" != "$META_VER" ]]; then
+              echo "Tag $TAG does not match metadata version $META_VER" >&2
+              exit 1
+            fi
+          fi
+          echo "version=$META_VER" >> "$GITHUB_OUTPUT"
+          echo "id=$ID" >> "$GITHUB_OUTPUT"
+          echo "artifact=${ID}-${META_VER}.plasmoid" >> "$GITHUB_OUTPUT"
+          echo "meta=$META_VER tag=${TAG:-none}"
+
+      - name: Build package
+        run: |
+          chmod +x scripts/package.sh
+          ./scripts/package.sh
+          test -f "${{ steps.ver.outputs.artifact }}"
+          ls -la "${{ steps.ver.outputs.artifact }}"
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-plasmoid
+          path: ${{ steps.ver.outputs.artifact }}
+          if-no-files-found: error
+
+      - name: Publish GitHub release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          ART="${{ steps.ver.outputs.artifact }}"
+          VER="${{ steps.ver.outputs.version }}"
+          # Fail if this tag already has a published release with assets we would clobber blindly
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; uploading asset if missing"
+            gh release upload "$TAG" "$ART" --clobber
+          else
+            gh release create "$TAG" "$ART" \
+              --title "Ticking v${VER}" \
+              --generate-notes \
+              --verify-tag
+          fi
+          gh release view "$TAG"

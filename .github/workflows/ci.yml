@@ -1,0 +1,137 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-guards:
+    name: Static guards
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run ci-check
+        run: |
+          python3 scripts/ci-check.py
+
+      - name: Validate metadata.json with jq
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq jq
+          jq empty metadata.json
+          ID=$(jq -r '.KPlugin.Id' metadata.json)
+          VER=$(jq -r '.KPlugin.Version' metadata.json)
+          test "$ID" = "org.adi_il.ticking"
+          echo "$VER" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$'
+          echo "plugin=$ID version=$VER"
+
+      - name: XML well-formed (main.xml)
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          ET.parse("contents/config/main.xml")
+          print("main.xml OK")
+          PY
+
+  package:
+    name: Package plasmoid
+    runs-on: ubuntu-latest
+    needs: static-guards
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build .plasmoid zip
+        run: |
+          chmod +x scripts/package.sh
+          ./scripts/package.sh
+          ls -la *.plasmoid
+
+      - name: Assert package layout
+        run: |
+          set -euo pipefail
+          ART=$(ls -1 *.plasmoid | head -1)
+          ID=$(python3 -c 'import json; print(json.load(open("metadata.json"))["KPlugin"]["Id"])')
+          VER=$(python3 -c 'import json; print(json.load(open("metadata.json"))["KPlugin"]["Version"])')
+          test "$ART" = "${ID}-${VER}.plasmoid"
+          # Zip must contain only the applet tree
+          unzip -l "$ART" | tee /tmp/plasmoid-list.txt
+          grep -q "${ID}/metadata.json" /tmp/plasmoid-list.txt
+          grep -q "${ID}/contents/ui/main.qml" /tmp/plasmoid-list.txt
+          grep -q "${ID}/contents/config/main.xml" /tmp/plasmoid-list.txt
+          # Must not ship junk
+          if unzip -l "$ART" | grep -E '(\.git/|node_modules/|\.hermes/|assets/)'; then
+            echo "package contains unexpected paths" >&2
+            exit 1
+          fi
+          # Size sanity (empty or huge is wrong)
+          BYTES=$(stat -c%s "$ART")
+          test "$BYTES" -gt 5000
+          test "$BYTES" -lt 5000000
+          echo "artifact=$ART bytes=$BYTES"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ticking-plasmoid
+          path: "*.plasmoid"
+          if-no-files-found: error
+          retention-days: 14
+
+  qml-inventory:
+    name: QML inventory
+    runs-on: ubuntu-latest
+    needs: static-guards
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: List and size-gate QML
+        run: |
+          set -euo pipefail
+          mapfile -t QMLS < <(find contents -name '*.qml' | sort)
+          echo "QML files: ${#QMLS[@]}"
+          test "${#QMLS[@]}" -ge 8
+          for f in "${QMLS[@]}"; do
+            lines=$(wc -l < "$f")
+            echo "$lines  $f"
+            # Catch accidental empty stubs
+            test "$lines" -ge 5
+          done
+          # Config model must only expose one category source we ship
+          grep -q 'configGeneral.qml' contents/config/config.qml
+
+  i18n-template:
+    name: i18n template
+    runs-on: ubuntu-latest
+    needs: static-guards
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: pot exists and has strings
+        run: |
+          set -euo pipefail
+          POT=po/plasma_applet_org.adi_il.ticking.pot
+          test -f "$POT"
+          # At least a handful of msgid entries beyond the header
+          COUNT=$(grep -c '^msgid "' "$POT" || true)
+          echo "msgid count=$COUNT"
+          test "$COUNT" -ge 10
