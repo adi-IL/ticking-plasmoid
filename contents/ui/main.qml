@@ -76,6 +76,7 @@ PlasmoidItem {
             : Qt.rgba(0.2, 0.2, 0.2, 0.9),
         buttonFg: isSystemTheme ? Kirigami.Theme.textColor : "#FFFFFF",
         onAccentFg: root.onAccentFg,
+        onDangerFg: "#FFFFFF",
         rowAlt: isSystemTheme
             ? Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.06)
             : Qt.rgba(0.1, 0.1, 0.1, 0.6),
