@@ -67,7 +67,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 30
         radius: 6
-        color: Qt.rgba(0.0, 0.9, 0.6, 0.15)
+        color: Qt.rgba(countdownRoot.accentColor.r, countdownRoot.accentColor.g, countdownRoot.accentColor.b, 0.15)
         border.width: 1
         border.color: countdownRoot.accentColor
 

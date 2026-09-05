@@ -45,11 +45,11 @@ Item {
             spacing: 6
 
             Kirigami.Icon {
-                source: "org.adi_il.ticking"
+                source: Qt.resolvedUrl("../icons/org.adi_il.ticking.svg")
                 fallback: "chronometer"
                 Layout.preferredWidth: inPanel ? Kirigami.Units.iconSizes.small : Kirigami.Units.iconSizes.medium
                 Layout.preferredHeight: Layout.preferredWidth
-                color: root.themeColors.accentColor
+                isMask: false
             }
 
             Text {
