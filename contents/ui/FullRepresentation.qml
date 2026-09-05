@@ -13,7 +13,16 @@ Item {
     Layout.preferredWidth: Kirigami.Units.gridUnit * 22
     Layout.preferredHeight: Kirigami.Units.gridUnit * 16
 
-    // Glass HUD Container
+    property int activeTabIndex: Plasmoid.configuration.activeTab || 0
+
+    // Keep in sync if config changes from the KCM while the popup is open
+    Connections {
+        target: Plasmoid.configuration
+        function onActiveTabChanged() {
+            fullRoot.activeTabIndex = Plasmoid.configuration.activeTab || 0;
+        }
+    }
+
     Kirigami.ShadowedRectangle {
         id: hudCard
         anchors.fill: parent
@@ -28,7 +37,6 @@ Item {
         shadow.color: root.isSystemTheme ? Qt.rgba(0, 0, 0, 0.25) : Qt.rgba(0, 0, 0, 0.75)
         shadow.yOffset: 6
 
-        // Mouse hover tracking for vgpu-inspired specular beam reflection
         MouseArea {
             id: mouseTracker
             anchors.fill: parent
@@ -36,7 +44,6 @@ Item {
             acceptedButtons: Qt.NoButton
         }
 
-        // Top specular line (vgpu-inspired analytic physical edge glow)
         Rectangle {
             id: specularBeam
             anchors.top: parent.top
@@ -61,26 +68,23 @@ Item {
             anchors.margins: Kirigami.Units.largeSpacing
             spacing: Kirigami.Units.largeSpacing
 
-            // Header Bar
             RowLayout {
                 Layout.fillWidth: true
                 spacing: Kirigami.Units.smallSpacing
 
-                // Live status indicator pill
                 Kirigami.ShadowedRectangle {
                     Layout.preferredHeight: 22
                     Layout.preferredWidth: liveRow.implicitWidth + 14
                     radius: 11
-                    color: Qt.rgba(0.0, 0.9, 0.6, 0.12)
+                    color: root.themeColors.livePillBg
                     border.width: 1
-                    border.color: Qt.rgba(0.0, 0.9, 0.6, 0.3)
+                    border.color: root.themeColors.livePillBorder
 
                     RowLayout {
                         id: liveRow
                         anchors.centerIn: parent
                         spacing: 6
 
-                        // Pulsing Green Dot
                         Rectangle {
                             width: 6
                             height: 6
@@ -98,33 +102,30 @@ Item {
                         Text {
                             text: i18nc("@label:status", "LIVE")
                             color: root.themeColors.accentColor
-                            font.family: "sans-serif"
+                            font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
                             font.weight: Font.Bold
-                            font.pixelSize: 9
                             font.letterSpacing: 1.1
                         }
                     }
                 }
 
-                // Milestone Headline
                 Text {
-                    text: Plasmoid.configuration.customTitle || "NEW HORIZON"
+                    text: root.milestoneTitle
                     color: root.themeColors.textPrimary
-                    font.family: "sans-serif"
+                    font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
                     font.weight: Font.DemiBold
-                    font.pixelSize: 11
                     font.letterSpacing: 1.2
                     font.capitalization: Font.AllUppercase
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                 }
 
-                // Settings icon button
                 Kirigami.Icon {
                     source: "configure"
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 14
                     color: settingsMouse.containsMouse ? root.themeColors.textPrimary : root.themeColors.textMuted
+                    Accessible.name: i18nc("@action:button", "Configure Ticking")
 
                     MouseArea {
                         id: settingsMouse
@@ -132,7 +133,8 @@ Item {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            var configAction = Plasmoid.internalAction("configure") || (typeof plasmoid !== "undefined" && plasmoid.action ? plasmoid.action("configure") : null);
+                            var configAction = Plasmoid.internalAction("configure")
+                                || (typeof plasmoid !== "undefined" && plasmoid.action ? plasmoid.action("configure") : null);
                             if (configAction) {
                                 configAction.trigger();
                             }
@@ -141,7 +143,6 @@ Item {
                 }
             }
 
-            // Main View Area (Dynamic Tab switching)
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -152,21 +153,21 @@ Item {
                     timeData: root.countdownData
                     showMilliseconds: Plasmoid.configuration.showMilliseconds
                     showProgress: Plasmoid.configuration.showProgress
-                    accentColor: Plasmoid.configuration.accentColor || "#00E599"
+                    accentColor: root.themeColors.accentColor
                 }
 
                 Components.ClockView {
                     anchors.fill: parent
                     visible: fullRoot.activeTabIndex === 1
                     clockData: root.clockData
-                    accentColor: Plasmoid.configuration.accentColor || "#00E599"
+                    accentColor: root.themeColors.accentColor
                 }
 
                 Components.StopwatchView {
                     anchors.fill: parent
                     visible: fullRoot.activeTabIndex === 2
                     stopwatchData: root.stopwatchData
-                    accentColor: Plasmoid.configuration.accentColor || "#00E599"
+                    accentColor: root.themeColors.accentColor
                     onStartRequested: root.startStopwatch()
                     onPauseRequested: root.pauseStopwatch()
                     onResetRequested: root.resetStopwatch()
@@ -174,7 +175,6 @@ Item {
                 }
             }
 
-            // Bottom Segmented Tab Navigation
             Components.SegmentedNav {
                 Layout.fillWidth: true
                 currentIndex: fullRoot.activeTabIndex
@@ -185,6 +185,4 @@ Item {
             }
         }
     }
-
-    property int activeTabIndex: Plasmoid.configuration.activeTab || 0
 }

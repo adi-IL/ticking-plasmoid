@@ -178,7 +178,7 @@ ColumnLayout {
             RowLayout {
                 anchors.centerIn: parent
                 spacing: 6
-                Text { text: i18nc("@label:time", "WEEK:"); color: root.themeColors.textMuted; font.pixelSize: 9; font.weight: Font.Bold }
+                Text { text: i18nc("@label:time", "ISO WK:"); color: root.themeColors.textMuted; font.pixelSize: 9; font.weight: Font.Bold }
                 Text { text: "#" + clockRoot.clockData.weekOfYear; color: root.themeColors.textPrimary; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
             }
         }
