@@ -9,9 +9,9 @@ Item {
     id: fullRoot
 
     Layout.minimumWidth: Kirigami.Units.gridUnit * 18
-    Layout.minimumHeight: Kirigami.Units.gridUnit * 14
+    Layout.minimumHeight: Kirigami.Units.gridUnit * 15
     Layout.preferredWidth: Kirigami.Units.gridUnit * 22
-    Layout.preferredHeight: Kirigami.Units.gridUnit * 16
+    Layout.preferredHeight: Kirigami.Units.gridUnit * 18.5
 
     property alias activeTabIndex: root.currentViewIndex
 
@@ -173,6 +173,16 @@ Item {
                 onTabSelected: index => {
                     fullRoot.activeTabIndex = index;
                 }
+            }
+
+            Components.QuoteBar {
+                Layout.fillWidth: true
+                visible: Plasmoid.configuration.showQuoteBar !== false
+                quoteText: root.currentQuoteText
+                quoteAuthor: root.currentQuoteAuthor
+                isLoading: root.isQuoteLoading
+                accentColor: root.themeColors.accentColor
+                onRefreshRequested: root.fetchNextQuote(false)
             }
         }
     }
