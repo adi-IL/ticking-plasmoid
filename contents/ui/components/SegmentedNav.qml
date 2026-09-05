@@ -74,6 +74,11 @@ Kirigami.ShadowedRectangle {
                     }
                 }
 
+                Accessible.name: modelData.name
+                Accessible.role: Accessible.Button
+                Accessible.checkable: true
+                Accessible.checked: tabItem.isSelected
+
                 MouseArea {
                     id: tabMouse
                     anchors.fill: parent

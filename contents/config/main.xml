@@ -6,12 +6,12 @@
     <kcfgfile name=""/>
     <group name="General">
         <entry name="targetTimestamp" type="String">
-            <default>2026-10-25T00:00:00Z</default>
-            <label>Target ISO timestamp for countdown horizon</label>
+            <default>2026-10-25</default>
+            <label>Target civil date (YYYY-MM-DD, local midnight) for countdown horizon</label>
         </entry>
         <entry name="startTimestamp" type="String">
-            <default>2026-01-01T00:00:00Z</default>
-            <label>Baseline ISO timestamp for elapsed calculation</label>
+            <default>2026-01-01</default>
+            <label>Baseline civil date (YYYY-MM-DD, local midnight) for journey progress</label>
         </entry>
         <entry name="customTitle" type="String">
             <default>NEW HORIZON</default>
@@ -20,10 +20,6 @@
         <entry name="themeMode" type="String">
             <default>obsidian</default>
             <label>Visual theme style (obsidian or system)</label>
-        </entry>
-        <entry name="baselineMode" type="String">
-            <default>year_start</default>
-            <label>Progress baseline calculation mode (year_start, install, or custom)</label>
         </entry>
         <entry name="showMilliseconds" type="Bool">
             <default>true</default>
@@ -47,11 +43,15 @@
         </entry>
         <entry name="accentColor" type="String">
             <default>#00E599</default>
-            <label>Vercel accent glow color</label>
+            <label>Accent glow color (CSS hex)</label>
         </entry>
         <entry name="showProgress" type="Bool">
             <default>true</default>
             <label>Display target completion progress bar</label>
+        </entry>
+        <entry name="showPanelBadge" type="Bool">
+            <default>true</default>
+            <label>Show remaining days/hours text on horizontal panel compact view</label>
         </entry>
     </group>
 </kcfg>

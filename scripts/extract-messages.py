@@ -45,7 +45,7 @@ def main():
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: org.adi_il.ticking 1.2.0\\n"
+"Project-Id-Version: org.adi_il.ticking 1.3.0\\n"
 "Report-Msgid-Bugs-To: https://github.com/adi-IL/ticking-plasmoid/issues\\n"
 "POT-Creation-Date: {now}\\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\\n"
