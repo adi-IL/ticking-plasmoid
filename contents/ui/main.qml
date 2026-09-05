@@ -107,18 +107,6 @@ PlasmoidItem {
             icon.name: "edit-clear"
             priority: PlasmaCore.Action.LowPriority
             onTriggered: root.resetStopwatch()
-        },
-        PlasmaCore.Action {
-            text: i18nc("@action:inmenu", "Configure Ticking…")
-            icon.name: "configure"
-            priority: PlasmaCore.Action.NormalPriority
-            onTriggered: {
-                var configAction = Plasmoid.internalAction("configure")
-                    || (typeof plasmoid !== "undefined" && plasmoid.action ? plasmoid.action("configure") : null);
-                if (configAction) {
-                    configAction.trigger();
-                }
-            }
         }
     ]
 
