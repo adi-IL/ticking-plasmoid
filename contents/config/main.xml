@@ -53,5 +53,35 @@
             <default>true</default>
             <label>Show remaining days/hours text on horizontal panel compact view</label>
         </entry>
+        <entry name="showQuoteBar" type="Bool">
+            <default>true</default>
+            <label>Show intellect and focus quote capsule</label>
+        </entry>
+        <entry name="quoteIntervalMinutes" type="Int">
+            <default>180</default>
+            <min>45</min>
+            <max>1440</max>
+            <label>Quote refresh interval in minutes</label>
+        </entry>
+        <entry name="quoteArchetype" type="String">
+            <default>adaptive</default>
+            <label>Quote resonance archetype (adaptive, stoic, builder, cosmic, intensity)</label>
+        </entry>
+        <entry name="quotePersonalFocus" type="String">
+            <default></default>
+            <label>Custom personal focus or mantra for tailored quotes</label>
+        </entry>
+        <entry name="quoteApiKey" type="String">
+            <default></default>
+            <label>Optional OpenCode Zen API key override for remote model generation</label>
+        </entry>
+        <entry name="cachedQuoteText" type="String">
+            <default>The only reason for time is so that everything does not happen at once.</default>
+            <label>Cached quote text for immediate display across restarts</label>
+        </entry>
+        <entry name="cachedQuoteAuthor" type="String">
+            <default>Albert Einstein</default>
+            <label>Cached quote author</label>
+        </entry>
     </group>
 </kcfg>
