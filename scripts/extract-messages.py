@@ -21,17 +21,27 @@ def main():
     for p in qml_files:
         with open(p, "r", encoding="utf-8") as fp:
             for idx, line in enumerate(fp, 1):
-                # i18nc("@context", "message")
-                for m in re.finditer(r'i18nc\(\s*"([^"]+)"\s*,\s*"([^"]+)"', line):
-                    ctx, msg = m.group(1), m.group(2)
-                    key = (ctx, msg)
+                for m in re.finditer(r'i18ncp\(\s*"([^"]+)"\s*,\s*"([^"]+)"\s*,\s*"([^"]+)"', line):
+                    ctx, sing, plur = m.group(1), m.group(2), m.group(3)
+                    key = (ctx, sing, plur)
                     if key not in entries:
                         entries[key] = []
                     entries[key].append((p, idx))
-                # i18n("message")
-                for m in re.finditer(r'(?<!i18nc\()i18n\(\s*"([^"]+)"', line):
+                for m in re.finditer(r'(?<!i18ncp\()i18np\(\s*"([^"]+)"\s*,\s*"([^"]+)"', line):
+                    sing, plur = m.group(1), m.group(2)
+                    key = (None, sing, plur)
+                    if key not in entries:
+                        entries[key] = []
+                    entries[key].append((p, idx))
+                for m in re.finditer(r'(?<!i18ncp\()i18nc\(\s*"([^"]+)"\s*,\s*"([^"]+)"', line):
+                    ctx, msg = m.group(1), m.group(2)
+                    key = (ctx, msg, None)
+                    if key not in entries:
+                        entries[key] = []
+                    entries[key].append((p, idx))
+                for m in re.finditer(r'(?<!i18nc\()(?<!i18ncp\()(?<!i18np\()i18n\(\s*"([^"]+)"', line):
                     msg = m.group(1)
-                    key = (None, msg)
+                    key = (None, msg, None)
                     if key not in entries:
                         entries[key] = []
                     entries[key].append((p, idx))
@@ -55,18 +65,24 @@ msgstr ""
 "MIME-Version: 1.0\\n"
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\\n"
 
 """
 
     with open(OUTPUT_POT, "w", encoding="utf-8") as out:
         out.write(header)
-        for (ctx, msg), locs in sorted(entries.items(), key=lambda x: (x[1][0][0], x[1][0][1])):
+        for (ctx, msg, plur), locs in sorted(entries.items(), key=lambda x: (x[1][0][0], x[1][0][1])):
             for p, line_no in locs:
                 out.write(f"#: {p}:{line_no}\n")
             if ctx:
                 out.write(f'msgctxt "{ctx}"\n')
             out.write(f'msgid "{msg}"\n')
-            out.write('msgstr ""\n\n')
+            if plur:
+                out.write(f'msgid_plural "{plur}"\n')
+                out.write('msgstr[0] ""\n')
+                out.write('msgstr[1] ""\n\n')
+            else:
+                out.write('msgstr ""\n\n')
 
     print(f"Generated {OUTPUT_POT} with {len(entries)} unique strings.")
 
