@@ -28,8 +28,8 @@ Kirigami.ShadowedRectangle {
     }
 
     Layout.fillWidth: true
-    Layout.preferredHeight: Kirigami.Units.gridUnit * 1.9
-    Layout.minimumHeight: Kirigami.Units.gridUnit * 1.6
+    Layout.preferredHeight: authorLabel.visible ? (quoteLabel.lineCount > 1 ? Kirigami.Units.gridUnit * 2.8 : Kirigami.Units.gridUnit * 2.3) : Kirigami.Units.gridUnit * 1.9
+    Layout.minimumHeight: Kirigami.Units.gridUnit * 1.8
     radius: 8
     color: capsuleMouse.containsMouse ? root.themeColors.subCardHover : root.themeColors.subCardBg
     border.width: 1
@@ -65,23 +65,44 @@ Kirigami.ShadowedRectangle {
         anchors.fill: parent
         anchors.leftMargin: Kirigami.Units.largeSpacing
         anchors.rightMargin: Kirigami.Units.smallSpacing
+        anchors.topMargin: 3
+        anchors.bottomMargin: 3
         spacing: Kirigami.Units.smallSpacing
 
-        Text {
-            id: quoteLabel
+        ColumnLayout {
             Layout.fillWidth: true
-            text: quoteBarRoot.quoteText.length > 0
-                ? ("\"" + quoteBarRoot.quoteText + "\"" + (quoteBarRoot.quoteAuthor.length > 0 ? (" - " + quoteBarRoot.quoteAuthor) : ""))
-                : i18nc("@info:placeholder", "Focus on the horizon ahead.")
-            color: root.themeColors.textSecondary
-            font.family: "sans-serif"
-            font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
-            font.italic: true
-            elide: Text.ElideRight
-            maximumLineCount: 1
+            spacing: 1
 
-            Behavior on opacity {
-                NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
+            Text {
+                id: quoteLabel
+                Layout.fillWidth: true
+                text: quoteBarRoot.quoteText.length > 0
+                    ? ("\"" + quoteBarRoot.quoteText + "\"")
+                    : i18nc("@info:placeholder", "Focus on the horizon ahead.")
+                color: root.themeColors.textSecondary
+                font.family: "sans-serif"
+                font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
+                font.italic: true
+                wrapMode: Text.WordWrap
+                maximumLineCount: 2
+                elide: Text.ElideRight
+
+                Behavior on opacity {
+                    NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
+                }
+            }
+
+            Text {
+                id: authorLabel
+                visible: quoteBarRoot.quoteAuthor.length > 0
+                Layout.fillWidth: true
+                text: quoteBarRoot.quoteAuthor.length > 0 ? ("- " + quoteBarRoot.quoteAuthor) : ""
+                color: quoteBarRoot.accentColor
+                font.family: "sans-serif"
+                font.pixelSize: Math.max(9, Kirigami.Theme.smallFont.pixelSize - 1)
+                font.weight: Font.DemiBold
+                elide: Text.ElideRight
+                maximumLineCount: 1
             }
         }
 

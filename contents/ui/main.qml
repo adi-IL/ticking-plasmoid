@@ -185,10 +185,10 @@ PlasmoidItem {
 
     property string currentQuoteText: {
         var saved = (Plasmoid.configuration.cachedQuoteText || "").trim();
-        if (saved.length === 0 || saved.indexOf("thinking process") !== -1 || saved.indexOf("Analyze User") !== -1) {
+        if (saved.length === 0 || saved.indexOf("thinking process") !== -1 || saved.indexOf("Analyze User") !== -1 || saved.toLowerCase().indexOf("alternatively") !== -1) {
             return "The only reason for time is so that everything does not happen at once.";
         }
-        return saved;
+        return saved.replace(/^(alternatively|here is|here's|sure[!,.]?|quote)[:\s\-]*/i, "").trim();
     }
     property string currentQuoteAuthor: {
         var saved = (Plasmoid.configuration.cachedQuoteAuthor || "").trim();
@@ -287,6 +287,10 @@ PlasmoidItem {
             text = fallback.text;
             author = fallback.author;
         }
+        text = text.replace(/^(alternatively|here is|here's|sure[!,.]?|quote|option \d+)[:\s\-]*/i, "").trim();
+        text = text.replace(/^(a quote|another quote|one quote|a profound quote)[:\s\-]*/i, "").trim();
+        text = text.replace(/^["'\u201c\u201d\u00ab\u00bb]+|["'\u201c\u201d\u00ab\u00bb]+$/g, "").trim();
+        author = (author || "").replace(/^["'\u201c\u201d\u00ab\u00bb]+|["'\u201c\u201d\u00ab\u00bb]+$/g, "").trim();
         root.currentQuoteText = text;
         root.currentQuoteAuthor = author;
         Plasmoid.configuration.cachedQuoteText = text;
@@ -362,17 +366,29 @@ PlasmoidItem {
                                     }
                                 }
 
-                                var qText = content;
+                                var qText = "";
                                 var qAuthor = "";
-                                if (content.indexOf(" - ") !== -1) {
-                                    var parts = content.split(" - ");
-                                    qText = parts[0].trim().replace(/^["']|["']$/g, "");
-                                    qAuthor = parts[1].trim().replace(/^["']|["']$/g, "");
-                                } else if (content.indexOf(" by ") !== -1) {
-                                    var bParts = content.split(" by ");
-                                    qText = bParts[0].trim().replace(/^["']|["']$/g, "");
-                                    qAuthor = bParts[1].trim().replace(/^["']|["']$/g, "");
+                                var m = content.match(/["\u201c]([^"\u201d\n]+)["\u201d]\s*[-by]+\s*([^"\n]+)/);
+                                if (m) {
+                                    qText = m[1].trim();
+                                    qAuthor = m[2].trim();
+                                } else {
+                                    var cleaned = content.replace(/^(alternatively|here is|here's|sure[!,.]?|quote|option \d+)[:\s\-]*/i, "").trim();
+                                    cleaned = cleaned.replace(/^(a quote|another quote|one quote|a profound quote)[:\s\-]*/i, "").trim();
+                                    if (cleaned.indexOf(" - ") !== -1) {
+                                        var parts = cleaned.split(" - ");
+                                        qText = parts[0].trim();
+                                        qAuthor = parts.slice(1).join(" - ").trim();
+                                    } else if (cleaned.indexOf(" by ") !== -1) {
+                                        var bParts = cleaned.split(" by ");
+                                        qText = bParts[0].trim();
+                                        qAuthor = bParts.slice(1).join(" by ").trim();
+                                    } else {
+                                        qText = cleaned;
+                                    }
                                 }
+                                qText = qText.replace(/^["'\u201c\u201d\u00ab\u00bb]+|["'\u201c\u201d\u00ab\u00bb]+$/g, "").trim();
+                                qAuthor = qAuthor.replace(/^["'\u201c\u201d\u00ab\u00bb]+|["'\u201c\u201d\u00ab\u00bb]+$/g, "").trim();
 
                                 if (qText.indexOf("thinking process") === -1 && qText.length > 0) {
                                     applyQuote(qText, qAuthor);
