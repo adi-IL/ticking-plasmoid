@@ -249,8 +249,9 @@ PlasmoidItem {
     }
 
     function dayOfYearLocal(dateObj) {
-        var start = new Date(dateObj.getFullYear(), 0, 1);
-        return Math.floor((dateObj.getTime() - start.getTime()) / 86400000) + 1;
+        var nowUtc = Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+        var startUtc = Date.UTC(dateObj.getFullYear(), 0, 1);
+        return Math.floor((nowUtc - startUtc) / 86400000) + 1;
     }
 
     function resetBaselineToNow() {
