@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: org.adi_il.ticking 1.3.0\n"
 "Report-Msgid-Bugs-To: https://github.com/adi-IL/ticking-plasmoid/issues\n"
-"POT-Creation-Date: 2026-09-05 05:50+0000\n"
+"POT-Creation-Date: 2026-09-05 05:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <kde-i18n-doc@kde.org>\n"
@@ -315,74 +315,74 @@ msgctxt "@item:theme"
 msgid "Plasma System Theme Adaptive"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:355
+#: contents/ui/configGeneral.qml:364
 msgctxt "@label:combobox"
 msgid "Default view:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:357
+#: contents/ui/configGeneral.qml:366
 msgctxt "@item:tab"
 msgid "Countdown"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:358
+#: contents/ui/configGeneral.qml:367
 msgctxt "@item:tab"
 msgid "Clock"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:359
+#: contents/ui/configGeneral.qml:368
 msgctxt "@item:tab"
 msgid "Stopwatch"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:377
+#: contents/ui/configGeneral.qml:386
 msgctxt "@label:textbox"
 msgid "Accent color:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:404
+#: contents/ui/configGeneral.qml:413
 msgctxt "@label:swatches"
 msgid "Vercel presets:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:443
+#: contents/ui/configGeneral.qml:452
 msgctxt "@label:slider"
 msgid "Glass opacity:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:464
+#: contents/ui/configGeneral.qml:473
 msgctxt "@label:checkbox"
 msgid "Precision:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:465
+#: contents/ui/configGeneral.qml:474
 msgid "Show sub-second milliseconds ticker"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:470
+#: contents/ui/configGeneral.qml:479
 msgctxt "@label:checkbox"
 msgid "Progress bar:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:471
+#: contents/ui/configGeneral.qml:480
 msgid "Display journey percentage progress bar"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:476
+#: contents/ui/configGeneral.qml:485
 msgctxt "@label:checkbox"
 msgid "Panel badge:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:477
+#: contents/ui/configGeneral.qml:486
 msgid "Show remaining time text on horizontal panels"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:482
+#: contents/ui/configGeneral.qml:491
 msgctxt "@label:checkbox"
 msgid "Clock format:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:483
+#: contents/ui/configGeneral.qml:492
 msgid "Use 24-hour clock format"
 msgstr ""
 
@@ -403,10 +403,5 @@ msgstr ""
 #: contents/ui/main.qml:106
 msgctxt "@action:inmenu"
 msgid "Reset stopwatch"
-msgstr ""
-
-#: contents/ui/main.qml:112
-msgctxt "@action:inmenu"
-msgid "Configure Ticking…"
 msgstr ""
 

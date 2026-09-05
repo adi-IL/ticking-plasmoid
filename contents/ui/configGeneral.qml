@@ -344,9 +344,18 @@ KCM.SimpleKCM {
                 { text: i18nc("@item:theme", "Plasma System Theme Adaptive"), value: "system" }
             ]
             textRole: "text"
-            currentIndex: themeHolder.text === "system" ? 1 : 0
-            onCurrentIndexChanged: {
-                themeHolder.text = model[currentIndex].value;
+            Component.onCompleted: currentIndex = themeHolder.text === "system" ? 1 : 0
+            onActivated: function (index) {
+                themeHolder.text = model[index].value;
+            }
+            Connections {
+                target: themeHolder
+                function onTextChanged() {
+                    var next = themeHolder.text === "system" ? 1 : 0;
+                    if (themeCombo.currentIndex !== next) {
+                        themeCombo.currentIndex = next;
+                    }
+                }
             }
         }
 
@@ -420,8 +429,8 @@ KCM.SimpleKCM {
                     height: 22
                     radius: 11
                     color: modelData.hex
-                    border.width: accentField.text.toUpperCase() === modelData.hex ? 2 : 1
-                    border.color: accentField.text.toUpperCase() === modelData.hex
+                    border.width: (accentField.text || "").trim().toUpperCase() === modelData.hex ? 2 : 1
+                    border.color: (accentField.text || "").trim().toUpperCase() === modelData.hex
                         ? Kirigami.Theme.textColor
                         : Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.3)
 
