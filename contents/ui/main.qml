@@ -254,6 +254,22 @@ PlasmoidItem {
         return Math.floor((nowUtc - startUtc) / 86400000) + 1;
     }
 
+    readonly property double targetMs: {
+        var d = parseHorizonDate(Plasmoid.configuration.targetTimestamp) || defaultTargetDate();
+        return d.getTime();
+    }
+
+    readonly property double startMs: {
+        var d = parseHorizonDate(Plasmoid.configuration.startTimestamp) || defaultStartDate();
+        return d.getTime();
+    }
+
+    property string cachedDateKey: ""
+    property string cachedDateFormatted: ""
+    property string cachedTzString: ""
+    property int cachedDayOfYear: 1
+    property int cachedWeekOfYear: 1
+
     function resetBaselineToNow() {
         Plasmoid.configuration.startTimestamp = formatHorizonDate(new Date());
         updateAllMetrics();
@@ -263,10 +279,8 @@ PlasmoidItem {
         var now = new Date();
         var nowMs = now.getTime();
 
-        var targetDate = parseHorizonDate(Plasmoid.configuration.targetTimestamp) || defaultTargetDate();
-        var startDate = parseHorizonDate(Plasmoid.configuration.startTimestamp) || defaultStartDate();
-        var targetMs = targetDate.getTime();
-        var startMs = startDate.getTime();
+        var targetMs = root.targetMs;
+        var startMs = root.startMs;
 
         var diffMs = targetMs - nowMs;
         var isExpired = diffMs <= 0;
@@ -312,27 +326,33 @@ PlasmoidItem {
             }
         }
 
-        // Date only under the big clock. LongFormat on a DateTime also embeds time.
-        var dateFormatted = Qt.formatDate(now, Locale.LongFormat);
-        if (!dateFormatted || dateFormatted.length === 0) {
-            dateFormatted = now.toLocaleDateString(Qt.locale(), Locale.LongFormat);
-        }
+        var dateKey = now.getFullYear() + "-" + now.getMonth() + "-" + now.getDate() + "@" + now.getTimezoneOffset();
+        if (dateKey !== root.cachedDateKey) {
+            root.cachedDateKey = dateKey;
+            var df = Qt.formatDate(now, Locale.LongFormat);
+            if (!df || df.length === 0) {
+                df = now.toLocaleDateString(Qt.locale(), Locale.LongFormat);
+            }
+            root.cachedDateFormatted = df;
 
-        var tzOffsetMin = -now.getTimezoneOffset();
-        var tzSign = tzOffsetMin >= 0 ? "+" : "-";
-        var tzHours = Math.floor(Math.abs(tzOffsetMin) / 60);
-        var tzMins = Math.abs(tzOffsetMin) % 60;
-        var tzString = "UTC" + tzSign + pad2(tzHours) + ":" + pad2(tzMins);
+            var tzOffsetMin = -now.getTimezoneOffset();
+            var tzSign = tzOffsetMin >= 0 ? "+" : "-";
+            var tzHours = Math.floor(Math.abs(tzOffsetMin) / 60);
+            var tzMins = Math.abs(tzOffsetMin) % 60;
+            root.cachedTzString = "UTC" + tzSign + pad2(tzHours) + ":" + pad2(tzMins);
+            root.cachedDayOfYear = dayOfYearLocal(now);
+            root.cachedWeekOfYear = isoWeekNumber(now);
+        }
 
         root.clockData = {
             hours: pad2(hoursNum),
             minutes: pad2(now.getMinutes()),
             seconds: pad2(now.getSeconds()),
             amPm: amPmStr,
-            dateString: dateFormatted,
-            timeZone: tzString,
-            dayOfYear: dayOfYearLocal(now),
-            weekOfYear: isoWeekNumber(now)
+            dateString: root.cachedDateFormatted,
+            timeZone: root.cachedTzString,
+            dayOfYear: root.cachedDayOfYear,
+            weekOfYear: root.cachedWeekOfYear
         };
 
         if (root.stopwatchRunning) {
