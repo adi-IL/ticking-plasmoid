@@ -33,8 +33,6 @@ jobs:
 
       - name: Validate metadata.json with jq
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq jq
           jq empty metadata.json
           ID=$(jq -r '.KPlugin.Id' metadata.json)
           VER=$(jq -r '.KPlugin.Version' metadata.json)
