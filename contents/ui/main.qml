@@ -183,12 +183,20 @@ PlasmoidItem {
         }
     }
 
-    property string currentQuoteText: (Plasmoid.configuration.cachedQuoteText || "").trim().length > 0
-        ? Plasmoid.configuration.cachedQuoteText
-        : "The only reason for time is so that everything does not happen at once."
-    property string currentQuoteAuthor: (Plasmoid.configuration.cachedQuoteAuthor || "").trim().length > 0
-        ? Plasmoid.configuration.cachedQuoteAuthor
-        : "Albert Einstein"
+    property string currentQuoteText: {
+        var saved = (Plasmoid.configuration.cachedQuoteText || "").trim();
+        if (saved.length === 0 || saved.indexOf("thinking process") !== -1 || saved.indexOf("Analyze User") !== -1) {
+            return "The only reason for time is so that everything does not happen at once.";
+        }
+        return saved;
+    }
+    property string currentQuoteAuthor: {
+        var saved = (Plasmoid.configuration.cachedQuoteAuthor || "").trim();
+        if (saved.length === 0 || saved.indexOf("thinking process") !== -1 || saved.indexOf("Analyze User") !== -1) {
+            return "Albert Einstein";
+        }
+        return saved;
+    }
     property bool isQuoteLoading: false
 
     Timer {
@@ -274,6 +282,11 @@ PlasmoidItem {
     }
 
     function applyQuote(text, author) {
+        if (!text || text.indexOf("thinking process") !== -1 || text.indexOf("Analyze User Request") !== -1) {
+            var fallback = QuoteLibrary.getCuratedQuote(Plasmoid.configuration.quoteArchetype, root.countdownData.progressRatio);
+            text = fallback.text;
+            author = fallback.author;
+        }
         root.currentQuoteText = text;
         root.currentQuoteAuthor = author;
         Plasmoid.configuration.cachedQuoteText = text;
@@ -295,10 +308,24 @@ PlasmoidItem {
 
         root.isQuoteLoading = true;
         var headline = root.milestoneTitle;
-        var progressPercent = Math.round(ratio * 100);
         var focus = (Plasmoid.configuration.quotePersonalFocus || "").trim();
 
-        var prompt = "Give exactly ONE short profound quote (1 sentence) on human time, focus, or perseverance. Context: milestone '" + headline + "', journey progress " + progressPercent + "%, archetype: " + archetype + (focus.length > 0 ? (", personal focus: " + focus) : "") + ". Format strictly as: Quote - Author. Zero markdown, zero explanations, zero quotation marks.";
+        var topic = "time and human focus";
+        if (focus.length > 0) {
+            topic = focus;
+        } else if (archetype === "stoic") {
+            topic = "stoic discipline";
+        } else if (archetype === "builder") {
+            topic = "craft and building";
+        } else if (archetype === "cosmic") {
+            topic = "time and universe";
+        } else if (archetype === "intensity") {
+            topic = "relentless focus";
+        } else if (headline.length > 0 && headline !== "NEW HORIZON") {
+            topic = headline;
+        }
+
+        var prompt = "Quote about " + topic + ". Format: Quote - Author";
 
         function tryModel(modelName, onFail) {
             var xhr = new XMLHttpRequest();
@@ -313,22 +340,44 @@ PlasmoidItem {
                         try {
                             var res = JSON.parse(xhr.responseText);
                             var content = res.choices && res.choices[0] && res.choices[0].message ? res.choices[0].message.content : "";
-                            content = content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-                            content = content.replace(/\u2014/g, "-");
-                            if (content.length > 0) {
+                            if (content && content.length > 0) {
+                                content = content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+                                content = content.replace(/\u2014/g, "-");
+
+                                if (content.indexOf("thinking process") !== -1 || content.indexOf("Analyze User Request") !== -1) {
+                                    var lines = content.trim().split("\n");
+                                    var foundLine = "";
+                                    for (var li = lines.length - 1; li >= 0; --li) {
+                                        var candidate = lines[li].trim();
+                                        if (candidate.length > 5 && candidate.indexOf(" - ") !== -1 && candidate.indexOf("thinking process") === -1 && candidate.indexOf("**") === -1) {
+                                            foundLine = candidate;
+                                            break;
+                                        }
+                                    }
+                                    if (foundLine.length > 0) {
+                                        content = foundLine;
+                                    } else {
+                                        onFail();
+                                        return;
+                                    }
+                                }
+
                                 var qText = content;
                                 var qAuthor = "";
                                 if (content.indexOf(" - ") !== -1) {
                                     var parts = content.split(" - ");
                                     qText = parts[0].trim().replace(/^["']|["']$/g, "");
-                                    qAuthor = parts[1].trim();
+                                    qAuthor = parts[1].trim().replace(/^["']|["']$/g, "");
                                 } else if (content.indexOf(" by ") !== -1) {
                                     var bParts = content.split(" by ");
                                     qText = bParts[0].trim().replace(/^["']|["']$/g, "");
-                                    qAuthor = bParts[1].trim();
+                                    qAuthor = bParts[1].trim().replace(/^["']|["']$/g, "");
                                 }
-                                applyQuote(qText, qAuthor);
-                                return;
+
+                                if (qText.indexOf("thinking process") === -1 && qText.length > 0) {
+                                    applyQuote(qText, qAuthor);
+                                    return;
+                                }
                             }
                         } catch (e) {}
                     }
@@ -341,7 +390,7 @@ PlasmoidItem {
             var payload = JSON.stringify({
                 model: modelName,
                 messages: [{ role: "user", content: prompt }],
-                max_tokens: 800,
+                max_tokens: 1000,
                 temperature: 0.7
             });
             xhr.send(payload);

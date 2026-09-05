@@ -31,12 +31,20 @@ Kirigami.ShadowedRectangle {
     Layout.preferredHeight: Kirigami.Units.gridUnit * 1.9
     Layout.minimumHeight: Kirigami.Units.gridUnit * 1.6
     radius: 8
-    color: barMouse.containsMouse ? root.themeColors.subCardHover : root.themeColors.subCardBg
+    color: capsuleMouse.containsMouse ? root.themeColors.subCardHover : root.themeColors.subCardBg
     border.width: 1
-    border.color: barMouse.containsMouse ? root.themeColors.cardBorderHover : root.themeColors.cardBorder
+    border.color: capsuleMouse.containsMouse ? root.themeColors.cardBorderHover : root.themeColors.cardBorder
 
     Behavior on color { ColorAnimation { duration: 150 } }
     Behavior on border.color { ColorAnimation { duration: 150 } }
+
+    MouseArea {
+        id: capsuleMouse
+        anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        onClicked: quoteBarRoot.refreshRequested()
+    }
 
     Rectangle {
         anchors.top: parent.top
@@ -48,7 +56,7 @@ Kirigami.ShadowedRectangle {
         gradient: Gradient {
             orientation: Gradient.Horizontal
             GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.04) }
-            GradientStop { position: 0.5; color: barMouse.containsMouse ? root.themeColors.specularGlint : Qt.rgba(1, 1, 1, 0.12) }
+            GradientStop { position: 0.5; color: capsuleMouse.containsMouse ? root.themeColors.specularGlint : Qt.rgba(1, 1, 1, 0.12) }
             GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.04) }
         }
     }
@@ -85,7 +93,7 @@ Kirigami.ShadowedRectangle {
             color: quoteBarRoot.isCopied
                 ? quoteBarRoot.accentColor
                 : (copyMouse.containsMouse ? root.themeColors.textPrimary : root.themeColors.textMuted)
-            opacity: barMouse.containsMouse || quoteBarRoot.isCopied ? 1.0 : 0.0
+            opacity: copyMouse.containsMouse || quoteBarRoot.isCopied ? 1.0 : (capsuleMouse.containsMouse ? 0.85 : 0.45)
             Accessible.name: quoteBarRoot.isCopied
                 ? i18nc("@info:tooltip", "Copied to clipboard")
                 : i18nc("@action:button", "Copy quote")
@@ -122,7 +130,7 @@ Kirigami.ShadowedRectangle {
             Layout.preferredWidth: 14
             Layout.preferredHeight: 14
             color: refreshMouse.containsMouse ? root.themeColors.textPrimary : root.themeColors.textMuted
-            opacity: barMouse.containsMouse || quoteBarRoot.isLoading ? 1.0 : 0.0
+            opacity: refreshMouse.containsMouse || quoteBarRoot.isLoading ? 1.0 : (capsuleMouse.containsMouse ? 0.85 : 0.45)
             Accessible.name: i18nc("@action:button", "New quote")
 
             RotationAnimation on rotation {
@@ -146,12 +154,5 @@ Kirigami.ShadowedRectangle {
             QQC2.ToolTip.visible: refreshMouse.containsMouse
             QQC2.ToolTip.text: i18nc("@action:button", "New quote")
         }
-    }
-
-    MouseArea {
-        id: barMouse
-        anchors.fill: parent
-        hoverEnabled: true
-        acceptedButtons: Qt.NoButton
     }
 }
