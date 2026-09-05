@@ -15,7 +15,7 @@ Kirigami.ShadowedRectangle {
     ]
 
     Layout.fillWidth: true
-    Layout.preferredHeight: 36
+    Layout.preferredHeight: 32
     radius: 8
     color: root.themeColors.subCardBg
     border.width: 1

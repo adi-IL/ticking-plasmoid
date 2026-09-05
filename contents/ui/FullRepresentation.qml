@@ -66,8 +66,11 @@ Item {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: Kirigami.Units.largeSpacing
-            spacing: Kirigami.Units.largeSpacing
+            anchors.leftMargin: Kirigami.Units.largeSpacing
+            anchors.rightMargin: Kirigami.Units.largeSpacing
+            anchors.topMargin: Kirigami.Units.smallSpacing * 1.5
+            anchors.bottomMargin: Kirigami.Units.smallSpacing * 1.5
+            spacing: Kirigami.Units.smallSpacing
 
             RowLayout {
                 Layout.fillWidth: true

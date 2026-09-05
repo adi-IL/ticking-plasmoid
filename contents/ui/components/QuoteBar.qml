@@ -28,7 +28,8 @@ Kirigami.ShadowedRectangle {
     }
 
     Layout.fillWidth: true
-    Layout.preferredHeight: Kirigami.Units.gridUnit * 2.2
+    Layout.preferredHeight: Kirigami.Units.gridUnit * 1.9
+    Layout.minimumHeight: Kirigami.Units.gridUnit * 1.6
     radius: 8
     color: barMouse.containsMouse ? root.themeColors.subCardHover : root.themeColors.subCardBg
     border.width: 1
