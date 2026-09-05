@@ -68,12 +68,16 @@ jobs:
           if-no-files-found: error
 
       - name: Publish GitHub release
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        if: (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          TAG="${GITHUB_REF_NAME}"
+          if [[ "${GITHUB_REF_TYPE:-}" == "tag" ]]; then
+            TAG="${GITHUB_REF_NAME}"
+          else
+            TAG="v${{ steps.ver.outputs.version }}"
+          fi
           ART="${{ steps.ver.outputs.artifact }}"
           VER="${{ steps.ver.outputs.version }}"
           # Fail if this tag already has a published release with assets we would clobber blindly
