@@ -5,107 +5,84 @@
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPLv3-blue?style=flat-square)](LICENSE)
 [![Plasma: 6.0+](https://img.shields.io/badge/KDE%20Plasma-6.0+-blueviolet?style=flat-square)](https://kde.org/plasma-desktop/)
 
-A high-aesthetic, Vercel-inspired desktop and panel widget for KDE Plasma 6. Designed for precision tracking toward custom event horizons, milestone deadlines, live digital world time, and high-precision stopwatch metrics.
+Desktop and panel widget for KDE Plasma 6. Countdown to a horizon date, live clock, and a millisecond stopwatch, with an Obsidian glass look or Plasma system colors.
 
 ![Ticking Desktop HUD](assets/desktop-hero.png)
 
 ---
 
-## Visual Gallery
+## Visual gallery
 
-| Horizon Countdown | Live World Clock | Precision Stopwatch |
+| Horizon countdown | Live clock | Stopwatch |
 | :---: | :---: | :---: |
 | ![Countdown View](assets/countdown-view.png) | ![Clock View](assets/clock-view.png) | ![Stopwatch View](assets/stopwatch-view.png) |
-| Tabular cards, sub-second ticker, and journey progress | 12h/24h time, UTC offset, Day of Year, and Week # | Millisecond timer, hour support, and lap history |
+| Tabular cards, sub-second ticker, journey progress | 12h/24h, UTC offset, day of year, ISO week | Hours support, lap splits |
 
-### Minimal Panel Integration
+### Panel mode
 
 ![Panel Mode](assets/panel-mode.png)
 
-Sleek minimal icon with remaining time badge that expands into the full HUD on click, with adaptive support for both horizontal docks and vertical panels.
+Compact icon with an optional remaining-time badge. Expands to the full HUD. Works on horizontal and vertical panels.
 
 ---
 
-## Key Features
+## Features
 
-- **Obsidian Glass & Plasma Adaptive Themes:**
-  - **Vercel Obsidian Glass Mode:** Ultra-dark translucent surfaces, sub-pixel specular borders, and interactive cursor-tracking specular lighting.
-  - **Plasma System Adaptive Mode:** Automatically harmonizes with your active KDE Plasma color scheme (Breeze, Breeze Dark, Catppuccin, Nord).
-- **Dual Start & End Date Normalization:**
-  - Graphical Month, Day, and Year selectors for both Start Date (00:00) and End Date (00:00).
-  - Automatically assumes 00:00:00 midnight normalization without requiring manual time inputs.
-  - Live journey span indicator calculating total elapsed days and percentage progress.
-  - One-click presets: *New Year 2027*, *End of 2026*, *100-Day Goal*, and *October 25, 2026 Horizon*.
-- **Universal Horizon Countdown:**
-  - Modular tabular cards: Days, Hours, Minutes, Seconds, and live Sub-second Milliseconds.
-  - Tabular monospace numerals to ensure jitter-free ticking.
-  - Milestone celebration banner when the target horizon is reached.
-- **Precision Live Clock:**
-  - Full date string, 12h/24h time, UTC offset timezone indicator, day-of-year, and week-of-year counter.
-- **Digital Stopwatch:**
-  - Millisecond-accurate stopwatch with hour/minute/second support and Start / Pause / Lap / Reset controls.
-  - Lap history table with split time calculations and balanced empty-state guidance.
-- **Desktop & Panel Versatility:**
-  - Desktop Mode: Floating HUD card with zero outer container border (`NoBackground` integration).
-  - Panel Mode: Sleek minimal icon with remaining time badge that expands into the full HUD on click.
-- **Adaptive Battery Throttling:**
-  - Intelligent timer throttling (1000ms when idle or in panel, 40ms high-precision when actively viewed or tracking).
-- **Internationalization (i18n):**
-  - Full gettext localization support with PO template in `po/`.
+- **Themes:** Vercel-style Obsidian glass, or Plasma system adaptive (Breeze, Catppuccin, Nord, and friends).
+- **Horizon dates:** Month/day/year pickers for start and end. Both are **local calendar days at 00:00** in your timezone. Legacy `…T00:00:00Z` values still load as the civil date they encoded.
+- **Presets:** New Year 2027, End of 2026, 100-day goal, Oct 25 2026.
+- **Countdown:** Days/hours/mins/secs/ms cards, milestone banner, journey progress bar.
+- **Clock:** Locale long date, 12h/24h, UTC offset, day-of-year, ISO week number.
+- **Stopwatch:** Start/pause/lap/reset with split history. Timer steps up to ~25 FPS only while you need it.
+- **Config:** Default view tab, panel badge toggle, glass opacity, accent swatches, ms ticker, progress bar.
+- **i18n:** gettext template in `po/`.
 
 ---
 
 ## Requirements
 
-- **KDE Plasma:** 6.0+ (Tested on Plasma 6.2+)
-- **KDE Frameworks:** 6.0+ (Kirigami, KCMUtils, KPackage)
-- **Qt:** 6.6+ (Qt Quick, Qt Quick Layouts, Qt Quick Controls)
-- **Operating System:** Linux (Fedora KDE, Arch, openSUSE, Debian)
+- KDE Plasma 6.0+ (tested on 6.2+)
+- KF6: Kirigami, KCMUtils, KPackage
+- Qt 6.6+ (Quick, Layouts, Controls)
+- Linux (Fedora KDE, Arch, openSUSE, Debian, …)
 
 ---
 
-## Installation
+## Install
 
-### User Space Installation (Rootless)
+### User install (no root)
 
 ```bash
-# Clone repository
 git clone https://github.com/adi-IL/ticking-plasmoid.git
 cd ticking-plasmoid
 
-# Package and install via kpackagetool6
 kpackagetool6 -t Plasma/Applet --install .
+# later:
+kpackagetool6 -t Plasma/Applet --upgrade .
+```
 
-# Or manual copy
+Manual copy:
+
+```bash
 mkdir -p ~/.local/share/plasma/plasmoids/org.adi_il.ticking
 cp -r metadata.json contents ~/.local/share/plasma/plasmoids/org.adi_il.ticking/
 ```
 
-### Upgrading Existing Installation
+### Build a release zip
 
 ```bash
-kpackagetool6 -t Plasma/Applet --upgrade .
+chmod +x scripts/package.sh
+./scripts/package.sh
+# → org.adi_il.ticking-1.3.0.plasmoid
 ```
 
 ---
 
-## Development & Testing
-
-### Run in Standalone Window
+## Development
 
 ```bash
 plasmawindowed org.adi_il.ticking
-```
-
-### Reload Plasma Shell
-
-```bash
 systemctl --user restart plasma-plasmashell.service
-```
-
-### Update Translation Template
-
-```bash
 python3 scripts/extract-messages.py
 ```
 

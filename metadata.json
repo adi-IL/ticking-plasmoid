@@ -14,7 +14,7 @@
         "Id": "org.adi_il.ticking",
         "License": "GPL-3.0-or-later",
         "Name": "Ticking - Horizon & Time HUD",
-        "Version": "1.2.0",
+        "Version": "1.3.0",
         "Website": "https://github.com/adi-IL/ticking-plasmoid"
     },
     "X-Plasma-API-Minimum-Version": "6.0"
