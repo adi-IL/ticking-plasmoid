@@ -109,6 +109,13 @@ def check_main_xml() -> None:
         "accentColor": "String",
         "showProgress": "Bool",
         "showPanelBadge": "Bool",
+        "showQuoteBar": "Bool",
+        "quoteIntervalMinutes": "Int",
+        "quoteArchetype": "String",
+        "quotePersonalFocus": "String",
+        "quoteApiKey": "String",
+        "cachedQuoteText": "String",
+        "cachedQuoteAuthor": "String",
     }
     for name, typ in expected.items():
         if name not in entries:
