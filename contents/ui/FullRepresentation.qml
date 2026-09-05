@@ -13,15 +13,7 @@ Item {
     Layout.preferredWidth: Kirigami.Units.gridUnit * 22
     Layout.preferredHeight: Kirigami.Units.gridUnit * 16
 
-    property int activeTabIndex: Plasmoid.configuration.activeTab || 0
-
-    // Keep in sync if config changes from the KCM while the popup is open
-    Connections {
-        target: Plasmoid.configuration
-        function onActiveTabChanged() {
-            fullRoot.activeTabIndex = Plasmoid.configuration.activeTab || 0;
-        }
-    }
+    property alias activeTabIndex: root.currentViewIndex
 
     Kirigami.ShadowedRectangle {
         id: hudCard
@@ -180,7 +172,6 @@ Item {
                 currentIndex: fullRoot.activeTabIndex
                 onTabSelected: index => {
                     fullRoot.activeTabIndex = index;
-                    Plasmoid.configuration.activeTab = index;
                 }
             }
         }

@@ -162,15 +162,39 @@ PlasmoidItem {
         laps: []
     })
 
+    property int currentViewIndex: Plasmoid.configuration.activeTab || 0
+
+    Connections {
+        target: Plasmoid.configuration
+        function onActiveTabChanged() {
+            root.currentViewIndex = Plasmoid.configuration.activeTab || 0;
+        }
+    }
+
+    Connections {
+        target: Plasmoid
+        function onExpandedChanged() {
+            if (Plasmoid.expanded) {
+                root.updateAllMetrics();
+            }
+        }
+    }
+
     Timer {
         id: tickerTimer
         interval: {
             var isVisible = (Plasmoid.expanded || Plasmoid.formFactor === PlasmaCore.Types.Planar);
             if (!isVisible) {
-                return 1000;
+                if (root.stopwatchRunning) {
+                    return 1000;
+                }
+                return (Plasmoid.configuration.showPanelBadge !== false) ? 30000 : 60000;
             }
-            if (root.stopwatchRunning || Plasmoid.configuration.showMilliseconds) {
-                return 40;
+            if (root.currentViewIndex === 2) {
+                return root.stopwatchRunning ? 40 : 1000;
+            }
+            if (root.currentViewIndex === 0) {
+                return Plasmoid.configuration.showMilliseconds ? 40 : 1000;
             }
             return 1000;
         }
