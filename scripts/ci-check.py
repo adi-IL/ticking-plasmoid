@@ -39,6 +39,8 @@ def check_required_paths() -> None:
         "contents/ui/components/CountdownView.qml",
         "contents/ui/components/StopwatchView.qml",
         "contents/ui/components/SegmentedNav.qml",
+        "contents/ui/components/QuoteBar.qml",
+        "contents/ui/components/QuoteLibrary.js",
         "LICENSE",
         "scripts/package.sh",
     ]

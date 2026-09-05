@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
+import "./components/QuoteLibrary.js" as QuoteLibrary
 
 PlasmoidItem {
     id: root
@@ -168,6 +169,22 @@ PlasmoidItem {
         }
     }
 
+    property string currentQuoteText: (Plasmoid.configuration.cachedQuoteText || "").trim().length > 0
+        ? Plasmoid.configuration.cachedQuoteText
+        : "The only reason for time is so that everything does not happen at once."
+    property string currentQuoteAuthor: (Plasmoid.configuration.cachedQuoteAuthor || "").trim().length > 0
+        ? Plasmoid.configuration.cachedQuoteAuthor
+        : "Albert Einstein"
+    property bool isQuoteLoading: false
+
+    Timer {
+        id: quoteTimer
+        interval: Math.max(45, Plasmoid.configuration.quoteIntervalMinutes || 180) * 60 * 1000
+        running: Plasmoid.configuration.showQuoteBar !== false
+        repeat: true
+        onTriggered: root.fetchNextQuote(false)
+    }
+
     Timer {
         id: tickerTimer
         interval: {
@@ -240,6 +257,88 @@ PlasmoidItem {
         var nowUtc = Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
         var startUtc = Date.UTC(dateObj.getFullYear(), 0, 1);
         return Math.floor((nowUtc - startUtc) / 86400000) + 1;
+    }
+
+    function applyQuote(text, author) {
+        root.currentQuoteText = text;
+        root.currentQuoteAuthor = author;
+        Plasmoid.configuration.cachedQuoteText = text;
+        Plasmoid.configuration.cachedQuoteAuthor = author;
+        root.isQuoteLoading = false;
+    }
+
+    function fetchNextQuote(forceOffline) {
+        if (root.isQuoteLoading) return;
+        var apiKey = (Plasmoid.configuration.quoteApiKey || "").trim();
+        var archetype = Plasmoid.configuration.quoteArchetype || "adaptive";
+        var ratio = root.countdownData.progressRatio || 0.0;
+
+        if (forceOffline || apiKey.length === 0) {
+            var curated = QuoteLibrary.getCuratedQuote(archetype, ratio);
+            applyQuote(curated.text, curated.author);
+            return;
+        }
+
+        root.isQuoteLoading = true;
+        var headline = root.milestoneTitle;
+        var progressPercent = Math.round(ratio * 100);
+        var focus = (Plasmoid.configuration.quotePersonalFocus || "").trim();
+
+        var prompt = "Give exactly ONE short profound quote (1 sentence) on human time, focus, or perseverance. Context: milestone '" + headline + "', journey progress " + progressPercent + "%, archetype: " + archetype + (focus.length > 0 ? (", personal focus: " + focus) : "") + ". Format strictly as: Quote - Author. Zero markdown, zero explanations, zero quotation marks.";
+
+        function tryModel(modelName, onFail) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://opencode.ai/zen/v1/chat/completions", true);
+            xhr.setRequestHeader("Authorization", "Bearer " + apiKey);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.timeout = 7000;
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        try {
+                            var res = JSON.parse(xhr.responseText);
+                            var content = res.choices && res.choices[0] && res.choices[0].message ? res.choices[0].message.content : "";
+                            content = content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+                            content = content.replace(/\u2014/g, "-");
+                            if (content.length > 0) {
+                                var qText = content;
+                                var qAuthor = "";
+                                if (content.indexOf(" - ") !== -1) {
+                                    var parts = content.split(" - ");
+                                    qText = parts[0].trim().replace(/^["']|["']$/g, "");
+                                    qAuthor = parts[1].trim();
+                                } else if (content.indexOf(" by ") !== -1) {
+                                    var bParts = content.split(" by ");
+                                    qText = bParts[0].trim().replace(/^["']|["']$/g, "");
+                                    qAuthor = bParts[1].trim();
+                                }
+                                applyQuote(qText, qAuthor);
+                                return;
+                            }
+                        } catch (e) {}
+                    }
+                    onFail();
+                }
+            };
+            xhr.ontimeout = onFail;
+            xhr.onerror = onFail;
+
+            var payload = JSON.stringify({
+                model: modelName,
+                messages: [{ role: "user", content: prompt }],
+                max_tokens: 60,
+                temperature: 0.7
+            });
+            xhr.send(payload);
+        }
+
+        tryModel("nemotron-3.5-lightning-free", function () {
+            tryModel("nemotron-3-ultra-free", function () {
+                var fallback = QuoteLibrary.getCuratedQuote(archetype, ratio);
+                applyQuote(fallback.text, fallback.author);
+            });
+        });
     }
 
     readonly property double targetMs: {
