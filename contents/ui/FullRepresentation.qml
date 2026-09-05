@@ -13,7 +13,16 @@ Item {
     Layout.preferredWidth: Kirigami.Units.gridUnit * 22
     Layout.preferredHeight: Kirigami.Units.gridUnit * 18.5
 
-    property alias activeTabIndex: root.currentViewIndex
+    property int activeTabIndex: typeof root !== "undefined" ? root.currentViewIndex : 0
+
+    Connections {
+        target: typeof root !== "undefined" ? root : null
+        function onCurrentViewIndexChanged() {
+            if (fullRoot.activeTabIndex !== root.currentViewIndex) {
+                fullRoot.activeTabIndex = root.currentViewIndex;
+            }
+        }
+    }
 
     Kirigami.ShadowedRectangle {
         id: hudCard
@@ -172,6 +181,9 @@ Item {
                 currentIndex: fullRoot.activeTabIndex
                 onTabSelected: index => {
                     fullRoot.activeTabIndex = index;
+                    if (typeof root !== "undefined") {
+                        root.currentViewIndex = index;
+                    }
                 }
             }
 
