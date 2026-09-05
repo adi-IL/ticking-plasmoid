@@ -101,14 +101,16 @@ ColumnLayout {
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 14
                     color: stopwatchRoot.stopwatchData.running
-                        ? root.themeColors.onAccentFg
+                        ? root.themeColors.onDangerFg
                         : root.themeColors.onAccentFg
                 }
                 Text {
                     text: stopwatchRoot.stopwatchData.running
                         ? i18nc("@action:button", "PAUSE")
                         : i18nc("@action:button", "START")
-                    color: root.themeColors.onAccentFg
+                    color: stopwatchRoot.stopwatchData.running
+                        ? root.themeColors.onDangerFg
+                        : root.themeColors.onAccentFg
                     font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
                     font.weight: Font.Bold
                     font.letterSpacing: 1.1
