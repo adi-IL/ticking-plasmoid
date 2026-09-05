@@ -18,6 +18,11 @@ KCM.SimpleKCM {
     property alias cfg_hourFormat24: hourFormat24Check.checked
     property alias cfg_accentColor: accentField.text
     property int cfg_activeTab: 0
+    property alias cfg_showQuoteBar: quoteBarCheck.checked
+    property int cfg_quoteIntervalMinutes: 180
+    property alias cfg_quoteArchetype: archetypeHolder.text
+    property alias cfg_quotePersonalFocus: personalFocusField.text
+    property alias cfg_quoteApiKey: apiKeyField.text
 
     Item {
         id: internalHolders
@@ -25,6 +30,7 @@ KCM.SimpleKCM {
         QQC2.TextField { id: targetField }
         QQC2.TextField { id: startField }
         QQC2.TextField { id: themeHolder; text: "obsidian" }
+        QQC2.TextField { id: archetypeHolder; text: "adaptive" }
     }
 
     property bool internalSyncing: false
@@ -490,6 +496,105 @@ KCM.SimpleKCM {
             id: hourFormat24Check
             Kirigami.FormData.label: i18nc("@label:checkbox", "Clock format:")
             text: i18n("Use 24-hour clock format")
+        }
+
+        Kirigami.Separator {
+            Kirigami.FormData.isSection: true
+            Kirigami.FormData.label: i18nc("@title:group", "Intellect and quotes")
+        }
+
+        QQC2.CheckBox {
+            id: quoteBarCheck
+            Kirigami.FormData.label: i18nc("@label:checkbox", "Quote capsule:")
+            text: i18n("Display intellect and focus quote capsule")
+        }
+
+        QQC2.ComboBox {
+            id: quoteIntervalCombo
+            Kirigami.FormData.label: i18nc("@label:combobox", "Refresh rhythm:")
+            model: [
+                { text: i18nc("@item:rhythm", "Every 45 minutes"), value: 45 },
+                { text: i18nc("@item:rhythm", "Every 90 minutes"), value: 90 },
+                { text: i18nc("@item:rhythm", "Every 3 hours"), value: 180 },
+                { text: i18nc("@item:rhythm", "Every 6 hours"), value: 360 }
+            ]
+            textRole: "text"
+            Component.onCompleted: {
+                for (var i = 0; i < model.length; ++i) {
+                    if (model[i].value === configPage.cfg_quoteIntervalMinutes) {
+                        currentIndex = i;
+                        break;
+                    }
+                }
+            }
+            onActivated: function (index) {
+                configPage.cfg_quoteIntervalMinutes = model[index].value;
+            }
+            Connections {
+                target: configPage
+                function onCfg_quoteIntervalMinutesChanged() {
+                    for (var i = 0; i < quoteIntervalCombo.model.length; ++i) {
+                        if (quoteIntervalCombo.model[i].value === configPage.cfg_quoteIntervalMinutes) {
+                            if (quoteIntervalCombo.currentIndex !== i) {
+                                quoteIntervalCombo.currentIndex = i;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        QQC2.ComboBox {
+            id: archetypeCombo
+            Kirigami.FormData.label: i18nc("@label:combobox", "Resonance style:")
+            model: [
+                { text: i18nc("@item:archetype", "Adaptive (blends with journey and milestone)"), value: "adaptive" },
+                { text: i18nc("@item:archetype", "Stoic and discipline (Seneca, Aurelius, Epictetus)"), value: "stoic" },
+                { text: i18nc("@item:archetype", "Builders and craft (Da Vinci, Feynman, Jobs)"), value: "builder" },
+                { text: i18nc("@item:archetype", "Cosmic perspective (Carl Sagan, Rilke, Eastern thought)"), value: "cosmic" },
+                { text: i18nc("@item:archetype", "High-intensity focus (Action, grit, momentum)"), value: "intensity" }
+            ]
+            textRole: "text"
+            Component.onCompleted: {
+                for (var i = 0; i < model.length; ++i) {
+                    if (model[i].value === archetypeHolder.text) {
+                        currentIndex = i;
+                        break;
+                    }
+                }
+            }
+            onActivated: function (index) {
+                archetypeHolder.text = model[index].value;
+            }
+            Connections {
+                target: archetypeHolder
+                function onTextChanged() {
+                    for (var i = 0; i < archetypeCombo.model.length; ++i) {
+                        if (archetypeCombo.model[i].value === archetypeHolder.text) {
+                            if (archetypeCombo.currentIndex !== i) {
+                                archetypeCombo.currentIndex = i;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        QQC2.TextField {
+            id: personalFocusField
+            Kirigami.FormData.label: i18nc("@label:textbox", "Personal focus:")
+            placeholderText: i18nc("@info:placeholder", "e.g. Master thesis, marathons, creative craft")
+            Layout.fillWidth: true
+        }
+
+        QQC2.TextField {
+            id: apiKeyField
+            Kirigami.FormData.label: i18nc("@label:textbox", "OpenCode Zen API key:")
+            placeholderText: i18nc("@info:placeholder", "Optional. Uses curated library if empty.")
+            echoMode: TextInput.Password
+            Layout.fillWidth: true
         }
     }
 }
