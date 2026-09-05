@@ -158,6 +158,20 @@ PlasmoidItem {
         function onActiveTabChanged() {
             root.currentViewIndex = Plasmoid.configuration.activeTab || 0;
         }
+        function onQuoteApiKeyChanged() {
+            root.fetchNextQuote(false);
+        }
+        function onQuoteArchetypeChanged() {
+            root.fetchNextQuote(false);
+        }
+        function onQuotePersonalFocusChanged() {
+            root.fetchNextQuote(false);
+        }
+        function onShowQuoteBarChanged() {
+            if (Plasmoid.configuration.showQuoteBar) {
+                root.fetchNextQuote(false);
+            }
+        }
     }
 
     Connections {
@@ -291,7 +305,7 @@ PlasmoidItem {
             xhr.open("POST", "https://opencode.ai/zen/v1/chat/completions", true);
             xhr.setRequestHeader("Authorization", "Bearer " + apiKey);
             xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.timeout = 7000;
+            xhr.timeout = 12000;
 
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -327,7 +341,7 @@ PlasmoidItem {
             var payload = JSON.stringify({
                 model: modelName,
                 messages: [{ role: "user", content: prompt }],
-                max_tokens: 60,
+                max_tokens: 800,
                 temperature: 0.7
             });
             xhr.send(payload);
@@ -517,6 +531,13 @@ PlasmoidItem {
 
         root.stopwatchLaps = [newLap].concat(root.stopwatchLaps);
         updateStopwatchDisplay();
+    }
+
+    Component.onCompleted: {
+        var apiKey = (Plasmoid.configuration.quoteApiKey || "").trim();
+        if (apiKey.length > 0 && Plasmoid.configuration.showQuoteBar !== false) {
+            root.fetchNextQuote(false);
+        }
     }
 
     compactRepresentation: CompactRepresentation {}

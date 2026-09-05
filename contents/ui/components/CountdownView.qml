@@ -20,7 +20,7 @@ ColumnLayout {
     property bool showProgress: true
     property color accentColor: "#00E599"
 
-    spacing: Kirigami.Units.largeSpacing
+    spacing: Kirigami.Units.smallSpacing
 
     // Metric Cards Grid
     RowLayout {

@@ -13,8 +13,8 @@ Kirigami.ShadowedRectangle {
 
     Layout.fillWidth: true
     Layout.fillHeight: true
-    Layout.minimumWidth: isCompact ? Kirigami.Units.gridUnit * 2.5 : Kirigami.Units.gridUnit * 3.2
-    Layout.minimumHeight: isCompact ? Kirigami.Units.gridUnit * 3.2 : Kirigami.Units.gridUnit * 4.5
+    Layout.minimumWidth: isCompact ? Kirigami.Units.gridUnit * 2.2 : Kirigami.Units.gridUnit * 2.8
+    Layout.minimumHeight: isCompact ? Kirigami.Units.gridUnit * 2.5 : Kirigami.Units.gridUnit * 3.2
 
     radius: 8
     color: mouseArea.containsMouse ? root.themeColors.subCardHover : root.themeColors.subCardBg
