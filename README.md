@@ -82,7 +82,7 @@ cp -r metadata.json contents ~/.local/share/plasma/plasmoids/org.adi_il.ticking/
 ```bash
 chmod +x scripts/package.sh
 ./scripts/package.sh
-# -> org.adi_il.ticking-1.3.0.plasmoid
+# -> org.adi_il.ticking-1.4.0.plasmoid
 ```
 
 ---
