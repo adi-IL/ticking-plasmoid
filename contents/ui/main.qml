@@ -213,7 +213,7 @@ PlasmoidItem {
                 return root.stopwatchRunning ? 40 : 1000;
             }
             if (root.currentViewIndex === 0) {
-                return Plasmoid.configuration.showMilliseconds ? 40 : 1000;
+                return Plasmoid.configuration.showMilliseconds ? 100 : 1000;
             }
             return 1000;
         }
