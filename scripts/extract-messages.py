@@ -12,7 +12,7 @@ def main():
     entries = {}
     
     qml_files = []
-    for root, _, files in os.walk("contents/ui"):
+    for root, _, files in os.walk("contents"):
         for f in sorted(files):
             if f.endswith(".qml"):
                 qml_files.append(os.path.join(root, f))
