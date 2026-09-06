@@ -76,9 +76,7 @@ Item {
                 Layout.fillWidth: true
                 spacing: Kirigami.Units.smallSpacing
 
-    signal quoteRefreshRequested()
-
-    Kirigami.ShadowedRectangle {
+                Kirigami.ShadowedRectangle {
                     Layout.preferredHeight: 22
                     Layout.preferredWidth: liveRow.implicitWidth + 14
                     radius: 11
@@ -203,7 +201,6 @@ Item {
                     if (typeof root !== "undefined" && root.fetchNextQuote) {
                         root.fetchNextQuote(false);
                     }
-                    fullRoot.quoteRefreshRequested();
                 }
             }
         }
