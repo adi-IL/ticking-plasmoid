@@ -387,7 +387,9 @@ PlasmoidItem {
                                     return;
                                 }
                             }
-                        } catch (e) {}
+                        } catch (e) {
+                            console.warn("Ticking: quote parse failed:", e);
+                        }
                     }
                     onFail();
                 }
