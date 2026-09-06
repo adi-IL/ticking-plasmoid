@@ -612,5 +612,13 @@ KCM.SimpleKCM {
             echoMode: TextInput.Password
             Layout.fillWidth: true
         }
+
+        Text {
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            color: Kirigami.Theme.disabledTextColor
+            font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
+            text: i18nc("@info", "Stored unencrypted in the Plasma applet config. Leave empty to use the offline library.")
+        }
     }
 }
