@@ -115,6 +115,7 @@ Item {
 
                 Text {
                     text: root.milestoneTitle
+                    textFormat: Text.PlainText
                     color: root.themeColors.textPrimary
                     font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
                     font.weight: Font.DemiBold

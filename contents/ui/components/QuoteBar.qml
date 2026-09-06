@@ -76,6 +76,7 @@ Kirigami.ShadowedRectangle {
             Text {
                 id: quoteLabel
                 Layout.fillWidth: true
+                textFormat: Text.PlainText
                 text: quoteBarRoot.quoteText.length > 0
                     ? ("\"" + quoteBarRoot.quoteText + "\"")
                     : i18nc("@info:placeholder", "Focus on the horizon ahead.")
@@ -97,6 +98,7 @@ Kirigami.ShadowedRectangle {
                 id: authorLabel
                 visible: quoteBarRoot.quoteAuthor.length > 0
                 Layout.fillWidth: true
+                textFormat: Text.PlainText
                 text: quoteBarRoot.quoteAuthor.length > 0 ? ("- " + quoteBarRoot.quoteAuthor) : ""
                 color: quoteBarRoot.accentColor
                 font.family: "sans-serif"
