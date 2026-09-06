@@ -174,15 +174,6 @@ PlasmoidItem {
         }
     }
 
-    Connections {
-        target: Plasmoid
-        function onExpandedChanged() {
-            if (Plasmoid.expanded) {
-                root.updateAllMetrics();
-            }
-        }
-    }
-
     property string currentQuoteText: {
         var saved = (Plasmoid.configuration.cachedQuoteText || "").trim();
         if (saved.length === 0 || saved.indexOf("thinking process") !== -1 || saved.indexOf("Analyze User") !== -1 || saved.toLowerCase().indexOf("alternatively") !== -1) {
