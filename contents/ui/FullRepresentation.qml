@@ -96,7 +96,7 @@ Item {
                             color: root.themeColors.accentColor
 
                             SequentialAnimation on opacity {
-                                running: true
+                                running: Plasmoid.expanded || Plasmoid.formFactor === PlasmaCore.Types.Planar
                                 loops: Animation.Infinite
                                 NumberAnimation { from: 1.0; to: 0.3; duration: 900; easing.type: Easing.InOutQuad }
                                 NumberAnimation { from: 0.3; to: 1.0; duration: 900; easing.type: Easing.InOutQuad }
