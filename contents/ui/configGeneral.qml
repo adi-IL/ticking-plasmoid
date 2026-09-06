@@ -33,7 +33,10 @@ KCM.SimpleKCM {
         QQC2.TextField { id: archetypeHolder; text: "adaptive" }
     }
 
-    property bool internalSyncing: false
+    // Stay true until cfg_* values have been copied into the date controls.
+    // Month ComboBoxes default to index 0 (January) and SpinBoxes fire
+    // onValueChanged during construction; those must not rewrite cfg_ dates.
+    property bool internalSyncing: true
 
     function pad2(n) {
         return n < 10 ? "0" + n : "" + n;
@@ -74,6 +77,7 @@ KCM.SimpleKCM {
         if (internalSyncing) return;
         var y = targetYearSpin.value;
         var m = targetMonthCombo.currentIndex;
+        if (m < 0 || m > 11) return;
         var maxD = daysInMonth(y, m);
         if (targetDaySpin.value > maxD) targetDaySpin.value = maxD;
         targetField.text = formatDate(y, m, targetDaySpin.value);
@@ -83,12 +87,14 @@ KCM.SimpleKCM {
         if (internalSyncing) return;
         var y = startYearSpin.value;
         var m = startMonthCombo.currentIndex;
+        if (m < 0 || m > 11) return;
         var maxD = daysInMonth(y, m);
         if (startDaySpin.value > maxD) startDaySpin.value = maxD;
         startField.text = formatDate(y, m, startDaySpin.value);
     }
 
     function syncFromIso() {
+        var wasSyncing = internalSyncing;
         internalSyncing = true;
 
         var td = parseCivilDate(targetField.text, 2026, 9, 25);
@@ -101,10 +107,20 @@ KCM.SimpleKCM {
         startMonthCombo.currentIndex = sd.m;
         startDaySpin.value = sd.d;
 
-        internalSyncing = false;
+        internalSyncing = wasSyncing;
     }
 
-    Component.onCompleted: syncFromIso()
+    function finishInitialSync() {
+        syncFromIso();
+        // KCM copies plasmoid.configuration into cfg_* shortly after
+        // construction. One extra pass picks that up before we unlock writes.
+        Qt.callLater(function () {
+            configPage.syncFromIso();
+            configPage.internalSyncing = false;
+        });
+    }
+
+    Component.onCompleted: finishInitialSync()
 
     Connections {
         target: targetField
@@ -149,7 +165,7 @@ KCM.SimpleKCM {
                     i18nc("@item:month", "Nov"), i18nc("@item:month", "Dec")
                 ]
                 Layout.preferredWidth: 80
-                onCurrentIndexChanged: configPage.updateTargetIso()
+                onActivated: configPage.updateTargetIso()
             }
 
             QQC2.SpinBox {
@@ -200,7 +216,7 @@ KCM.SimpleKCM {
                     i18nc("@item:month", "Nov"), i18nc("@item:month", "Dec")
                 ]
                 Layout.preferredWidth: 80
-                onCurrentIndexChanged: configPage.updateStartIso()
+                onActivated: configPage.updateStartIso()
             }
 
             QQC2.SpinBox {
