@@ -194,6 +194,7 @@ PlasmoidItem {
         id: quoteTimer
         interval: Math.max(45, Plasmoid.configuration.quoteIntervalMinutes || 180) * 60 * 1000
         running: Plasmoid.configuration.showQuoteBar !== false
+            && (Plasmoid.expanded || Plasmoid.formFactor === PlasmaCore.Types.Planar)
         repeat: true
         onTriggered: root.fetchNextQuote(false)
     }
