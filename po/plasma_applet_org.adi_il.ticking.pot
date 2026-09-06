@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: org.adi_il.ticking 1.4.0\n"
 "Report-Msgid-Bugs-To: https://github.com/adi-IL/ticking-plasmoid/issues\n"
-"POT-Creation-Date: 2026-09-05 09:55+0000\n"
+"POT-Creation-Date: 2026-09-06 03:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <kde-i18n-doc@kde.org>\n"
@@ -18,17 +18,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: contents/config/config.qml:6
+msgctxt "@title:tab"
+msgid "General"
+msgstr ""
+
 #: contents/ui/CompactRepresentation.qml:57
 msgctxt "@info:status compact panel"
 msgid "done"
 msgstr ""
 
-#: contents/ui/FullRepresentation.qml:109
+#: contents/ui/FullRepresentation.qml:107
 msgctxt "@label:status"
 msgid "LIVE"
 msgstr ""
 
-#: contents/ui/FullRepresentation.qml:134
+#: contents/ui/FullRepresentation.qml:133
 msgctxt "@action:button"
 msgid "Configure Ticking"
 msgstr ""
@@ -83,25 +88,25 @@ msgctxt "@label:progress"
 msgid "JOURNEY TO HORIZON"
 msgstr ""
 
-#: contents/ui/components/QuoteBar.qml:81
+#: contents/ui/components/QuoteBar.qml:82
 msgctxt "@info:placeholder"
 msgid "Focus on the horizon ahead."
 msgstr ""
 
-#: contents/ui/components/QuoteBar.qml:120
-#: contents/ui/components/QuoteBar.qml:145
+#: contents/ui/components/QuoteBar.qml:122
+#: contents/ui/components/QuoteBar.qml:147
 msgctxt "@info:tooltip"
 msgid "Copied to clipboard"
 msgstr ""
 
-#: contents/ui/components/QuoteBar.qml:121
-#: contents/ui/components/QuoteBar.qml:146
+#: contents/ui/components/QuoteBar.qml:123
+#: contents/ui/components/QuoteBar.qml:148
 msgctxt "@action:button"
 msgid "Copy quote"
 msgstr ""
 
-#: contents/ui/components/QuoteBar.qml:156
-#: contents/ui/components/QuoteBar.qml:177
+#: contents/ui/components/QuoteBar.qml:158
+#: contents/ui/components/QuoteBar.qml:179
 msgctxt "@action:button"
 msgid "New quote"
 msgstr ""
@@ -154,348 +159,353 @@ msgstr ""
 msgid "Lap %1"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:126
+#: contents/ui/configGeneral.qml:142
 msgctxt "@label:textbox"
 msgid "Milestone title:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:127
+#: contents/ui/configGeneral.qml:143
 #: contents/ui/main.qml:91
 msgctxt "@title:window default milestone"
 msgid "NEW HORIZON"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:133
+#: contents/ui/configGeneral.qml:149
 msgctxt "@title:group"
 msgid "Target horizon date"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:137
+#: contents/ui/configGeneral.qml:153
 msgctxt "@label:date"
 msgid "End date:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:144
-#: contents/ui/configGeneral.qml:195
+#: contents/ui/configGeneral.qml:160
+#: contents/ui/configGeneral.qml:211
 msgctxt "@item:month"
 msgid "Jan"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:144
-#: contents/ui/configGeneral.qml:195
+#: contents/ui/configGeneral.qml:160
+#: contents/ui/configGeneral.qml:211
 msgctxt "@item:month"
 msgid "Feb"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:145
-#: contents/ui/configGeneral.qml:196
+#: contents/ui/configGeneral.qml:161
+#: contents/ui/configGeneral.qml:212
 msgctxt "@item:month"
 msgid "Mar"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:145
-#: contents/ui/configGeneral.qml:196
+#: contents/ui/configGeneral.qml:161
+#: contents/ui/configGeneral.qml:212
 msgctxt "@item:month"
 msgid "Apr"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:146
-#: contents/ui/configGeneral.qml:197
+#: contents/ui/configGeneral.qml:162
+#: contents/ui/configGeneral.qml:213
 msgctxt "@item:month"
 msgid "May"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:146
-#: contents/ui/configGeneral.qml:197
+#: contents/ui/configGeneral.qml:162
+#: contents/ui/configGeneral.qml:213
 msgctxt "@item:month"
 msgid "Jun"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:147
-#: contents/ui/configGeneral.qml:198
+#: contents/ui/configGeneral.qml:163
+#: contents/ui/configGeneral.qml:214
 msgctxt "@item:month"
 msgid "Jul"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:147
-#: contents/ui/configGeneral.qml:198
+#: contents/ui/configGeneral.qml:163
+#: contents/ui/configGeneral.qml:214
 msgctxt "@item:month"
 msgid "Aug"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:148
-#: contents/ui/configGeneral.qml:199
+#: contents/ui/configGeneral.qml:164
+#: contents/ui/configGeneral.qml:215
 msgctxt "@item:month"
 msgid "Sep"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:148
-#: contents/ui/configGeneral.qml:199
+#: contents/ui/configGeneral.qml:164
+#: contents/ui/configGeneral.qml:215
 msgctxt "@item:month"
 msgid "Oct"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:149
-#: contents/ui/configGeneral.qml:200
+#: contents/ui/configGeneral.qml:165
+#: contents/ui/configGeneral.qml:216
 msgctxt "@item:month"
 msgid "Nov"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:149
-#: contents/ui/configGeneral.qml:200
+#: contents/ui/configGeneral.qml:165
+#: contents/ui/configGeneral.qml:216
 msgctxt "@item:month"
 msgid "Dec"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:176
-#: contents/ui/configGeneral.qml:227
+#: contents/ui/configGeneral.qml:192
+#: contents/ui/configGeneral.qml:243
 msgctxt "@info:time"
 msgid "@ local 00:00"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:184
+#: contents/ui/configGeneral.qml:200
 msgctxt "@title:group"
 msgid "Journey start date"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:188
+#: contents/ui/configGeneral.qml:204
 msgctxt "@label:date"
 msgid "Start date:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:233
+#: contents/ui/configGeneral.qml:249
 msgctxt "@action:button"
 msgid "Today"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:243
+#: contents/ui/configGeneral.qml:259
 msgctxt "@action:button"
 msgid "Jan 1"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:252
+#: contents/ui/configGeneral.qml:268
 msgctxt "@label:summary"
 msgid "Journey span:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:264
+#: contents/ui/configGeneral.qml:280
 msgid "%1 total day"
 msgid_plural "%1 total days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: contents/ui/configGeneral.qml:265
+#: contents/ui/configGeneral.qml:281
 msgid "Invalid range (end before start)"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:278
+#: contents/ui/configGeneral.qml:294
 msgctxt "@info"
 msgid "Dates are calendar days in your local timezone. The countdown hits zero at local midnight on the end date."
 msgstr ""
 
-#: contents/ui/configGeneral.qml:282
+#: contents/ui/configGeneral.qml:298
 msgctxt "@label:presets"
 msgid "Quick presets:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:286
+#: contents/ui/configGeneral.qml:302
 msgctxt "@action:button"
 msgid "New Year 2027"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:299
+#: contents/ui/configGeneral.qml:315
 msgctxt "@action:button"
 msgid "End of 2026"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:312
+#: contents/ui/configGeneral.qml:328
 msgctxt "@action:button"
 msgid "100-Day Goal"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:327
+#: contents/ui/configGeneral.qml:343
 msgctxt "@action:button"
 msgid "Oct 25, 2026"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:342
+#: contents/ui/configGeneral.qml:358
 msgctxt "@title:group"
 msgid "Display and aesthetic"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:347
+#: contents/ui/configGeneral.qml:363
 msgctxt "@label:combobox"
 msgid "Visual theme:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:349
+#: contents/ui/configGeneral.qml:365
 msgctxt "@item:theme"
 msgid "Vercel Obsidian Glass (Dark HUD)"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:350
+#: contents/ui/configGeneral.qml:366
 msgctxt "@item:theme"
 msgid "Plasma System Theme Adaptive"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:370
+#: contents/ui/configGeneral.qml:386
 msgctxt "@label:combobox"
 msgid "Default view:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:372
+#: contents/ui/configGeneral.qml:388
 msgctxt "@item:tab"
 msgid "Countdown"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:373
+#: contents/ui/configGeneral.qml:389
 msgctxt "@item:tab"
 msgid "Clock"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:374
+#: contents/ui/configGeneral.qml:390
 msgctxt "@item:tab"
 msgid "Stopwatch"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:392
+#: contents/ui/configGeneral.qml:408
 msgctxt "@label:textbox"
 msgid "Accent color:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:419
+#: contents/ui/configGeneral.qml:435
 msgctxt "@label:swatches"
 msgid "Vercel presets:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:458
+#: contents/ui/configGeneral.qml:474
 msgctxt "@label:slider"
 msgid "Glass opacity:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:479
+#: contents/ui/configGeneral.qml:495
 msgctxt "@label:checkbox"
 msgid "Precision:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:480
+#: contents/ui/configGeneral.qml:496
 msgid "Show sub-second milliseconds ticker"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:485
+#: contents/ui/configGeneral.qml:501
 msgctxt "@label:checkbox"
 msgid "Progress bar:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:486
+#: contents/ui/configGeneral.qml:502
 msgid "Display journey percentage progress bar"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:491
+#: contents/ui/configGeneral.qml:507
 msgctxt "@label:checkbox"
 msgid "Panel badge:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:492
+#: contents/ui/configGeneral.qml:508
 msgid "Show remaining time text on horizontal panels"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:497
+#: contents/ui/configGeneral.qml:513
 msgctxt "@label:checkbox"
 msgid "Clock format:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:498
+#: contents/ui/configGeneral.qml:514
 msgid "Use 24-hour clock format"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:503
+#: contents/ui/configGeneral.qml:519
 msgctxt "@title:group"
 msgid "Intellect and quotes"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:508
+#: contents/ui/configGeneral.qml:524
 msgctxt "@label:checkbox"
 msgid "Quote capsule:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:509
+#: contents/ui/configGeneral.qml:525
 msgid "Display intellect and focus quote capsule"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:514
+#: contents/ui/configGeneral.qml:530
 msgctxt "@label:combobox"
 msgid "Refresh rhythm:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:516
+#: contents/ui/configGeneral.qml:532
 msgctxt "@item:rhythm"
 msgid "Every 45 minutes"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:517
+#: contents/ui/configGeneral.qml:533
 msgctxt "@item:rhythm"
 msgid "Every 90 minutes"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:518
+#: contents/ui/configGeneral.qml:534
 msgctxt "@item:rhythm"
 msgid "Every 3 hours"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:519
+#: contents/ui/configGeneral.qml:535
 msgctxt "@item:rhythm"
 msgid "Every 6 hours"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:550
+#: contents/ui/configGeneral.qml:566
 msgctxt "@label:combobox"
 msgid "Resonance style:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:552
+#: contents/ui/configGeneral.qml:568
 msgctxt "@item:archetype"
 msgid "Adaptive (blends with journey and milestone)"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:553
+#: contents/ui/configGeneral.qml:569
 msgctxt "@item:archetype"
 msgid "Stoic and discipline (Seneca, Aurelius, Epictetus)"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:554
+#: contents/ui/configGeneral.qml:570
 msgctxt "@item:archetype"
 msgid "Builders and craft (Da Vinci, Feynman, Jobs)"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:555
+#: contents/ui/configGeneral.qml:571
 msgctxt "@item:archetype"
 msgid "Cosmic perspective (Carl Sagan, Rilke, Eastern thought)"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:556
+#: contents/ui/configGeneral.qml:572
 msgctxt "@item:archetype"
 msgid "High-intensity focus (Action, grit, momentum)"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:587
+#: contents/ui/configGeneral.qml:603
 msgctxt "@label:textbox"
 msgid "Personal focus:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:588
+#: contents/ui/configGeneral.qml:604
 msgctxt "@info:placeholder"
 msgid "e.g. Master thesis, marathons, creative craft"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:594
+#: contents/ui/configGeneral.qml:610
 msgctxt "@label:textbox"
 msgid "OpenCode Zen API key:"
 msgstr ""
 
-#: contents/ui/configGeneral.qml:595
+#: contents/ui/configGeneral.qml:611
 msgctxt "@info:placeholder"
 msgid "Optional. Uses curated library if empty."
+msgstr ""
+
+#: contents/ui/configGeneral.qml:621
+msgctxt "@info"
+msgid "Stored unencrypted in the Plasma applet config. Leave empty to use the offline library."
 msgstr ""
 
 #: contents/ui/main.qml:96
