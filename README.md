@@ -5,7 +5,7 @@
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPLv3-blue?style=flat-square)](LICENSE)
 [![Plasma: 6.0+](https://img.shields.io/badge/KDE%20Plasma-6.0+-blueviolet?style=flat-square)](https://kde.org/plasma-desktop/)
 
-A desktop and panel HUD for KDE Plasma 6. Track your milestone countdown, read a clean world clock, run a split-lap stopwatch, and keep a quiet philosophy quote companion on your desktop.
+A desktop and panel HUD for KDE Plasma 6. Track a milestone countdown, read a world clock, run a split-lap stopwatch, and keep a quiet philosophy quote on the desktop.
 
 ![Ticking Desktop HUD](assets/desktop-hero.png)
 
@@ -16,41 +16,41 @@ A desktop and panel HUD for KDE Plasma 6. Track your milestone countdown, read a
 | Horizon Countdown | Live Clock | Precision Stopwatch |
 | :---: | :---: | :---: |
 | ![Countdown View](assets/countdown-view.png) | ![Clock View](assets/clock-view.png) | ![Stopwatch View](assets/stopwatch-view.png) |
-| Tabular cards, live sub-second ticker, journey progress bar | 12h/24h formats, UTC offset, day of year, ISO week number | Split lap recording, hours support, 25 FPS live tick |
+| Tabular cards, 10 FPS centisecond ticker, journey progress bar | 12h/24h formats, UTC offset, day of year, ISO week number | Split lap recording, hours support, 25 FPS while running |
 
 ### Intellect Quote Companion
 
 ![Intellect Quote Companion](assets/intellect-quotes.png)
 
-A quiet, rounded glass capsule at the bottom of the HUD. Rotates thought-provoking quotes on time, human craft, and discipline. The engine adapts to your milestone headline, journey progress, and time of day, running on a rhythm you choose (from 45 minutes to 6 hours).
+A rounded glass capsule at the bottom of the HUD. Rotates short quotes on time, craft, and discipline. Offline library of 40+ lines (Seneca, Marcus Aurelius, Feynman, Da Vinci, Sagan). Optional OpenCode Zen key uses Nemotron with local fallback. Copy is one click.
 
-Includes an offline library of 40+ timeless quotes by Seneca, Marcus Aurelius, Feynman, Da Vinci, and Sagan. When an optional OpenCode Zen key is configured, it connects to Nemotron 3.5 Lightning for contextual reflection with local fallback. No tech branding, no badges, just clean text with a one-click copy button.
+The Zen key is stored unencrypted in `~/.config/plasma-org.kde.plasma.desktop-appletsrc`. Leave it empty to stay offline.
 
 ### Panel Mode
 
 ![Panel Mode](assets/panel-mode.png)
 
-Compact panel icon with an optional remaining-time badge. Expands to the full HUD on click. Works on horizontal and vertical panels alike.
+Compact panel icon with an optional remaining-time badge. Expands to the full HUD on click. Horizontal and vertical panels.
 
 ---
 
 ## Core Features
 
-- **Themes:** Vercel-inspired Obsidian dark glass, or adaptive Plasma system colors (Breeze, Catppuccin, Nord).
-- **Horizon dates:** Calendar pickers for start and end dates, normalized to local midnight. Legacy ISO dates still load as the civil date they encoded.
+- **Themes:** Obsidian dark glass, or Plasma system colors.
+- **Horizon dates:** Calendar pickers for start and end, local midnight. Legacy ISO dates still load as the civil date they encoded.
 - **Quick presets:** New Year 2027, End of 2026, 100-day goal, October 25 2026.
-- **Countdown:** Tabular days, hours, minutes, seconds, and milliseconds cards with an active progress track.
-- **Clock:** Clean typography, locale date string, 12h/24h toggle, UTC offset, day-of-year, and ISO week number.
-- **Stopwatch:** Start, pause, lap, and reset with full split history.
-- **Battery-first performance:** The timer drops to idle intervals while collapsed in a panel, and only steps up to 25 FPS when sub-second tickers or an active stopwatch are on screen.
-- **Customization:** Default active tab, glass opacity slider, accent swatches, panel badge toggle, sub-second ticker toggle.
-- **Localization:** Complete gettext translation template in `po/`.
+- **Countdown:** Days, hours, minutes, seconds, centiseconds, progress track.
+- **Clock:** Locale date, 12h/24h, UTC offset, day-of-year, ISO week.
+- **Stopwatch:** Start, pause, lap, reset, split history.
+- **Idle timers:** Collapsed panel ticks at 30s (badge on) or 60s (badge off). Visible countdown with milliseconds uses 10 FPS. Running stopwatch uses 25 FPS. Quote fetches run only while the HUD is visible.
+- **Customization:** Default tab, glass opacity, accent, panel badge, sub-second ticker, quote rhythm.
+- **Localization:** Gettext template at `po/plasma_applet_org.adi_il.ticking.pot`. No compiled `.mo` catalogs yet.
 
 ---
 
 ## Requirements
 
-- KDE Plasma 6.0+ (tested on 6.2+)
+- KDE Plasma 6.0+ (tested on 6.7)
 - KF6: Kirigami, KCMUtils, KPackage
 - Qt 6.6+ (Quick, Layouts, Controls)
 - Linux (Fedora KDE, Arch, openSUSE, Debian, and friends)
@@ -59,31 +59,39 @@ Compact panel icon with an optional remaining-time badge. Expands to the full HU
 
 ## Installation
 
-### User install (no root)
+Install the `.plasmoid` zip, not the git working tree. `kpackagetool6 --install .` from a clone copies scripts, assets, and leftover zips into the applet dir.
+
+### From a release (preferred)
+
+Download `org.adi_il.ticking-1.4.0.plasmoid` from [GitHub Releases](https://github.com/adi-IL/ticking-plasmoid/releases/latest) or the [KDE Store](https://store.kde.org/p/2370240/).
+
+```bash
+kpackagetool6 -t Plasma/Applet --install org.adi_il.ticking-1.4.0.plasmoid
+# later:
+kpackagetool6 -t Plasma/Applet --upgrade org.adi_il.ticking-1.4.0.plasmoid
+```
+
+`--upgrade` replaces package files and keeps your applet settings (dates, 12h/24h, quote key).
+
+### From git
 
 ```bash
 git clone https://github.com/adi-IL/ticking-plasmoid.git
 cd ticking-plasmoid
-
-kpackagetool6 -t Plasma/Applet --install .
-# To update later:
-kpackagetool6 -t Plasma/Applet --upgrade .
+./scripts/package.sh
+kpackagetool6 -t Plasma/Applet --install org.adi_il.ticking-1.4.0.plasmoid
 ```
 
-Manual copy:
+### Manual copy
 
 ```bash
 mkdir -p ~/.local/share/plasma/plasmoids/org.adi_il.ticking
-cp -r metadata.json contents ~/.local/share/plasma/plasmoids/org.adi_il.ticking/
+cp metadata.json ~/.local/share/plasma/plasmoids/org.adi_il.ticking/
+cp -r contents ~/.local/share/plasma/plasmoids/org.adi_il.ticking/
+systemctl --user restart plasma-plasmashell.service
 ```
 
-### Build a release package
-
-```bash
-chmod +x scripts/package.sh
-./scripts/package.sh
-# -> org.adi_il.ticking-1.4.0.plasmoid
-```
+Copy only `metadata.json` and `contents/`. Do not copy `assets/`, `scripts/`, or `*.plasmoid` into that folder.
 
 ---
 
@@ -91,9 +99,15 @@ chmod +x scripts/package.sh
 
 ```bash
 plasmawindowed org.adi_il.ticking
-systemctl --user restart plasma-plasmashell.service
 python3 scripts/extract-messages.py
 python3 scripts/ci-check.py
+./scripts/package.sh
+```
+
+After editing an already-installed applet, restart the shell:
+
+```bash
+systemctl --user restart plasma-plasmashell.service
 ```
 
 ---
@@ -102,6 +116,4 @@ python3 scripts/ci-check.py
 
 GNU General Public License v3.0 or later ([GPL-3.0-or-later](LICENSE)).
 
----
-
-Developed with care by **Aditya Gaurav** ([`adi-IL`](https://github.com/adi-IL))
+Developed by **Aditya Gaurav** ([`adi-IL`](https://github.com/adi-IL))
