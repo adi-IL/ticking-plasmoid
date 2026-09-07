@@ -29,6 +29,29 @@ function cleanQuoteAuthor(author) {
     }
     var cleaned = author.trim();
     cleaned = cleaned.replace(/^["'\u201c\u201d\u00ab\u00bb]+|["'\u201c\u201d\u00ab\u00bb]+$/g, "").trim();
+
+    // Reject commentary lines masquerading as authors
+    if (/^(attributed to|possibly|maybe|this is|that's|probably|unknown|an? \w+ quote)/i.test(cleaned)) {
+        return "";
+    }
+
+    // Cut off full sentences continuing after the author's name (e.g. "Bruce Lee. That's a quote about focus, but...")
+    var periodIdx = cleaned.indexOf(". ");
+    if (periodIdx !== -1) {
+        var beforePeriod = cleaned.substring(0, periodIdx).trim();
+        if (!/^[A-Z]\.?\s*[A-Z]?\.?$/.test(beforePeriod)) {
+            cleaned = beforePeriod;
+        }
+    }
+
+    // Cut off trailing explanatory phrases after comma or dash
+    cleaned = cleaned.replace(/,\s*(?:which|who|that|a|an|the|as|noting|explaining|saying)[\s\S]*$/i, "");
+    cleaned = cleaned.replace(/\s+-\s+.*$/, "");
+    cleaned = cleaned.replace(/[.\-,;:\s]+$/, "").trim();
+
+    if (cleaned.length > 45 || cleaned.length === 0) {
+        return "";
+    }
     return cleaned;
 }
 
@@ -89,28 +112,62 @@ function parseModelContent(content) {
     return { text: qText, author: qAuthor };
 }
 
+var ARCHETYPE_TOPICS = {
+    stoic: [
+        "stoic discipline and inner fortress",
+        "amor fati and enduring hardship",
+        "focusing strictly on what is in your control",
+        "tranquility through reason and wisdom",
+        "memento mori and the urgency of time",
+        "self-mastery and temperance"
+    ],
+    builder: [
+        "craftsmanship and building great things",
+        "relentless iteration and engineering excellence",
+        "creating software systems that endure",
+        "shipping and execution over talking",
+        "overcoming technical barriers through persistence",
+        "the beauty of master craftsmanship"
+    ],
+    cosmic: [
+        "the vastness of time and cosmic perspective",
+        "the preciousness of fleeting human moments",
+        "the mystery of the universe and human purpose",
+        "the arrow of time and starlight",
+        "humility under the vast cosmos"
+    ],
+    intensity: [
+        "unwavering self-discipline and daily mastery",
+        "grit and relentless determination",
+        "deep work and eliminating all distractions",
+        "perseverance through pain and struggle",
+        "laser focus and fierce urgency",
+        "mental toughness and relentless drive",
+        "obsession with excellence and execution"
+    ],
+    adaptive: [
+        "clarity of vision and unrelenting momentum",
+        "mastery over time and decisive action",
+        "turning ambitious goals into reality",
+        "relentless focus and dedication"
+    ]
+};
+
 function resolveTopic(archetype, headline, personalFocus) {
     var focus = (personalFocus || "").trim();
     if (focus.length > 0) {
         return focus;
     }
-    if (archetype === "stoic") {
-        return "stoic discipline";
-    }
-    if (archetype === "builder") {
-        return "craft and building";
-    }
-    if (archetype === "cosmic") {
-        return "time and universe";
-    }
-    if (archetype === "intensity") {
-        return "relentless focus";
+    var pool = ARCHETYPE_TOPICS[archetype];
+    if (pool && pool.length > 0) {
+        var idx = Math.floor(Math.random() * pool.length);
+        return pool[idx];
     }
     var title = (headline || "").trim();
     if (title.length > 0 && title !== "NEW HORIZON") {
         return title;
     }
-    return "time and human focus";
+    return "relentless focus and execution";
 }
 
 function fetchQuote(params, quoteLibrary, callbacks) {
@@ -118,27 +175,36 @@ function fetchQuote(params, quoteLibrary, callbacks) {
     var archetype = params.archetype || "adaptive";
     var ratio = params.progressRatio || 0.0;
     var forceOffline = !!params.forceOffline;
+    var currentQuote = (params.currentQuoteText || "").trim();
+    var currentAuthor = (params.currentQuoteAuthor || "").trim();
 
     var onSuccess = (callbacks && callbacks.onSuccess) ? callbacks.onSuccess : function () {};
     var onComplete = (callbacks && callbacks.onComplete) ? callbacks.onComplete : function () {};
 
-    if (forceOffline || apiKey.length === 0) {
-        var curated = quoteLibrary.getCuratedQuote(archetype, ratio);
-        onSuccess(cleanQuoteText(curated.text), cleanQuoteAuthor(curated.author));
+    function fallbackToCurated() {
+        var fallback = quoteLibrary.getCuratedQuote(archetype, ratio, currentQuote);
+        onSuccess(cleanQuoteText(fallback.text), cleanQuoteAuthor(fallback.author));
         onComplete();
+    }
+
+    if (forceOffline || apiKey.length === 0) {
+        fallbackToCurated();
         return;
     }
 
     var topic = resolveTopic(archetype, params.milestoneTitle, params.personalFocus);
-    var prompt = "Famous quote about " + topic + ". 1 line only: \"Quote\" - Author";
+    var prompt = "Famous quote about " + topic + ".";
+    if (currentQuote.length > 10) {
+        var quoteSnippet = currentQuote.replace(/["\n]/g, "").slice(0, 35);
+        prompt += " Do NOT provide the quote: \"" + quoteSnippet + "...\"";
+        if (currentAuthor.length > 0) {
+            prompt += " or any quote by " + currentAuthor;
+        }
+        prompt += ".";
+    }
+    prompt += " 1 line only: \"Quote\" - Author Name";
 
     var modelIndex = 0;
-
-    function fallbackToCurated() {
-        var fallback = quoteLibrary.getCuratedQuote(archetype, ratio);
-        onSuccess(cleanQuoteText(fallback.text), cleanQuoteAuthor(fallback.author));
-        onComplete();
-    }
 
     function tryNextModel() {
         if (modelIndex >= REMOTE_MODELS.length) {
@@ -164,7 +230,12 @@ function fetchQuote(params, quoteLibrary, callbacks) {
                         } else {
                             var content = res.choices && res.choices[0] && res.choices[0].message ? res.choices[0].message.content : "";
                             var parsed = parseModelContent(content);
-                            if (parsed && parsed.text.length > 0) {
+                            if (parsed && parsed.text.length > 0 && parsed.author.length > 0) {
+                                if (currentQuote.length > 0 && parsed.text.toLowerCase() === currentQuote.toLowerCase()) {
+                                    console.warn("Ticking QuoteClient: duplicate quote received, cascading");
+                                    tryNextModel();
+                                    return;
+                                }
                                 onSuccess(parsed.text, parsed.author);
                                 onComplete();
                                 return;
@@ -183,11 +254,22 @@ function fetchQuote(params, quoteLibrary, callbacks) {
         xhr.ontimeout = tryNextModel;
         xhr.onerror = tryNextModel;
 
+        var messages = [
+            {
+                role: "system",
+                content: "You are a database of famous quotes. Respond ONLY with the format:\n\"<Quote>\" - <Author Name>\nDo NOT add notes, explanations, commentary, or attribution disclaimers. Author must be ONLY the person name."
+            },
+            {
+                role: "user",
+                content: prompt
+            }
+        ];
+
         var payload = JSON.stringify({
             model: modelName,
-            messages: [{ role: "user", content: prompt }],
+            messages: messages,
             max_tokens: 800,
-            temperature: 0.7
+            temperature: 0.85
         });
         xhr.send(payload);
     }

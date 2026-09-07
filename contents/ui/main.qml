@@ -307,7 +307,7 @@ PlasmoidItem {
         var cleanedText = QuoteClient.cleanQuoteText(text);
         var cleanedAuthor = QuoteClient.cleanQuoteAuthor(author);
         if (cleanedText.length === 0) {
-            var fallback = QuoteLibrary.getCuratedQuote(Plasmoid.configuration.quoteArchetype, root.countdownData.progressRatio);
+            var fallback = QuoteLibrary.getCuratedQuote(Plasmoid.configuration.quoteArchetype, root.countdownData.progressRatio, root.currentQuoteText);
             cleanedText = QuoteClient.cleanQuoteText(fallback.text);
             cleanedAuthor = QuoteClient.cleanQuoteAuthor(fallback.author);
         }
@@ -328,7 +328,9 @@ PlasmoidItem {
             progressRatio: root.countdownData.progressRatio || 0.0,
             milestoneTitle: root.milestoneTitle,
             personalFocus: (Plasmoid.configuration.quotePersonalFocus || "").trim(),
-            forceOffline: !!forceOffline
+            forceOffline: !!forceOffline,
+            currentQuoteText: root.currentQuoteText || "",
+            currentQuoteAuthor: root.currentQuoteAuthor || ""
         };
 
         QuoteClient.fetchQuote(params, QuoteLibrary, {

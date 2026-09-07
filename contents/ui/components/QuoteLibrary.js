@@ -75,7 +75,7 @@ var quotes = {
     ]
 };
 
-function getCuratedQuote(archetype, progressRatio) {
+function getCuratedQuote(archetype, progressRatio, excludeText) {
     var pool = quotes.builder;
     var arch = (archetype || "adaptive").toLowerCase();
 
@@ -97,6 +97,16 @@ function getCuratedQuote(archetype, progressRatio) {
             pool = quotes.adaptiveMiddle;
         } else {
             pool = quotes.adaptiveBeginning;
+        }
+    }
+
+    if (excludeText && typeof excludeText === "string" && pool.length > 1) {
+        var cleanExclude = excludeText.toLowerCase().trim();
+        var filtered = pool.filter(function (q) {
+            return q.text.toLowerCase().trim() !== cleanExclude;
+        });
+        if (filtered.length > 0) {
+            pool = filtered;
         }
     }
 
