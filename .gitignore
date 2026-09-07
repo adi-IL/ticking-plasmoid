@@ -31,3 +31,6 @@ widget-debug.log
 # Duplicate skills and extensions
 extend/
 .omo/
+
+# Local MCP configuration
+.mcp.json
