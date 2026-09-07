@@ -159,6 +159,8 @@ Item {
                     showMilliseconds: Plasmoid.configuration.showMilliseconds
                     showProgress: Plasmoid.configuration.showProgress
                     accentColor: root.themeColors.accentColor
+                    themeColors: root.themeColors
+                    isSystemTheme: root.isSystemTheme
                 }
 
                 Components.ClockView {
@@ -166,6 +168,7 @@ Item {
                     visible: fullRoot.activeTabIndex === 1
                     clockData: root.clockData
                     accentColor: root.themeColors.accentColor
+                    themeColors: root.themeColors
                 }
 
                 Components.StopwatchView {
@@ -173,6 +176,7 @@ Item {
                     visible: fullRoot.activeTabIndex === 2
                     stopwatchData: root.stopwatchData
                     accentColor: root.themeColors.accentColor
+                    themeColors: root.themeColors
                     onStartRequested: root.startStopwatch()
                     onPauseRequested: root.pauseStopwatch()
                     onResetRequested: root.resetStopwatch()
@@ -183,6 +187,8 @@ Item {
             Components.SegmentedNav {
                 Layout.fillWidth: true
                 currentIndex: fullRoot.activeTabIndex
+                themeColors: root.themeColors
+                isSystemTheme: root.isSystemTheme
                 onTabSelected: index => {
                     fullRoot.activeTabIndex = index;
                     if (typeof root !== "undefined") {
@@ -198,6 +204,7 @@ Item {
                 quoteAuthor: root.currentQuoteAuthor
                 isLoading: root.isQuoteLoading
                 accentColor: root.themeColors.accentColor
+                themeColors: root.themeColors
                 onRefreshRequested: {
                     if (typeof root !== "undefined" && root.fetchNextQuote) {
                         root.fetchNextQuote(false);

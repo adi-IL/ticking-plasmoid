@@ -10,6 +10,15 @@ Kirigami.ShadowedRectangle {
     property string quoteAuthor: ""
     property bool isLoading: false
     property color accentColor: "#00E599"
+    property var themeColors: (typeof root !== "undefined" && root && root.themeColors) ? root.themeColors : ({
+        subCardBg: Kirigami.Theme.backgroundColor,
+        subCardHover: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.09),
+        cardBorder: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.12),
+        cardBorderHover: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.22),
+        specularGlint: Qt.rgba(1, 1, 1, 0.25),
+        textPrimary: Kirigami.Theme.textColor,
+        textMuted: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.45)
+    })
 
     signal refreshRequested()
 
@@ -31,9 +40,9 @@ Kirigami.ShadowedRectangle {
     Layout.preferredHeight: authorLabel.visible ? (quoteLabel.lineCount > 1 ? Kirigami.Units.gridUnit * 3.6 : Kirigami.Units.gridUnit * 3.0) : Kirigami.Units.gridUnit * 2.4
     Layout.minimumHeight: Kirigami.Units.gridUnit * 2.2
     radius: 10
-    color: capsuleMouse.containsMouse ? root.themeColors.subCardHover : root.themeColors.subCardBg
+    color: capsuleMouse.containsMouse ? quoteBarRoot.themeColors.subCardHover : quoteBarRoot.themeColors.subCardBg
     border.width: 1
-    border.color: capsuleMouse.containsMouse ? root.themeColors.cardBorderHover : root.themeColors.cardBorder
+    border.color: capsuleMouse.containsMouse ? quoteBarRoot.themeColors.cardBorderHover : quoteBarRoot.themeColors.cardBorder
 
     Behavior on color { ColorAnimation { duration: 150 } }
     Behavior on border.color { ColorAnimation { duration: 150 } }
@@ -56,7 +65,7 @@ Kirigami.ShadowedRectangle {
         gradient: Gradient {
             orientation: Gradient.Horizontal
             GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.04) }
-            GradientStop { position: 0.5; color: capsuleMouse.containsMouse ? root.themeColors.specularGlint : Qt.rgba(1, 1, 1, 0.12) }
+            GradientStop { position: 0.5; color: capsuleMouse.containsMouse ? quoteBarRoot.themeColors.specularGlint : Qt.rgba(1, 1, 1, 0.12) }
             GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.04) }
         }
     }
@@ -80,7 +89,7 @@ Kirigami.ShadowedRectangle {
                 text: quoteBarRoot.quoteText.length > 0
                     ? ("\"" + quoteBarRoot.quoteText + "\"")
                     : i18nc("@info:placeholder", "Focus on the horizon ahead.")
-                color: root.themeColors.textPrimary
+                color: quoteBarRoot.themeColors.textPrimary
                 font.family: "sans-serif"
                 font.pixelSize: Math.max(13, Kirigami.Theme.defaultFont.pixelSize)
                 font.italic: true
@@ -116,7 +125,7 @@ Kirigami.ShadowedRectangle {
             Layout.preferredHeight: 16
             color: quoteBarRoot.isCopied
                 ? quoteBarRoot.accentColor
-                : (copyMouse.containsMouse ? root.themeColors.textPrimary : root.themeColors.textMuted)
+                : (copyMouse.containsMouse ? quoteBarRoot.themeColors.textPrimary : quoteBarRoot.themeColors.textMuted)
             opacity: copyMouse.containsMouse || quoteBarRoot.isCopied ? 1.0 : (capsuleMouse.containsMouse ? 0.85 : 0.45)
             Accessible.name: quoteBarRoot.isCopied
                 ? i18nc("@info:tooltip", "Copied to clipboard")
@@ -153,7 +162,7 @@ Kirigami.ShadowedRectangle {
             source: "view-refresh"
             Layout.preferredWidth: 16
             Layout.preferredHeight: 16
-            color: refreshMouse.containsMouse ? root.themeColors.textPrimary : root.themeColors.textMuted
+            color: refreshMouse.containsMouse ? quoteBarRoot.themeColors.textPrimary : quoteBarRoot.themeColors.textMuted
             opacity: refreshMouse.containsMouse || quoteBarRoot.isLoading ? 1.0 : (capsuleMouse.containsMouse ? 0.85 : 0.45)
             Accessible.name: i18nc("@action:button", "New quote")
 

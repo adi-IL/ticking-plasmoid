@@ -23,6 +23,24 @@ ColumnLayout {
     signal lapRequested()
 
     property color accentColor: "#00E599"
+    property var themeColors: (typeof root !== "undefined" && root && root.themeColors) ? root.themeColors : ({
+        subCardBg: Kirigami.Theme.backgroundColor,
+        cardBorder: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.12),
+        specularGlint: Qt.rgba(Kirigami.Theme.highlightColor.r, Kirigami.Theme.highlightColor.g, Kirigami.Theme.highlightColor.b, 0.35),
+        textPrimary: Kirigami.Theme.textColor,
+        textSecondary: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.72),
+        textMuted: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.45),
+        dangerBg: Qt.rgba(Kirigami.Theme.negativeTextColor.r, Kirigami.Theme.negativeTextColor.g, Kirigami.Theme.negativeTextColor.b, 0.85),
+        dangerBgHover: Kirigami.Theme.negativeTextColor,
+        successBg: Kirigami.Theme.highlightColor,
+        successBgHover: Qt.lighter(Kirigami.Theme.highlightColor, 1.15),
+        onDangerFg: "#FFFFFF",
+        onAccentFg: Kirigami.Theme.highlightedTextColor,
+        buttonBg: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.08),
+        buttonBgHover: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.14),
+        buttonFg: Kirigami.Theme.textColor,
+        rowAlt: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.06)
+    })
 
     spacing: Kirigami.Units.smallSpacing
 
@@ -30,9 +48,9 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: Kirigami.Units.gridUnit * 5
         radius: 8
-        color: root.themeColors.subCardBg
+        color: stopwatchRoot.themeColors.subCardBg
         border.width: 1
-        border.color: root.themeColors.cardBorder
+        border.color: stopwatchRoot.themeColors.cardBorder
 
         Rectangle {
             anchors.top: parent.top
@@ -44,7 +62,7 @@ ColumnLayout {
             gradient: Gradient {
                 orientation: Gradient.Horizontal
                 GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.04) }
-                GradientStop { position: 0.5; color: root.themeColors.specularGlint }
+                GradientStop { position: 0.5; color: stopwatchRoot.themeColors.specularGlint }
                 GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.04) }
             }
         }
@@ -56,7 +74,7 @@ ColumnLayout {
             Text {
                 text: (stopwatchRoot.stopwatchData.hasHours ? (stopwatchRoot.stopwatchData.hours + ":") : "")
                     + stopwatchRoot.stopwatchData.minutes + ":" + stopwatchRoot.stopwatchData.seconds
-                color: root.themeColors.textPrimary
+                color: stopwatchRoot.themeColors.textPrimary
                 font.family: "monospace"
                 font.weight: Font.Bold
                 font.pixelSize: stopwatchRoot.stopwatchData.hasHours ? 28 : 36
@@ -85,8 +103,8 @@ ColumnLayout {
             Layout.preferredHeight: 34
             radius: 6
             color: stopwatchRoot.stopwatchData.running
-                ? (startMouse.containsMouse ? root.themeColors.dangerBgHover : root.themeColors.dangerBg)
-                : (startMouse.containsMouse ? root.themeColors.successBgHover : root.themeColors.successBg)
+                ? (startMouse.containsMouse ? stopwatchRoot.themeColors.dangerBgHover : stopwatchRoot.themeColors.dangerBg)
+                : (startMouse.containsMouse ? stopwatchRoot.themeColors.successBgHover : stopwatchRoot.themeColors.successBg)
 
             Accessible.name: stopwatchRoot.stopwatchData.running
                 ? i18nc("@action:button", "PAUSE")
@@ -101,16 +119,16 @@ ColumnLayout {
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 14
                     color: stopwatchRoot.stopwatchData.running
-                        ? root.themeColors.onDangerFg
-                        : root.themeColors.onAccentFg
+                        ? stopwatchRoot.themeColors.onDangerFg
+                        : stopwatchRoot.themeColors.onAccentFg
                 }
                 Text {
                     text: stopwatchRoot.stopwatchData.running
                         ? i18nc("@action:button", "PAUSE")
                         : i18nc("@action:button", "START")
                     color: stopwatchRoot.stopwatchData.running
-                        ? root.themeColors.onDangerFg
-                        : root.themeColors.onAccentFg
+                        ? stopwatchRoot.themeColors.onDangerFg
+                        : stopwatchRoot.themeColors.onAccentFg
                     font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
                     font.weight: Font.Bold
                     font.letterSpacing: 1.1
@@ -137,9 +155,9 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 34
             radius: 6
-            color: lapMouse.containsMouse ? root.themeColors.buttonBgHover : root.themeColors.buttonBg
+            color: lapMouse.containsMouse ? stopwatchRoot.themeColors.buttonBgHover : stopwatchRoot.themeColors.buttonBg
             border.width: 1
-            border.color: root.themeColors.cardBorder
+            border.color: stopwatchRoot.themeColors.cardBorder
             opacity: stopwatchRoot.stopwatchData.running ? 1.0 : 0.5
 
             Accessible.name: i18nc("@action:button", "LAP")
@@ -152,11 +170,11 @@ ColumnLayout {
                     source: "chronometer-lap"
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 14
-                    color: root.themeColors.buttonFg
+                    color: stopwatchRoot.themeColors.buttonFg
                 }
                 Text {
                     text: i18nc("@action:button", "LAP")
-                    color: root.themeColors.buttonFg
+                    color: stopwatchRoot.themeColors.buttonFg
                     font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
                     font.weight: Font.Bold
                     font.letterSpacing: 1.1
@@ -178,9 +196,9 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 34
             radius: 6
-            color: resetMouse.containsMouse ? root.themeColors.buttonBgHover : root.themeColors.buttonBg
+            color: resetMouse.containsMouse ? stopwatchRoot.themeColors.buttonBgHover : stopwatchRoot.themeColors.buttonBg
             border.width: 1
-            border.color: root.themeColors.cardBorder
+            border.color: stopwatchRoot.themeColors.cardBorder
 
             Accessible.name: i18nc("@action:button", "RESET")
             Accessible.role: Accessible.Button
@@ -192,11 +210,11 @@ ColumnLayout {
                     source: "chronometer-reset"
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 14
-                    color: root.themeColors.textSecondary
+                    color: stopwatchRoot.themeColors.textSecondary
                 }
                 Text {
                     text: i18nc("@action:button", "RESET")
-                    color: root.themeColors.textSecondary
+                    color: stopwatchRoot.themeColors.textSecondary
                     font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
                     font.weight: Font.Bold
                     font.letterSpacing: 1.1
@@ -219,9 +237,9 @@ ColumnLayout {
         Layout.minimumHeight: Kirigami.Units.gridUnit * 3.5
         visible: !stopwatchRoot.stopwatchData.laps || stopwatchRoot.stopwatchData.laps.length === 0
         radius: 6
-        color: root.themeColors.subCardBg
+        color: stopwatchRoot.themeColors.subCardBg
         border.width: 1
-        border.color: root.themeColors.cardBorder
+        border.color: stopwatchRoot.themeColors.cardBorder
 
         ColumnLayout {
             anchors.centerIn: parent
@@ -231,12 +249,12 @@ ColumnLayout {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: 18
                 Layout.preferredHeight: 18
-                color: root.themeColors.textMuted
+                color: stopwatchRoot.themeColors.textMuted
             }
             Text {
                 Layout.alignment: Qt.AlignHCenter
                 text: i18nc("@info:placeholder", "Press LAP while running to record split times")
-                color: root.themeColors.textMuted
+                color: stopwatchRoot.themeColors.textMuted
                 font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
                 font.weight: Font.Medium
             }
@@ -259,7 +277,7 @@ ColumnLayout {
                 width: lapListView.width
                 height: 24
                 radius: 4
-                color: index % 2 === 0 ? root.themeColors.rowAlt : "transparent"
+                color: index % 2 === 0 ? stopwatchRoot.themeColors.rowAlt : "transparent"
 
                 RowLayout {
                     anchors.fill: parent
@@ -268,7 +286,7 @@ ColumnLayout {
 
                     Text {
                         text: i18n("Lap %1", modelData.lapNumber)
-                        color: root.themeColors.textMuted
+                        color: stopwatchRoot.themeColors.textMuted
                         font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
                         font.family: "monospace"
                     }
@@ -277,7 +295,7 @@ ColumnLayout {
 
                     Text {
                         text: "+" + modelData.splitTime
-                        color: root.themeColors.textSecondary
+                        color: stopwatchRoot.themeColors.textSecondary
                         font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
                         font.family: "monospace"
                     }
@@ -286,7 +304,7 @@ ColumnLayout {
 
                     Text {
                         text: modelData.totalTime
-                        color: root.themeColors.textPrimary
+                        color: stopwatchRoot.themeColors.textPrimary
                         font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
                         font.family: "monospace"
                         font.weight: Font.Bold

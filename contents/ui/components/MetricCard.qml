@@ -10,6 +10,17 @@ Kirigami.ShadowedRectangle {
     property color accentColor: "#00E599"
     property bool isHighlighted: false
     property bool isCompact: cardRoot.width < Kirigami.Units.gridUnit * 4.2
+    property var themeColors: (typeof root !== "undefined" && root && root.themeColors) ? root.themeColors : ({
+        subCardBg: Kirigami.Theme.backgroundColor,
+        subCardHover: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.09),
+        cardBorder: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.12),
+        cardBorderHover: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.22),
+        specularGlint: Qt.rgba(1, 1, 1, 0.25),
+        textPrimary: Kirigami.Theme.textColor,
+        textSecondary: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.75),
+        textMuted: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.45)
+    })
+    property bool isSystemTheme: (typeof root !== "undefined" && root) ? root.isSystemTheme : true
 
     Layout.fillWidth: true
     Layout.fillHeight: true
@@ -17,17 +28,17 @@ Kirigami.ShadowedRectangle {
     Layout.minimumHeight: isCompact ? Kirigami.Units.gridUnit * 2.5 : Kirigami.Units.gridUnit * 3.2
 
     radius: 8
-    color: mouseArea.containsMouse ? root.themeColors.subCardHover : root.themeColors.subCardBg
+    color: mouseArea.containsMouse ? cardRoot.themeColors.subCardHover : cardRoot.themeColors.subCardBg
 
     Behavior on color { ColorAnimation { duration: 150 } }
 
     border.width: 1
-    border.color: mouseArea.containsMouse ? root.themeColors.cardBorderHover : root.themeColors.cardBorder
+    border.color: mouseArea.containsMouse ? cardRoot.themeColors.cardBorderHover : cardRoot.themeColors.cardBorder
 
     Behavior on border.color { ColorAnimation { duration: 150 } }
 
     shadow.size: mouseArea.containsMouse ? 12 : 4
-    shadow.color: root.isSystemTheme ? Qt.rgba(0, 0, 0, 0.15) : (mouseArea.containsMouse ? Qt.rgba(0, 0, 0, 0.6) : Qt.rgba(0, 0, 0, 0.3))
+    shadow.color: cardRoot.isSystemTheme ? Qt.rgba(0, 0, 0, 0.15) : (mouseArea.containsMouse ? Qt.rgba(0, 0, 0, 0.6) : Qt.rgba(0, 0, 0, 0.3))
     shadow.yOffset: 2
 
     // Top edge sub-pixel highlight (Vercel style specular line)
@@ -41,7 +52,7 @@ Kirigami.ShadowedRectangle {
         gradient: Gradient {
             orientation: Gradient.Horizontal
             GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.04) }
-            GradientStop { position: 0.5; color: mouseArea.containsMouse ? root.themeColors.specularGlint : Qt.rgba(1, 1, 1, 0.15) }
+            GradientStop { position: 0.5; color: mouseArea.containsMouse ? cardRoot.themeColors.specularGlint : Qt.rgba(1, 1, 1, 0.15) }
             GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.04) }
         }
     }
@@ -63,7 +74,7 @@ Kirigami.ShadowedRectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             text: cardRoot.value
-            color: cardRoot.isHighlighted ? cardRoot.accentColor : root.themeColors.textPrimary
+            color: cardRoot.isHighlighted ? cardRoot.accentColor : cardRoot.themeColors.textPrimary
             font.family: "monospace"
             font.weight: Font.Bold
             font.pixelSize: isCompact ? Math.max(14, cardRoot.height * 0.42) : Math.max(18, cardRoot.height * 0.48)
@@ -78,7 +89,7 @@ Kirigami.ShadowedRectangle {
         Text {
             Layout.fillWidth: true
             text: cardRoot.unit
-            color: mouseArea.containsMouse ? root.themeColors.textSecondary : root.themeColors.textMuted
+            color: mouseArea.containsMouse ? cardRoot.themeColors.textSecondary : cardRoot.themeColors.textMuted
             font.family: "sans-serif"
             font.weight: Font.DemiBold
             font.pixelSize: isCompact ? 8 : 10

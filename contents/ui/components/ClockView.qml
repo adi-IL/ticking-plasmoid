@@ -17,6 +17,14 @@ ColumnLayout {
     })
 
     property color accentColor: "#00E599"
+    property var themeColors: (typeof root !== "undefined" && root && root.themeColors) ? root.themeColors : ({
+        subCardBg: Kirigami.Theme.backgroundColor,
+        cardBorder: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.12),
+        specularGlint: Qt.rgba(1, 1, 1, 0.25),
+        textPrimary: Kirigami.Theme.textColor,
+        textSecondary: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.75),
+        textMuted: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.45)
+    })
 
     spacing: Kirigami.Units.largeSpacing
 
@@ -27,9 +35,9 @@ ColumnLayout {
         Layout.fillHeight: true
         Layout.minimumHeight: Kirigami.Units.gridUnit * 5.5
         radius: 8
-        color: root.themeColors.subCardBg
+        color: clockRoot.themeColors.subCardBg
         border.width: 1
-        border.color: root.themeColors.cardBorder
+        border.color: clockRoot.themeColors.cardBorder
 
         // Top edge specular line
         Rectangle {
@@ -42,7 +50,7 @@ ColumnLayout {
             gradient: Gradient {
                 orientation: Gradient.Horizontal
                 GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.04) }
-                GradientStop { position: 0.5; color: root.themeColors.specularGlint }
+                GradientStop { position: 0.5; color: clockRoot.themeColors.specularGlint }
                 GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.04) }
             }
         }
@@ -60,7 +68,7 @@ ColumnLayout {
 
                 Text {
                     text: clockRoot.clockData.hours
-                    color: root.themeColors.textPrimary
+                    color: clockRoot.themeColors.textPrimary
                     font.family: "monospace"
                     font.weight: Font.Bold
                     font.pixelSize: parent.responsiveFontSize
@@ -77,7 +85,7 @@ ColumnLayout {
 
                 Text {
                     text: clockRoot.clockData.minutes
-                    color: root.themeColors.textPrimary
+                    color: clockRoot.themeColors.textPrimary
                     font.family: "monospace"
                     font.weight: Font.Bold
                     font.pixelSize: parent.responsiveFontSize
@@ -104,7 +112,7 @@ ColumnLayout {
                 Text {
                     visible: clockRoot.clockData.amPm !== ""
                     text: clockRoot.clockData.amPm
-                    color: root.themeColors.textSecondary
+                    color: clockRoot.themeColors.textSecondary
                     font.family: "sans-serif"
                     font.weight: Font.Bold
                     font.pixelSize: 13
@@ -117,7 +125,7 @@ ColumnLayout {
             Text {
                 Layout.alignment: Qt.AlignHCenter
                 text: clockRoot.clockData.dateString
-                color: root.themeColors.textSecondary
+                color: clockRoot.themeColors.textSecondary
                 font.family: "sans-serif"
                 font.weight: Font.DemiBold
                 font.pixelSize: 11
@@ -137,15 +145,15 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 28
             radius: 6
-            color: root.themeColors.subCardBg
+            color: clockRoot.themeColors.subCardBg
             border.width: 1
-            border.color: root.themeColors.cardBorder
+            border.color: clockRoot.themeColors.cardBorder
 
             RowLayout {
                 anchors.centerIn: parent
                 spacing: 6
-                Text { text: i18nc("@label:time", "ZONE:"); color: root.themeColors.textMuted; font.pixelSize: 9; font.weight: Font.Bold }
-                Text { text: clockRoot.clockData.timeZone; color: root.themeColors.textPrimary; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
+                Text { text: i18nc("@label:time", "ZONE:"); color: clockRoot.themeColors.textMuted; font.pixelSize: 9; font.weight: Font.Bold }
+                Text { text: clockRoot.clockData.timeZone; color: clockRoot.themeColors.textPrimary; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
             }
         }
 
@@ -154,15 +162,15 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 28
             radius: 6
-            color: root.themeColors.subCardBg
+            color: clockRoot.themeColors.subCardBg
             border.width: 1
-            border.color: root.themeColors.cardBorder
+            border.color: clockRoot.themeColors.cardBorder
 
             RowLayout {
                 anchors.centerIn: parent
                 spacing: 6
-                Text { text: i18nc("@label:time", "DAY:"); color: root.themeColors.textMuted; font.pixelSize: 9; font.weight: Font.Bold }
-                Text { text: "" + clockRoot.clockData.dayOfYear; color: root.themeColors.textPrimary; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
+                Text { text: i18nc("@label:time", "DAY:"); color: clockRoot.themeColors.textMuted; font.pixelSize: 9; font.weight: Font.Bold }
+                Text { text: "" + clockRoot.clockData.dayOfYear; color: clockRoot.themeColors.textPrimary; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
             }
         }
 
@@ -171,15 +179,15 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 28
             radius: 6
-            color: root.themeColors.subCardBg
+            color: clockRoot.themeColors.subCardBg
             border.width: 1
-            border.color: root.themeColors.cardBorder
+            border.color: clockRoot.themeColors.cardBorder
 
             RowLayout {
                 anchors.centerIn: parent
                 spacing: 6
-                Text { text: i18nc("@label:time", "ISO WK:"); color: root.themeColors.textMuted; font.pixelSize: 9; font.weight: Font.Bold }
-                Text { text: "#" + clockRoot.clockData.weekOfYear; color: root.themeColors.textPrimary; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
+                Text { text: i18nc("@label:time", "ISO WK:"); color: clockRoot.themeColors.textMuted; font.pixelSize: 9; font.weight: Font.Bold }
+                Text { text: "#" + clockRoot.clockData.weekOfYear; color: clockRoot.themeColors.textPrimary; font.pixelSize: 10; font.family: "monospace"; font.weight: Font.Bold }
             }
         }
     }

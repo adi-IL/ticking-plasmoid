@@ -9,6 +9,11 @@ ColumnLayout {
     property string percentageText: "0.000%"
     property string remainingText: ""
     property color accentColor: "#00E599"
+    property var themeColors: (typeof root !== "undefined" && root && root.themeColors) ? root.themeColors : ({
+        textMuted: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.45),
+        cardBorder: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.12)
+    })
+    property bool isSystemTheme: (typeof root !== "undefined" && root) ? root.isSystemTheme : true
 
     spacing: Kirigami.Units.smallSpacing
 
@@ -18,7 +23,7 @@ ColumnLayout {
 
         Text {
             text: i18nc("@label:progress", "JOURNEY TO HORIZON")
-            color: root.themeColors.textMuted
+            color: progressRoot.themeColors.textMuted
             font.family: "sans-serif"
             font.weight: Font.DemiBold
             font.pixelSize: 10
@@ -45,9 +50,9 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 6
         radius: 3
-        color: root.isSystemTheme ? Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.08) : Qt.rgba(0.12, 0.12, 0.12, 0.9)
+        color: progressRoot.isSystemTheme ? Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.08) : Qt.rgba(0.12, 0.12, 0.12, 0.9)
         border.width: 1
-        border.color: root.themeColors.cardBorder
+        border.color: progressRoot.themeColors.cardBorder
 
         // Filled active bar
         Rectangle {

@@ -19,6 +19,8 @@ ColumnLayout {
     property bool showMilliseconds: true
     property bool showProgress: true
     property color accentColor: "#00E599"
+    property var themeColors: (typeof root !== "undefined" && root && root.themeColors) ? root.themeColors : null
+    property bool isSystemTheme: (typeof root !== "undefined" && root) ? root.isSystemTheme : true
 
     spacing: Kirigami.Units.smallSpacing
 
@@ -32,18 +34,24 @@ ColumnLayout {
             value: countdownRoot.timeData.days
             unit: i18nc("@label:timeunit", "Days")
             accentColor: countdownRoot.accentColor
+            themeColors: countdownRoot.themeColors
+            isSystemTheme: countdownRoot.isSystemTheme
         }
 
         MetricCard {
             value: countdownRoot.timeData.hours
             unit: i18nc("@label:timeunit", "Hours")
             accentColor: countdownRoot.accentColor
+            themeColors: countdownRoot.themeColors
+            isSystemTheme: countdownRoot.isSystemTheme
         }
 
         MetricCard {
             value: countdownRoot.timeData.minutes
             unit: i18nc("@label:timeunit", "Mins")
             accentColor: countdownRoot.accentColor
+            themeColors: countdownRoot.themeColors
+            isSystemTheme: countdownRoot.isSystemTheme
         }
 
         MetricCard {
@@ -51,6 +59,8 @@ ColumnLayout {
             unit: i18nc("@label:timeunit", "Secs")
             accentColor: countdownRoot.accentColor
             isHighlighted: true
+            themeColors: countdownRoot.themeColors
+            isSystemTheme: countdownRoot.isSystemTheme
         }
 
         MetricCard {
@@ -58,6 +68,8 @@ ColumnLayout {
             value: countdownRoot.timeData.milliseconds
             unit: i18nc("@label:timeunit", "Msec")
             accentColor: countdownRoot.accentColor
+            themeColors: countdownRoot.themeColors
+            isSystemTheme: countdownRoot.isSystemTheme
         }
     }
 
@@ -97,5 +109,7 @@ ColumnLayout {
         progressRatio: countdownRoot.timeData.progressRatio
         percentageText: countdownRoot.timeData.progressPercent
         accentColor: countdownRoot.accentColor
+        themeColors: countdownRoot.themeColors
+        isSystemTheme: countdownRoot.isSystemTheme
     }
 }
