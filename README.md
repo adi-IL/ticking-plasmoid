@@ -63,23 +63,21 @@ Install the `.plasmoid` zip, not the git working tree. `kpackagetool6 --install 
 
 ### From a release (preferred)
 
-Download `org.adi_il.ticking-1.5.0.plasmoid` from [GitHub Releases](https://github.com/adi-IL/ticking-plasmoid/releases/latest) or the [KDE Store](https://store.kde.org/p/2370240/).
+Download `org.adi_il.ticking-1.5.1.plasmoid` from [GitHub Releases](https://github.com/adi-IL/ticking-plasmoid/releases/latest) or the [KDE Store](https://store.kde.org/p/2370240/).
 
 ```bash
-kpackagetool6 -t Plasma/Applet --install org.adi_il.ticking-1.5.0.plasmoid
-# later:
-kpackagetool6 -t Plasma/Applet --upgrade org.adi_il.ticking-1.5.0.plasmoid
+kpackagetool6 -t Plasma/Applet --install org.adi_il.ticking-1.5.1.plasmoid
+# or if upgrading an earlier build:
+kpackagetool6 -t Plasma/Applet --upgrade org.adi_il.ticking-1.5.1.plasmoid
 ```
 
-`--upgrade` replaces package files and keeps your applet settings (dates, 12h/24h, quote key).
-
-### From git
+### Option C: Build the `.plasmoid` from source
 
 ```bash
 git clone https://github.com/adi-IL/ticking-plasmoid.git
 cd ticking-plasmoid
 ./scripts/package.sh
-kpackagetool6 -t Plasma/Applet --install org.adi_il.ticking-1.5.0.plasmoid
+kpackagetool6 -t Plasma/Applet --install org.adi_il.ticking-1.5.1.plasmoid
 ```
 
 ### Manual copy
