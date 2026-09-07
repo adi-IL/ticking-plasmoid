@@ -31,7 +31,7 @@ function cleanQuoteAuthor(author) {
     cleaned = cleaned.replace(/^["'\u201c\u201d\u00ab\u00bb]+|["'\u201c\u201d\u00ab\u00bb]+$/g, "").trim();
 
     // Reject commentary lines masquerading as authors
-    if (/^(attributed to|possibly|maybe|this is|that's|probably|unknown|an? \w+ quote)/i.test(cleaned)) {
+    if (/^(attributed to|possibly|maybe|this is|that's|probably|unknown|an? \w+ quote|not fitting|unattributed|anonymous|n\/a)/i.test(cleaned)) {
         return "";
     }
 
