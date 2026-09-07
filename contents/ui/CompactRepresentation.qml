@@ -42,7 +42,7 @@ Item {
         RowLayout {
             id: compactLayout
             anchors.centerIn: parent
-            spacing: 6
+            spacing: 4
 
             Kirigami.Icon {
                 source: Qt.resolvedUrl("../icons/org.adi_il.ticking.svg")
@@ -58,9 +58,10 @@ Item {
                     : (root.countdownData.days + "d " + root.countdownData.hours + "h")
                 color: root.themeColors.textPrimary
                 font.family: "monospace"
-                font.weight: Font.Bold
-                font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
+                font.weight: Font.DemiBold
+                font.pixelSize: Math.max(9, Kirigami.Theme.smallFont.pixelSize - 1)
                 font.features: { "tnum": 1 }
+                opacity: 0.92
                 visible: compactRoot.showBadge
             }
         }

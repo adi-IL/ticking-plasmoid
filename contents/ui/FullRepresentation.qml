@@ -77,9 +77,9 @@ Item {
                 spacing: Kirigami.Units.smallSpacing
 
                 Kirigami.ShadowedRectangle {
-                    Layout.preferredHeight: 22
-                    Layout.preferredWidth: liveRow.implicitWidth + 14
-                    radius: 11
+                    Layout.preferredHeight: 16
+                    Layout.preferredWidth: liveRow.implicitWidth + 10
+                    radius: 8
                     color: root.themeColors.livePillBg
                     border.width: 1
                     border.color: root.themeColors.livePillBorder
@@ -87,28 +87,28 @@ Item {
                     RowLayout {
                         id: liveRow
                         anchors.centerIn: parent
-                        spacing: 6
+                        spacing: 4
 
                         Rectangle {
-                            width: 6
-                            height: 6
-                            radius: 3
+                            width: 4
+                            height: 4
+                            radius: 2
                             color: root.themeColors.accentColor
 
                             SequentialAnimation on opacity {
                                 running: Plasmoid.expanded || Plasmoid.formFactor === PlasmaCore.Types.Planar
                                 loops: Animation.Infinite
-                                NumberAnimation { from: 1.0; to: 0.3; duration: 900; easing.type: Easing.InOutQuad }
-                                NumberAnimation { from: 0.3; to: 1.0; duration: 900; easing.type: Easing.InOutQuad }
+                                NumberAnimation { from: 1.0; to: 0.35; duration: 900; easing.type: Easing.InOutQuad }
+                                NumberAnimation { from: 0.35; to: 1.0; duration: 900; easing.type: Easing.InOutQuad }
                             }
                         }
 
                         Text {
                             text: i18nc("@label:status", "LIVE")
                             color: root.themeColors.accentColor
-                            font.pixelSize: Math.max(10, Kirigami.Theme.smallFont.pixelSize)
-                            font.weight: Font.Bold
-                            font.letterSpacing: 1.1
+                            font.pixelSize: Math.max(8.5, Kirigami.Theme.smallFont.pixelSize - 2)
+                            font.weight: Font.DemiBold
+                            font.letterSpacing: 0.8
                         }
                     }
                 }
