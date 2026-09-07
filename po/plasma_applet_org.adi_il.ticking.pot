@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: org.adi_il.ticking 1.4.1\n"
+"Project-Id-Version: org.adi_il.ticking 1.5.0\n"
 "Report-Msgid-Bugs-To: https://github.com/adi-IL/ticking-plasmoid/issues\n"
-"POT-Creation-Date: 2026-09-06 03:45+0000\n"
+"POT-Creation-Date: 2026-09-07 19:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <kde-i18n-doc@kde.org>\n"
@@ -38,124 +38,124 @@ msgctxt "@action:button"
 msgid "Configure Ticking"
 msgstr ""
 
-#: contents/ui/components/ClockView.qml:147
+#: contents/ui/components/ClockView.qml:155
 msgctxt "@label:time"
 msgid "ZONE:"
 msgstr ""
 
-#: contents/ui/components/ClockView.qml:164
+#: contents/ui/components/ClockView.qml:172
 msgctxt "@label:time"
 msgid "DAY:"
 msgstr ""
 
-#: contents/ui/components/ClockView.qml:181
+#: contents/ui/components/ClockView.qml:189
 msgctxt "@label:time"
 msgid "ISO WK:"
 msgstr ""
 
-#: contents/ui/components/CountdownView.qml:33
+#: contents/ui/components/CountdownView.qml:35
 msgctxt "@label:timeunit"
 msgid "Days"
 msgstr ""
 
-#: contents/ui/components/CountdownView.qml:39
+#: contents/ui/components/CountdownView.qml:43
 msgctxt "@label:timeunit"
 msgid "Hours"
 msgstr ""
 
-#: contents/ui/components/CountdownView.qml:45
+#: contents/ui/components/CountdownView.qml:51
 msgctxt "@label:timeunit"
 msgid "Mins"
 msgstr ""
 
-#: contents/ui/components/CountdownView.qml:51
+#: contents/ui/components/CountdownView.qml:59
 msgctxt "@label:timeunit"
 msgid "Secs"
 msgstr ""
 
-#: contents/ui/components/CountdownView.qml:59
+#: contents/ui/components/CountdownView.qml:69
 msgctxt "@label:timeunit"
 msgid "Msec"
 msgstr ""
 
-#: contents/ui/components/CountdownView.qml:84
+#: contents/ui/components/CountdownView.qml:96
 msgctxt "@label:status"
 msgid "HORIZON REACHED - 100.000% COMPLETED"
 msgstr ""
 
-#: contents/ui/components/ProgressTrack.qml:20
+#: contents/ui/components/ProgressTrack.qml:25
 msgctxt "@label:progress"
 msgid "JOURNEY TO HORIZON"
 msgstr ""
 
-#: contents/ui/components/QuoteBar.qml:82
+#: contents/ui/components/QuoteBar.qml:91
 msgctxt "@info:placeholder"
 msgid "Focus on the horizon ahead."
 msgstr ""
 
-#: contents/ui/components/QuoteBar.qml:122
-#: contents/ui/components/QuoteBar.qml:147
+#: contents/ui/components/QuoteBar.qml:131
+#: contents/ui/components/QuoteBar.qml:156
 msgctxt "@info:tooltip"
 msgid "Copied to clipboard"
 msgstr ""
 
-#: contents/ui/components/QuoteBar.qml:123
-#: contents/ui/components/QuoteBar.qml:148
+#: contents/ui/components/QuoteBar.qml:132
+#: contents/ui/components/QuoteBar.qml:157
 msgctxt "@action:button"
 msgid "Copy quote"
 msgstr ""
 
-#: contents/ui/components/QuoteBar.qml:158
-#: contents/ui/components/QuoteBar.qml:179
+#: contents/ui/components/QuoteBar.qml:167
+#: contents/ui/components/QuoteBar.qml:188
 msgctxt "@action:button"
 msgid "New quote"
 msgstr ""
 
-#: contents/ui/components/SegmentedNav.qml:12
+#: contents/ui/components/SegmentedNav.qml:22
 msgctxt "@title:tab"
 msgid "COUNTDOWN"
 msgstr ""
 
-#: contents/ui/components/SegmentedNav.qml:13
+#: contents/ui/components/SegmentedNav.qml:23
 msgctxt "@title:tab"
 msgid "CLOCK"
 msgstr ""
 
-#: contents/ui/components/SegmentedNav.qml:14
+#: contents/ui/components/SegmentedNav.qml:24
 msgctxt "@title:tab"
 msgid "STOPWATCH"
 msgstr ""
 
-#: contents/ui/components/StopwatchView.qml:92
-#: contents/ui/components/StopwatchView.qml:109
+#: contents/ui/components/StopwatchView.qml:110
+#: contents/ui/components/StopwatchView.qml:127
 msgctxt "@action:button"
 msgid "PAUSE"
 msgstr ""
 
-#: contents/ui/components/StopwatchView.qml:93
-#: contents/ui/components/StopwatchView.qml:110
+#: contents/ui/components/StopwatchView.qml:111
+#: contents/ui/components/StopwatchView.qml:128
 msgctxt "@action:button"
 msgid "START"
 msgstr ""
 
-#: contents/ui/components/StopwatchView.qml:145
-#: contents/ui/components/StopwatchView.qml:158
+#: contents/ui/components/StopwatchView.qml:163
+#: contents/ui/components/StopwatchView.qml:176
 msgctxt "@action:button"
 msgid "LAP"
 msgstr ""
 
-#: contents/ui/components/StopwatchView.qml:185
-#: contents/ui/components/StopwatchView.qml:198
+#: contents/ui/components/StopwatchView.qml:203
+#: contents/ui/components/StopwatchView.qml:216
 msgctxt "@action:button"
 msgid "RESET"
 msgstr ""
 
-#: contents/ui/components/StopwatchView.qml:238
+#: contents/ui/components/StopwatchView.qml:256
 msgctxt "@info:placeholder"
 msgid "Press LAP while running to record split times"
 msgstr ""
 
-#: contents/ui/components/StopwatchView.qml:270
+#: contents/ui/components/StopwatchView.qml:288
 msgid "Lap %1"
 msgstr ""
 
@@ -165,7 +165,7 @@ msgid "Milestone title:"
 msgstr ""
 
 #: contents/ui/configGeneral.qml:143
-#: contents/ui/main.qml:91
+#: contents/ui/main.qml:92
 msgctxt "@title:window default milestone"
 msgid "NEW HORIZON"
 msgstr ""
@@ -508,21 +508,21 @@ msgctxt "@info"
 msgid "Stored unencrypted in the Plasma applet config. Leave empty to use the offline library."
 msgstr ""
 
-#: contents/ui/main.qml:96
+#: contents/ui/main.qml:97
 msgctxt "@info:tooltip"
 msgid "Horizon reached - 100.000% completed"
 msgstr ""
 
-#: contents/ui/main.qml:97
+#: contents/ui/main.qml:98
 msgid "%1 days, %2 hours remaining"
 msgstr ""
 
-#: contents/ui/main.qml:101
+#: contents/ui/main.qml:102
 msgctxt "@action:inmenu"
 msgid "Reset baseline to today"
 msgstr ""
 
-#: contents/ui/main.qml:107
+#: contents/ui/main.qml:108
 msgctxt "@action:inmenu"
 msgid "Reset stopwatch"
 msgstr ""

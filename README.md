@@ -41,7 +41,7 @@ Compact panel icon with an optional remaining-time badge. Expands to the full HU
 - **Quick presets:** New Year 2027, End of 2026, 100-day goal, October 25 2026.
 - **Countdown:** Days, hours, minutes, seconds, centiseconds, progress track.
 - **Clock:** Locale date, 12h/24h, UTC offset, day-of-year, ISO week.
-- **Stopwatch:** Start, pause, lap, reset, split history.
+- **Stopwatch:** Start, pause, lap, reset, split history, with state and split history persisted across Plasma restarts.
 - **Idle timers:** Collapsed panel ticks at 30s (badge on) or 60s (badge off). Visible countdown with milliseconds uses 10 FPS. Running stopwatch uses 25 FPS. Quote fetches run only while the HUD is visible.
 - **Customization:** Default tab, glass opacity, accent, panel badge, sub-second ticker, quote rhythm.
 - **Localization:** Gettext template at `po/plasma_applet_org.adi_il.ticking.pot`. No compiled `.mo` catalogs yet.
@@ -63,12 +63,12 @@ Install the `.plasmoid` zip, not the git working tree. `kpackagetool6 --install 
 
 ### From a release (preferred)
 
-Download `org.adi_il.ticking-1.4.1.plasmoid` from [GitHub Releases](https://github.com/adi-IL/ticking-plasmoid/releases/latest) or the [KDE Store](https://store.kde.org/p/2370240/).
+Download `org.adi_il.ticking-1.5.0.plasmoid` from [GitHub Releases](https://github.com/adi-IL/ticking-plasmoid/releases/latest) or the [KDE Store](https://store.kde.org/p/2370240/).
 
 ```bash
-kpackagetool6 -t Plasma/Applet --install org.adi_il.ticking-1.4.1.plasmoid
+kpackagetool6 -t Plasma/Applet --install org.adi_il.ticking-1.5.0.plasmoid
 # later:
-kpackagetool6 -t Plasma/Applet --upgrade org.adi_il.ticking-1.4.1.plasmoid
+kpackagetool6 -t Plasma/Applet --upgrade org.adi_il.ticking-1.5.0.plasmoid
 ```
 
 `--upgrade` replaces package files and keeps your applet settings (dates, 12h/24h, quote key).
@@ -79,7 +79,7 @@ kpackagetool6 -t Plasma/Applet --upgrade org.adi_il.ticking-1.4.1.plasmoid
 git clone https://github.com/adi-IL/ticking-plasmoid.git
 cd ticking-plasmoid
 ./scripts/package.sh
-kpackagetool6 -t Plasma/Applet --install org.adi_il.ticking-1.4.1.plasmoid
+kpackagetool6 -t Plasma/Applet --install org.adi_il.ticking-1.5.0.plasmoid
 ```
 
 ### Manual copy

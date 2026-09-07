@@ -46,6 +46,13 @@ def main():
                         entries[key] = []
                     entries[key].append((p, idx))
 
+    version = "1.5.0"
+    if os.path.exists("metadata.json"):
+        import json
+        with open("metadata.json", "r", encoding="utf-8") as mfp:
+            meta = json.load(mfp)
+            version = meta.get("KPlugin", {}).get("Version", version)
+
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M+0000")
     header = f"""# Translation template for Ticking Plasma 6 widget.
 # Copyright (C) {datetime.datetime.now().year} Aditya Gaurav
@@ -55,7 +62,7 @@ def main():
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: org.adi_il.ticking 1.4.1\\n"
+"Project-Id-Version: org.adi_il.ticking {version}\\n"
 "Report-Msgid-Bugs-To: https://github.com/adi-IL/ticking-plasmoid/issues\\n"
 "POT-Creation-Date: {now}\\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\\n"
