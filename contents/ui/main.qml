@@ -163,14 +163,11 @@ PlasmoidItem {
     property int lastClockSec: -1
     property int lastCountdownSec: -1
 
-    Connections {
-        target: Plasmoid
-        function onExpandedChanged() {
-            if (Plasmoid.expanded) {
-                root.lastCountdownSec = -1;
-                root.lastClockSec = -1;
-                root.updateAllMetrics();
-            }
+    onExpandedChanged: {
+        if (root.expanded) {
+            root.lastCountdownSec = -1;
+            root.lastClockSec = -1;
+            root.updateAllMetrics();
         }
     }
 
