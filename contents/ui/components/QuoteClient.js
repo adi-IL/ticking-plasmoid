@@ -6,8 +6,8 @@
 var DEFAULT_QUOTE_TEXT = "The only reason for time is so that everything does not happen at once.";
 var DEFAULT_QUOTE_AUTHOR = "Albert Einstein";
 var ZEN_ENDPOINT = "https://opencode.ai/zen/v1/chat/completions";
-var REMOTE_MODELS = ["nemotron-3.5-lightning-free", "nemotron-3-ultra-free"];
-var TIMEOUT_MS = 12000;
+var REMOTE_MODELS = ["nemotron-3-ultra-free", "nemotron-3.5-lightning-free"];
+var TIMEOUT_MS = 25000;
 
 function cleanQuoteText(text) {
     if (!text || typeof text !== "string") {
@@ -83,7 +83,7 @@ function parseModelContent(content) {
     qText = cleanQuoteText(qText);
     qAuthor = cleanQuoteAuthor(qAuthor);
 
-    if (qText.length === 0) {
+    if (qText.length === 0 || qAuthor.length === 0 || qText.length > 280) {
         return null;
     }
     return { text: qText, author: qAuthor };
@@ -130,7 +130,7 @@ function fetchQuote(params, quoteLibrary, callbacks) {
     }
 
     var topic = resolveTopic(archetype, params.milestoneTitle, params.personalFocus);
-    var prompt = "Quote about " + topic + ". Format: Quote - Author";
+    var prompt = "Famous quote about " + topic + ". 1 line only: \"Quote\" - Author";
 
     var modelIndex = 0;
 
@@ -151,6 +151,7 @@ function fetchQuote(params, quoteLibrary, callbacks) {
         xhr.open("POST", ZEN_ENDPOINT, true);
         xhr.setRequestHeader("Authorization", "Bearer " + apiKey);
         xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("x-session-id", "ticking-" + Date.now());
         xhr.timeout = TIMEOUT_MS;
 
         xhr.onreadystatechange = function () {
@@ -158,16 +159,22 @@ function fetchQuote(params, quoteLibrary, callbacks) {
                 if (xhr.status === 200) {
                     try {
                         var res = JSON.parse(xhr.responseText);
-                        var content = res.choices && res.choices[0] && res.choices[0].message ? res.choices[0].message.content : "";
-                        var parsed = parseModelContent(content);
-                        if (parsed && parsed.text.length > 0) {
-                            onSuccess(parsed.text, parsed.author);
-                            onComplete();
-                            return;
+                        if (res.error) {
+                            console.warn("Ticking QuoteClient: upstream error on", modelName, res.error.message);
+                        } else {
+                            var content = res.choices && res.choices[0] && res.choices[0].message ? res.choices[0].message.content : "";
+                            var parsed = parseModelContent(content);
+                            if (parsed && parsed.text.length > 0) {
+                                onSuccess(parsed.text, parsed.author);
+                                onComplete();
+                                return;
+                            }
                         }
                     } catch (e) {
                         console.warn("Ticking QuoteClient: parse failed:", e);
                     }
+                } else {
+                    console.warn("Ticking QuoteClient: model", modelName, "returned status", xhr.status, xhr.responseText);
                 }
                 tryNextModel();
             }
@@ -179,7 +186,7 @@ function fetchQuote(params, quoteLibrary, callbacks) {
         var payload = JSON.stringify({
             model: modelName,
             messages: [{ role: "user", content: prompt }],
-            max_tokens: 1000,
+            max_tokens: 800,
             temperature: 0.7
         });
         xhr.send(payload);
