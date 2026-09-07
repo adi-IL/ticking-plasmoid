@@ -139,6 +139,7 @@ PlasmoidItem {
     property double stopwatchElapsedMs: 0
     property double stopwatchLastTimestamp: 0
     property double stopwatchLastLapMs: 0
+    property double stopwatchLastSyncMs: 0
     property var stopwatchLaps: []
 
     property var stopwatchData: ({
@@ -414,6 +415,11 @@ PlasmoidItem {
             var delta = currentClock - root.stopwatchLastTimestamp;
             root.stopwatchLastTimestamp = currentClock;
             root.stopwatchElapsedMs += delta;
+            if (root.stopwatchElapsedMs - root.stopwatchLastSyncMs >= 5000) {
+                root.stopwatchLastSyncMs = root.stopwatchElapsedMs;
+                Plasmoid.configuration.stopwatchElapsedMs = root.stopwatchElapsedMs;
+                Plasmoid.configuration.stopwatchStartTimestamp = currentClock;
+            }
             updateStopwatchDisplay();
         }
     }
@@ -439,14 +445,62 @@ PlasmoidItem {
         };
     }
 
+    function restoreStopwatchState() {
+        var running = Plasmoid.configuration.stopwatchRunning || false;
+        var savedElapsed = Plasmoid.configuration.stopwatchElapsedMs || 0;
+        var savedStart = Plasmoid.configuration.stopwatchStartTimestamp || 0;
+        var laps = [];
+
+        var lapsJson = Plasmoid.configuration.stopwatchLapsJson || "";
+        if (lapsJson && lapsJson.length > 0) {
+            try {
+                var parsed = JSON.parse(lapsJson);
+                if (Array.isArray(parsed)) {
+                    laps = parsed;
+                }
+            } catch (e) {
+                laps = [];
+            }
+        }
+
+        root.stopwatchLaps = laps;
+        root.stopwatchLastLapMs = laps.length > 0 ? (savedElapsed || 0) : 0;
+
+        if (running && savedStart > 0) {
+            var now = Date.now();
+            var added = Math.max(0, now - savedStart);
+            root.stopwatchElapsedMs = savedElapsed + added;
+            root.stopwatchLastTimestamp = now;
+            root.stopwatchLastSyncMs = root.stopwatchElapsedMs;
+            root.stopwatchRunning = true;
+            Plasmoid.configuration.stopwatchStartTimestamp = now;
+            Plasmoid.configuration.stopwatchElapsedMs = root.stopwatchElapsedMs;
+        } else {
+            root.stopwatchElapsedMs = Math.max(0, savedElapsed);
+            root.stopwatchLastTimestamp = 0;
+            root.stopwatchLastSyncMs = root.stopwatchElapsedMs;
+            root.stopwatchRunning = false;
+        }
+
+        updateStopwatchDisplay();
+    }
+
     function startStopwatch() {
-        root.stopwatchLastTimestamp = Date.now();
+        var now = Date.now();
+        root.stopwatchLastTimestamp = now;
+        root.stopwatchLastSyncMs = root.stopwatchElapsedMs;
         root.stopwatchRunning = true;
+        Plasmoid.configuration.stopwatchRunning = true;
+        Plasmoid.configuration.stopwatchStartTimestamp = now;
+        Plasmoid.configuration.stopwatchElapsedMs = root.stopwatchElapsedMs;
         updateStopwatchDisplay();
     }
 
     function pauseStopwatch() {
         root.stopwatchRunning = false;
+        Plasmoid.configuration.stopwatchRunning = false;
+        Plasmoid.configuration.stopwatchStartTimestamp = 0;
+        Plasmoid.configuration.stopwatchElapsedMs = root.stopwatchElapsedMs;
         updateStopwatchDisplay();
     }
 
@@ -454,7 +508,12 @@ PlasmoidItem {
         root.stopwatchRunning = false;
         root.stopwatchElapsedMs = 0;
         root.stopwatchLastLapMs = 0;
+        root.stopwatchLastSyncMs = 0;
         root.stopwatchLaps = [];
+        Plasmoid.configuration.stopwatchRunning = false;
+        Plasmoid.configuration.stopwatchStartTimestamp = 0;
+        Plasmoid.configuration.stopwatchElapsedMs = 0;
+        Plasmoid.configuration.stopwatchLapsJson = "[]";
         updateStopwatchDisplay();
     }
 
@@ -483,10 +542,13 @@ PlasmoidItem {
         };
 
         root.stopwatchLaps = [newLap].concat(root.stopwatchLaps);
+        Plasmoid.configuration.stopwatchLapsJson = JSON.stringify(root.stopwatchLaps);
         updateStopwatchDisplay();
     }
 
     Component.onCompleted: {
+        restoreStopwatchState();
+
         var apiKey = (Plasmoid.configuration.quoteApiKey || "").trim();
         if (apiKey.length > 0 && Plasmoid.configuration.showQuoteBar !== false) {
             root.fetchNextQuote(false);

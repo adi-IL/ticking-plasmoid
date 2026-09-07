@@ -119,6 +119,10 @@ def check_main_xml() -> None:
         "quoteApiKey": "String",
         "cachedQuoteText": "String",
         "cachedQuoteAuthor": "String",
+        "stopwatchRunning": "Bool",
+        "stopwatchElapsedMs": "Double",
+        "stopwatchStartTimestamp": "Double",
+        "stopwatchLapsJson": "String",
     }
     for name, typ in expected.items():
         if name not in entries:

@@ -83,5 +83,21 @@
             <default>Albert Einstein</default>
             <label>Cached quote author</label>
         </entry>
+        <entry name="stopwatchRunning" type="Bool">
+            <default>false</default>
+            <label>Persisted stopwatch running state across plasma restarts</label>
+        </entry>
+        <entry name="stopwatchElapsedMs" type="Double">
+            <default>0</default>
+            <label>Persisted stopwatch elapsed time in milliseconds</label>
+        </entry>
+        <entry name="stopwatchStartTimestamp" type="Double">
+            <default>0</default>
+            <label>Timestamp when stopwatch was started for continuous tracking</label>
+        </entry>
+        <entry name="stopwatchLapsJson" type="String">
+            <default>[]</default>
+            <label>Persisted JSON serialized lap splits</label>
+        </entry>
     </group>
 </kcfg>
