@@ -154,11 +154,46 @@ PlasmoidItem {
     })
 
     property int currentViewIndex: Plasmoid.configuration.activeTab || 0
+    onCurrentViewIndexChanged: {
+        root.lastCountdownSec = -1;
+        root.lastClockSec = -1;
+        root.updateAllMetrics();
+    }
+
+    property int lastClockSec: -1
+    property int lastCountdownSec: -1
+
+    Connections {
+        target: Plasmoid
+        function onExpandedChanged() {
+            if (Plasmoid.expanded) {
+                root.lastCountdownSec = -1;
+                root.lastClockSec = -1;
+                root.updateAllMetrics();
+            }
+        }
+    }
 
     Connections {
         target: Plasmoid.configuration
         function onActiveTabChanged() {
             root.currentViewIndex = Plasmoid.configuration.activeTab || 0;
+        }
+        function onTargetTimestampChanged() {
+            root.lastCountdownSec = -1;
+            root.updateAllMetrics();
+        }
+        function onStartTimestampChanged() {
+            root.lastCountdownSec = -1;
+            root.updateAllMetrics();
+        }
+        function onHourFormat24Changed() {
+            root.lastClockSec = -1;
+            root.updateAllMetrics();
+        }
+        function onShowMillisecondsChanged() {
+            root.lastCountdownSec = -1;
+            root.updateAllMetrics();
         }
         function onQuoteApiKeyChanged() {
             root.fetchNextQuote(false);
@@ -327,88 +362,103 @@ PlasmoidItem {
 
     function resetBaselineToNow() {
         Plasmoid.configuration.startTimestamp = formatHorizonDate(new Date());
+        root.lastCountdownSec = -1;
         updateAllMetrics();
     }
 
     function updateAllMetrics() {
         var now = new Date();
         var nowMs = now.getTime();
+        var nowSec = Math.floor(nowMs / 1000);
 
-        var targetMs = root.targetMs;
-        var startMs = root.startMs;
+        var isVisible = (Plasmoid.expanded || Plasmoid.formFactor === PlasmaCore.Types.Planar);
+        var isCountdownActive = isVisible && root.currentViewIndex === 0;
+        var needsSubsecondCountdown = isCountdownActive && Plasmoid.configuration.showMilliseconds;
 
-        var diffMs = targetMs - nowMs;
-        var isExpired = diffMs <= 0;
+        if (needsSubsecondCountdown || nowSec !== root.lastCountdownSec) {
+            root.lastCountdownSec = nowSec;
 
-        var d = 0, h = 0, m = 0, s = 0, ms = 0;
-        if (!isExpired) {
-            d = Math.floor(diffMs / 86400000);
-            h = Math.floor((diffMs % 86400000) / 3600000);
-            m = Math.floor((diffMs % 3600000) / 60000);
-            s = Math.floor((diffMs % 60000) / 1000);
-            ms = Math.floor((diffMs % 1000) / 10);
-        }
+            var targetMs = root.targetMs;
+            var startMs = root.startMs;
 
-        var totalSpan = targetMs - startMs;
-        var elapsedSpan = nowMs - startMs;
-        var ratio = 0.0;
-        if (isExpired) {
-            ratio = 1.0;
-        } else if (nowMs <= startMs) {
-            ratio = 0.0;
-        } else if (totalSpan > 0) {
-            ratio = Math.max(0.0, Math.min(1.0, elapsedSpan / totalSpan));
-        }
+            var diffMs = targetMs - nowMs;
+            var isExpired = diffMs <= 0;
 
-        root.countdownData = {
-            days: pad2(d),
-            hours: pad2(h),
-            minutes: pad2(m),
-            seconds: pad2(s),
-            milliseconds: pad2(ms),
-            progressRatio: ratio,
-            progressPercent: (ratio * 100).toFixed(3) + "%",
-            isExpired: isExpired
-        };
-
-        var hoursNum = now.getHours();
-        var amPmStr = "";
-        if (!Plasmoid.configuration.hourFormat24) {
-            amPmStr = hoursNum >= 12 ? "PM" : "AM";
-            hoursNum = hoursNum % 12;
-            if (hoursNum === 0) {
-                hoursNum = 12;
+            var d = 0, h = 0, m = 0, s = 0, ms = 0;
+            if (!isExpired) {
+                d = Math.floor(diffMs / 86400000);
+                h = Math.floor((diffMs % 86400000) / 3600000);
+                m = Math.floor((diffMs % 3600000) / 60000);
+                s = Math.floor((diffMs % 60000) / 1000);
+                ms = Math.floor((diffMs % 1000) / 10);
             }
-        }
 
-        var dateKey = now.getFullYear() + "-" + now.getMonth() + "-" + now.getDate() + "@" + now.getTimezoneOffset();
-        if (dateKey !== root.cachedDateKey) {
-            root.cachedDateKey = dateKey;
-            var df = Qt.formatDate(now, Locale.LongFormat);
-            if (!df || df.length === 0) {
-                df = now.toLocaleDateString(Qt.locale(), Locale.LongFormat);
+            var totalSpan = targetMs - startMs;
+            var elapsedSpan = nowMs - startMs;
+            var ratio = 0.0;
+            if (isExpired) {
+                ratio = 1.0;
+            } else if (nowMs <= startMs) {
+                ratio = 0.0;
+            } else if (totalSpan > 0) {
+                ratio = Math.max(0.0, Math.min(1.0, elapsedSpan / totalSpan));
             }
-            root.cachedDateFormatted = df;
 
-            var tzOffsetMin = -now.getTimezoneOffset();
-            var tzSign = tzOffsetMin >= 0 ? "+" : "-";
-            var tzHours = Math.floor(Math.abs(tzOffsetMin) / 60);
-            var tzMins = Math.abs(tzOffsetMin) % 60;
-            root.cachedTzString = "UTC" + tzSign + pad2(tzHours) + ":" + pad2(tzMins);
-            root.cachedDayOfYear = dayOfYearLocal(now);
-            root.cachedWeekOfYear = isoWeekNumber(now);
+            root.countdownData = {
+                days: pad2(d),
+                hours: pad2(h),
+                minutes: pad2(m),
+                seconds: pad2(s),
+                milliseconds: pad2(ms),
+                progressRatio: ratio,
+                progressPercent: (ratio * 100).toFixed(3) + "%",
+                isExpired: isExpired
+            };
         }
 
-        root.clockData = {
-            hours: pad2(hoursNum),
-            minutes: pad2(now.getMinutes()),
-            seconds: pad2(now.getSeconds()),
-            amPm: amPmStr,
-            dateString: root.cachedDateFormatted,
-            timeZone: root.cachedTzString,
-            dayOfYear: root.cachedDayOfYear,
-            weekOfYear: root.cachedWeekOfYear
-        };
+        var clockSec = now.getSeconds();
+        if (clockSec !== root.lastClockSec) {
+            root.lastClockSec = clockSec;
+
+            var hoursNum = now.getHours();
+            var amPmStr = "";
+            if (!Plasmoid.configuration.hourFormat24) {
+                amPmStr = hoursNum >= 12 ? "PM" : "AM";
+                hoursNum = hoursNum % 12;
+                if (hoursNum === 0) {
+                    hoursNum = 12;
+                }
+            }
+
+            var dateKey = now.getFullYear() + "-" + now.getMonth() + "-" + now.getDate() + "@" + now.getTimezoneOffset();
+            if (dateKey !== root.cachedDateKey) {
+                root.cachedDateKey = dateKey;
+                var df = Qt.formatDate(now, Locale.LongFormat);
+                if (!df || df.length === 0) {
+                    df = now.toLocaleDateString(Qt.locale(), Locale.LongFormat);
+                }
+                root.cachedDateFormatted = df;
+
+                var tzOffsetMin = -now.getTimezoneOffset();
+                var tzSign = tzOffsetMin >= 0 ? "+" : "-";
+                var tzHours = Math.floor(Math.abs(tzOffsetMin) / 60);
+                var tzMins = Math.abs(tzOffsetMin) % 60;
+                root.cachedTzString = "UTC" + tzSign + pad2(tzHours) + ":" + pad2(tzMins);
+                root.cachedDayOfYear = dayOfYearLocal(now);
+                root.cachedWeekOfYear = isoWeekNumber(now);
+            }
+
+            root.clockData = {
+                hours: pad2(hoursNum),
+                minutes: pad2(now.getMinutes()),
+                seconds: pad2(clockSec),
+                amPm: amPmStr,
+                dateString: root.cachedDateFormatted,
+                timeZone: root.cachedTzString,
+                dayOfYear: root.cachedDayOfYear,
+                weekOfYear: root.cachedWeekOfYear
+            };
+        }
 
         if (root.stopwatchRunning) {
             var currentClock = Date.now();
