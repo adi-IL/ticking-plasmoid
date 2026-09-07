@@ -41,6 +41,7 @@ def check_required_paths() -> None:
         "contents/ui/components/SegmentedNav.qml",
         "contents/ui/components/QuoteBar.qml",
         "contents/ui/components/QuoteLibrary.js",
+        "contents/ui/components/QuoteClient.js",
         "LICENSE",
         "scripts/package.sh",
     ]

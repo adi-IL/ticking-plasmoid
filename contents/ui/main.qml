@@ -4,6 +4,7 @@ import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 import "./components/QuoteLibrary.js" as QuoteLibrary
+import "./components/QuoteClient.js" as QuoteClient
 
 PlasmoidItem {
     id: root
@@ -176,17 +177,13 @@ PlasmoidItem {
 
     property string currentQuoteText: {
         var saved = (Plasmoid.configuration.cachedQuoteText || "").trim();
-        if (saved.length === 0 || saved.indexOf("thinking process") !== -1 || saved.indexOf("Analyze User") !== -1 || saved.toLowerCase().indexOf("alternatively") !== -1) {
-            return "The only reason for time is so that everything does not happen at once.";
-        }
-        return saved.replace(/^(alternatively|here is|here's|sure[!,.]?|quote)[:\s\-]*/i, "").trim();
+        var cleaned = QuoteClient.cleanQuoteText(saved);
+        return cleaned.length > 0 ? cleaned : QuoteClient.DEFAULT_QUOTE_TEXT;
     }
     property string currentQuoteAuthor: {
         var saved = (Plasmoid.configuration.cachedQuoteAuthor || "").trim();
-        if (saved.length === 0 || saved.indexOf("thinking process") !== -1 || saved.indexOf("Analyze User") !== -1) {
-            return "Albert Einstein";
-        }
-        return saved;
+        var cleaned = QuoteClient.cleanQuoteAuthor(saved);
+        return cleaned.length > 0 ? cleaned : QuoteClient.DEFAULT_QUOTE_AUTHOR;
     }
     property bool isQuoteLoading: false
 
@@ -274,143 +271,40 @@ PlasmoidItem {
     }
 
     function applyQuote(text, author) {
-        if (!text || text.indexOf("thinking process") !== -1 || text.indexOf("Analyze User Request") !== -1) {
+        var cleanedText = QuoteClient.cleanQuoteText(text);
+        var cleanedAuthor = QuoteClient.cleanQuoteAuthor(author);
+        if (cleanedText.length === 0) {
             var fallback = QuoteLibrary.getCuratedQuote(Plasmoid.configuration.quoteArchetype, root.countdownData.progressRatio);
-            text = fallback.text;
-            author = fallback.author;
+            cleanedText = QuoteClient.cleanQuoteText(fallback.text);
+            cleanedAuthor = QuoteClient.cleanQuoteAuthor(fallback.author);
         }
-        text = text.replace(/^(alternatively|here is|here's|sure[!,.]?|quote|option \d+)[:\s\-]*/i, "").trim();
-        text = text.replace(/^(a quote|another quote|one quote|a profound quote)[:\s\-]*/i, "").trim();
-        text = text.replace(/^["'\u201c\u201d\u00ab\u00bb]+|["'\u201c\u201d\u00ab\u00bb]+$/g, "").trim();
-        author = (author || "").replace(/^["'\u201c\u201d\u00ab\u00bb]+|["'\u201c\u201d\u00ab\u00bb]+$/g, "").trim();
-        root.currentQuoteText = text;
-        root.currentQuoteAuthor = author;
-        Plasmoid.configuration.cachedQuoteText = text;
-        Plasmoid.configuration.cachedQuoteAuthor = author;
+        root.currentQuoteText = cleanedText;
+        root.currentQuoteAuthor = cleanedAuthor;
+        Plasmoid.configuration.cachedQuoteText = cleanedText;
+        Plasmoid.configuration.cachedQuoteAuthor = cleanedAuthor;
         root.isQuoteLoading = false;
     }
 
     function fetchNextQuote(forceOffline) {
         if (root.isQuoteLoading) return;
-        var apiKey = (Plasmoid.configuration.quoteApiKey || "").trim();
-        var archetype = Plasmoid.configuration.quoteArchetype || "adaptive";
-        var ratio = root.countdownData.progressRatio || 0.0;
-
-        if (forceOffline || apiKey.length === 0) {
-            var curated = QuoteLibrary.getCuratedQuote(archetype, ratio);
-            applyQuote(curated.text, curated.author);
-            return;
-        }
-
         root.isQuoteLoading = true;
-        var headline = root.milestoneTitle;
-        var focus = (Plasmoid.configuration.quotePersonalFocus || "").trim();
 
-        var topic = "time and human focus";
-        if (focus.length > 0) {
-            topic = focus;
-        } else if (archetype === "stoic") {
-            topic = "stoic discipline";
-        } else if (archetype === "builder") {
-            topic = "craft and building";
-        } else if (archetype === "cosmic") {
-            topic = "time and universe";
-        } else if (archetype === "intensity") {
-            topic = "relentless focus";
-        } else if (headline.length > 0 && headline !== "NEW HORIZON") {
-            topic = headline;
-        }
+        var params = {
+            apiKey: (Plasmoid.configuration.quoteApiKey || "").trim(),
+            archetype: Plasmoid.configuration.quoteArchetype || "adaptive",
+            progressRatio: root.countdownData.progressRatio || 0.0,
+            milestoneTitle: root.milestoneTitle,
+            personalFocus: (Plasmoid.configuration.quotePersonalFocus || "").trim(),
+            forceOffline: !!forceOffline
+        };
 
-        var prompt = "Quote about " + topic + ". Format: Quote - Author";
-
-        function tryModel(modelName, onFail) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "https://opencode.ai/zen/v1/chat/completions", true);
-            xhr.setRequestHeader("Authorization", "Bearer " + apiKey);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.timeout = 12000;
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        try {
-                            var res = JSON.parse(xhr.responseText);
-                            var content = res.choices && res.choices[0] && res.choices[0].message ? res.choices[0].message.content : "";
-                            if (content && content.length > 0) {
-                                content = content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-                                content = content.replace(/\u2014/g, "-");
-
-                                if (content.indexOf("thinking process") !== -1 || content.indexOf("Analyze User Request") !== -1) {
-                                    var lines = content.trim().split("\n");
-                                    var foundLine = "";
-                                    for (var li = lines.length - 1; li >= 0; --li) {
-                                        var candidate = lines[li].trim();
-                                        if (candidate.length > 5 && candidate.indexOf(" - ") !== -1 && candidate.indexOf("thinking process") === -1 && candidate.indexOf("**") === -1) {
-                                            foundLine = candidate;
-                                            break;
-                                        }
-                                    }
-                                    if (foundLine.length > 0) {
-                                        content = foundLine;
-                                    } else {
-                                        onFail();
-                                        return;
-                                    }
-                                }
-
-                                var qText = "";
-                                var qAuthor = "";
-                                var m = content.match(/["\u201c]([^"\u201d\n]+)["\u201d]\s*[-by]+\s*([^"\n]+)/);
-                                if (m) {
-                                    qText = m[1].trim();
-                                    qAuthor = m[2].trim();
-                                } else {
-                                    var cleaned = content.replace(/^(alternatively|here is|here's|sure[!,.]?|quote|option \d+)[:\s\-]*/i, "").trim();
-                                    cleaned = cleaned.replace(/^(a quote|another quote|one quote|a profound quote)[:\s\-]*/i, "").trim();
-                                    if (cleaned.indexOf(" - ") !== -1) {
-                                        var parts = cleaned.split(" - ");
-                                        qText = parts[0].trim();
-                                        qAuthor = parts.slice(1).join(" - ").trim();
-                                    } else if (cleaned.indexOf(" by ") !== -1) {
-                                        var bParts = cleaned.split(" by ");
-                                        qText = bParts[0].trim();
-                                        qAuthor = bParts.slice(1).join(" by ").trim();
-                                    } else {
-                                        qText = cleaned;
-                                    }
-                                }
-                                qText = qText.replace(/^["'\u201c\u201d\u00ab\u00bb]+|["'\u201c\u201d\u00ab\u00bb]+$/g, "").trim();
-                                qAuthor = qAuthor.replace(/^["'\u201c\u201d\u00ab\u00bb]+|["'\u201c\u201d\u00ab\u00bb]+$/g, "").trim();
-
-                                if (qText.indexOf("thinking process") === -1 && qText.length > 0) {
-                                    applyQuote(qText, qAuthor);
-                                    return;
-                                }
-                            }
-                        } catch (e) {
-                            console.warn("Ticking: quote parse failed:", e);
-                        }
-                    }
-                    onFail();
-                }
-            };
-            xhr.ontimeout = onFail;
-            xhr.onerror = onFail;
-
-            var payload = JSON.stringify({
-                model: modelName,
-                messages: [{ role: "user", content: prompt }],
-                max_tokens: 1000,
-                temperature: 0.7
-            });
-            xhr.send(payload);
-        }
-
-        tryModel("nemotron-3.5-lightning-free", function () {
-            tryModel("nemotron-3-ultra-free", function () {
-                var fallback = QuoteLibrary.getCuratedQuote(archetype, ratio);
-                applyQuote(fallback.text, fallback.author);
-            });
+        QuoteClient.fetchQuote(params, QuoteLibrary, {
+            onSuccess: function (text, author) {
+                applyQuote(text, author);
+            },
+            onComplete: function () {
+                root.isQuoteLoading = false;
+            }
         });
     }
 
