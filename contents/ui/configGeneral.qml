@@ -24,6 +24,14 @@ KCM.SimpleKCM {
     property alias cfg_quotePersonalFocus: personalFocusField.text
     property alias cfg_quoteApiKey: apiKeyField.text
 
+    // Internal state keys defined in main.xml
+    property string cfg_cachedQuoteText: ""
+    property string cfg_cachedQuoteAuthor: ""
+    property bool cfg_stopwatchRunning: false
+    property double cfg_stopwatchElapsedMs: 0
+    property double cfg_stopwatchStartTimestamp: 0
+    property string cfg_stopwatchLapsJson: "[]"
+
     Item {
         id: internalHolders
         visible: false
