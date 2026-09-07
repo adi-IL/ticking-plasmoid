@@ -1,9 +1,13 @@
 ---
 name: kde-plasmoid
-description: "Develop, debug, test, package, port, and publish KDE Plasma 6 widgets (Plasmoids) using modern Qt 6, KDE Frameworks 6, Kirigami, and C++/QML architecture on Linux/Fedora."
+description: "Develop, debug, test, package, and publish KDE Plasma 6 widgets using modern Qt 6, KDE Frameworks 6, Kirigami, and C++ or QML architecture on Linux."
 metadata:
-  author: kde-plasma-maintainers
-  version: "2.0.0"
+  author: Aditya Gaurav
+  github: https://github.com/adi-IL
+  publisher: adi-IL
+  applet_id_prefix: org.adi_il
+  license: GPL-3.0-or-later
+  version: "2.1.0"
   tags:
     - kde
     - plasma6
@@ -15,251 +19,193 @@ metadata:
     - kirigami
     - c++
     - linux
-    - fedora
 ---
 
-# Modern KDE Plasma 6 Plasmoid Development Playbook
+# KDE Plasma 6 plasmoid development playbook
 
-A production-grade technical specification and operational manual for developing, debugging, testing, packaging, porting, and publishing KDE Plasma 6 desktop and panel widgets (Plasmoids).
+A production-grade specification and operational manual for developing, debugging, testing, packaging, and publishing KDE Plasma 6 desktop and panel widgets.
 
----
+## Author identity and repository conventions
 
-## 1. Technical Baseline & Core Architecture
+Widgets authored under this playbook must adopt the following project defaults:
 
-### Platform Targets
+- Author: Aditya Gaurav
+- GitHub profile: https://github.com/adi-IL
+- KDE Store publisher: adi-IL
+- Applet identifier format: `org.adi_il.<widget_name>`
+- Default license: `GPL-3.0-or-later`
+- Repository URL format: `https://github.com/adi-IL/<widget_name>-plasmoid`
+- Bug report URL format: `https://github.com/adi-IL/<widget_name>-plasmoid/issues`
 
-| Component | Minimum Version | Reference Target (Fedora KDE) | Notes |
+## Technical baseline and core architecture
+
+### Platform targets
+
+| Component | Minimum version | Reference target | Notes |
 | :--- | :--- | :--- | :--- |
-| **KDE Plasma** | `6.0.0` | `6.2+` / `6.7+` | Plasma 5 APIs and legacy compatibility shims are removed. |
-| **KDE Frameworks (KF)** | `6.0.0` | `6.5+` / `6.29+` | Unversioned QML imports; `plasma-framework` split into `libplasma`, `ksvg`, `plasma5support`. |
-| **Qt Framework** | `6.6.0` | `6.7+` / `6.11+` | Pure Qt 6 QML and C++20 standard library. |
-| **Operating System** | Modern Linux | Fedora KDE 40+ | Native Wayland session with systemd user services. |
+| KDE Plasma | 6.0.0 | 6.2 or newer | Plasma 5 APIs and legacy compatibility shims are removed. |
+| KDE Frameworks | 6.0.0 | 6.5 or newer | Unversioned QML imports. plasma-framework is split into libplasma, ksvg, and plasma5support. |
+| Qt Framework | 6.6.0 | 6.7 or newer | Pure Qt 6 QML and C++20 standard library. |
+| Operating system | Linux | Fedora KDE 40 or newer | Native Wayland session with systemd user units. |
 
-### Architecture Selection Framework
+### Architecture selection tiers
 
-```
-                       ┌─────────────────────────────────────┐
-                       │  What is the widget's requirement?  │
-                       └──────────────────┬──────────────────┘
-                                          │
-       ┌──────────────────────────────────┼──────────────────────────────────┐
-       ▼                                  ▼                                  ▼
-┌──────────────┐                  ┌──────────────┐                  ┌──────────────┐
-│  UI / Logic  │                  │  Heavy Math  │                  │ System/CLI/  │
-│  REST / HTTP │                  │ C++ Models   │                  │ External Dev │
-│ DBus Clients │                  │ Native Libs  │                  │ Background   │
-└──────┬───────┘                  └──────┬───────┘                  └──────┬───────┘
-       │                                 │                                 │
-       ▼                                 ▼                                 ▼
-┌──────────────┐                  ┌──────────────┐                  ┌──────────────┐
-│   Tier 1:    │                  │   Tier 2:    │                  │   Tier 3:    │
-│   Pure QML   │                  │  QML + C++   │                  │  QML + DBus  │
-│  (Preferred) │                  │   Plugin     │                  │    Daemon    │
-└──────────────┘                  └──────────────┘                  └──────────────┘
-```
+1. **Tier 1: Pure QML and Kirigami.** Preferred and canonical.
+   - UI layer: `PlasmoidItem`, `Kirigami`, and `PlasmaComponents`.
+   - Data and logic: Declarative property bindings, JavaScript helper modules, `XMLHttpRequest`, and D-Bus interfaces via `QtDBus`.
+   - Zero compilation needed. Distributed directly through KDE Store and GitHub releases.
 
-1. **Tier 1: Pure QML / Kirigami (Preferred & Canonical)**
-   - UI layer: `PlasmoidItem` + `Kirigami` + `PlasmaComponents`.
-   - Data & Logic: Declarative bindings, JavaScript helper functions, `XMLHttpRequest` / `Fetch`, and D-Bus interfaces via `QtDBus` / QML D-Bus bindings.
-   - Zero compilation required. Distributed directly through KDE Store / GH releases.
+2. **Tier 2: QML with native C++ plugin.** High performance and system APIs.
+   - Used when CPU efficiency, multithreaded background I/O, or custom item models are required.
+   - Built using CMake, Extra CMake Modules, and `libplasma`. Installs QML extension plugins into the KDE QML directory.
 
-2. **Tier 2: QML + Native C++ Plugin (High Performance / System APIs)**
-   - Used when high CPU efficiency, multithreaded I/O (`QThreadPool`, `QThread`), low-level Linux APIs, or custom `QAbstractItemModel` implementations are required.
-   - Built using CMake, ECM (Extra CMake Modules), and `libplasma`. Installs QML extension plugins to `${KDE_INSTALL_QMLDIR}`.
-
-3. **Tier 3: QML + External Process / D-Bus Service (Daemon Architecture)**
-   - Used when leveraging existing scripts, Python packages (`psutil`, `pydbus`), or external system daemons.
-   - Logic runs in a separate process/daemon communicating over the D-Bus Session Bus.
+3. **Tier 3: QML with standalone D-Bus daemon.** External scripts or background services.
+   - Used when external Python packages or long-lived system monitors run in background processes.
+   - Logic runs in a separate process communicating over the session D-Bus.
    - The QML widget acts as a D-Bus client.
 
-#### Clarification on Python in Plasma 6
-`plasmashell` is a C++ Qt 6 binary. It **does not embed a Python interpreter** or execute arbitrary Python scripts inside the shell process. `PySide6` / `PyQt6` `@QmlElement` decorators cannot be registered directly into `plasmashell` without a dedicated host binary. Any Python logic must run as an **isolated D-Bus daemon** or be invoked asynchronously via a subprocess helper.
+### Python in Plasma 6 rule
 
----
+The `plasmashell` process is a Qt 6 C++ binary. It does not embed a Python interpreter and cannot execute arbitrary Python scripts inside the shell process. `PySide6` decorators cannot be registered directly into `plasmashell` without a dedicated host binary. Python logic must run as an isolated D-Bus daemon or be invoked asynchronously through subprocess helpers.
 
-## 2. Fedora KDE Development Environment & Toolchain
+## Runtime execution traps and cache mechanics
 
-### Required Packages on Fedora
+Plasma development has three pitfalls that cause local edits to be ignored or old state to persist.
 
-Install the development headers, build system, and debugging utilities:
+### 1. The install path trap
+
+Plasma does not run code directly from git working directories. The desktop shell loads user widgets exclusively from:
+
+```
+~/.local/share/plasma/plasmoids/<KPlugin.Id>/
+```
+
+Edits inside your git workspace have zero effect on screen until copied into that target directory.
+
+### 2. The bytecode cache trap
+
+The `plasmashell` engine compiles QML files into bytecode and stores them in:
+
+```
+~/.cache/plasmashell/qmlcache/
+```
+
+If you copy updated files into `~/.local/share/plasma/plasmoids/` without deleting this cache directory, `plasmashell` continues executing stale bytecode. You must delete this cache directory and restart the shell before testing.
+
+### 3. The KConfigXT serialization trap
+
+Every assignment to `Plasmoid.configuration` writes state to disk at:
+
+```
+~/.config/plasma-org.kde.plasma.desktop-appletsrc
+```
+
+During startup, the applet immediately deserializes cached properties from this file before any network I/O completes. When debugging unexpected initial values or ghost data, inspect this file under your containment and applet IDs.
+
+### 4. Canonical local sync command sequence
 
 ```bash
-# Core Plasma 6 & KF6 Development Tooling
-sudo dnf install -y \
-    gcc-c++ \
-    cmake \
-    ninja-build \
-    extra-cmake-modules \
-    plasma-sdk \
-    plasma-workspace-devel \
-    libplasma-devel \
-    kf6-kirigami-devel \
-    kf6-kirigami-addons-devel \
-    kf6-kcoreaddons-devel \
-    kf6-kpackage-devel \
-    kf6-kconfig-devel \
-    kf6-kconfigwidgets-devel \
-    kf6-ki18n-devel \
-    kf6-kcmutils-devel \
-    kf6-kdeclarative-devel \
-    kf6-kiconthemes-devel \
-    kf6-kitemmodels-devel \
-    kf6-ksvg-devel \
-    qt6-qtdeclarative-devel \
-    qt6-qtbase-devel \
-    gettext \
-    jq
+# Copy workspace files to local Plasma applet directory
+mkdir -p ~/.local/share/plasma/plasmoids/org.adi_il.<widget_name>
+cp -rf contents metadata.json ~/.local/share/plasma/plasmoids/org.adi_il.<widget_name>/
+
+# Clear compiled QML bytecode cache
+rm -rf ~/.cache/plasmashell/qmlcache
+
+# Rebuild system configuration cache
+kbuildsycoca6 --noincremental > /dev/null 2>&1 || true
+
+# Restart the user desktop shell service
+systemctl --user restart plasma-plasmashell.service
 ```
 
-### Essential CLI Verification Matrix
+## Canonical package structure and metadata
 
-| Tool | Package | Purpose | Verification Command |
-| :--- | :--- | :--- | :--- |
-| `plasmawindowed` | `plasma-workspace` | Runs a single Plasmoid in an isolated X11/Wayland window | `plasmawindowed --version` |
-| `plasmoidviewer` | `plasma-sdk` | Tests Plasmoids under simulated panel/desktop form factors | `plasmoidviewer --version` |
-| `kpackagetool6` | `kf6-kpackage` | Installs, upgrades, lists, and uninstalls Plasma packages | `kpackagetool6 --list-types` |
-| `qmllint-qt6` | `qt6-qtdeclarative-devel` | Static syntax and type checker for QML files | `qmllint-qt6 --version` |
-| `qmlformat-qt6` | `qt6-qtdeclarative-devel` | Automated canonical formatter for QML source | `qmlformat-qt6 --version` |
-| `iconexplorer` | `plasma-sdk` | System icon lookup and verification tool | `iconexplorer` |
-
----
-
-## 3. Canonical Package Structure & Metadata
-
-### Directory Tree
-
-For a pure QML or hybrid Plasmoid with ID `org.example.myplasmoid`:
+### Directory tree
 
 ```
-org.example.myplasmoid/
+org.adi_il.<widget_name>/
 ├── metadata.json
 ├── contents/
 │   ├── config/
 │   │   ├── main.xml              # KConfigXT schema definition
-│   │   └── config.qml             # Configuration category/tab registry
+│   │   └── config.qml             # Configuration category registry
 │   ├── ui/
-│   │   ├── main.qml               # Primary entry point (Root: PlasmoidItem)
+│   │   ├── main.qml               # Primary entry point with PlasmoidItem root
 │   │   ├── CompactRepresentation.qml
 │   │   ├── FullRepresentation.qml
-│   │   └── configGeneral.qml      # Configuration page (Root: KCM.SimpleKCM)
+│   │   ├── configGeneral.qml      # Configuration page with KCM.SimpleKCM root
+│   │   └── components/            # Reusable views and JavaScript helpers
 │   └── locale/                    # Compiled gettext translations (.mo)
-│       └── fr/LC_MESSAGES/plasma_applet_org.example.myplasmoid.mo
-├── CMakeLists.txt                 # Build & install definition (for CMake/C++)
+│       └── fr/LC_MESSAGES/plasma_applet_org.adi_il.<widget_name>.mo
+├── scripts/
+│   ├── install.sh                 # Local installation and reload tool
+│   ├── package.sh                 # Release packaging tool
+│   └── ci-check.py                # Deterministic static safeguards
+├── LICENSES/
+│   └── GPL-3.0-or-later.txt
 ├── README.md
-└── LICENSES/
-    └── LGPL-2.1-or-later.txt
+└── LICENSE
 ```
 
-### Filesystem Installation Locations
+### Canonical metadata.json specification
 
-- **User Local (Rootless / KDE Store):**
-  `~/.local/share/plasma/plasmoids/<KPlugin.Id>/`
-- **System-Wide (RPM / Distro Packages):**
-  `/usr/share/plasma/plasmoids/<KPlugin.Id>/`
-- **Runtime Configuration State:**
-  `~/.config/plasma-org.kde.plasma.desktop-appletsrc`
-
-### Canonical `metadata.json` Specification
-
-In Plasma 6, all metadata **must** use JSON format (`metadata.desktop` is completely obsolete).
+Plasma 6 requires JSON metadata. The legacy `metadata.desktop` format is unsupported.
 
 ```json
 {
     "KPackageStructure": "Plasma/Applet",
     "KPlugin": {
-        "Id": "org.example.myplasmoid",
-        "Name": "System Pulse",
-        "Description": "Monitors system resources with real-time responsive visualization",
-        "Icon": "utilities-system-monitor",
-        "Category": "System Information",
-        "Version": "1.0.0",
-        "License": "LGPL-2.1-or-later",
-        "Website": "https://github.com/example/system-pulse",
-        "BugReportUrl": "https://github.com/example/system-pulse/issues",
         "Authors": [
             {
-                "Name": "Developer Name",
-                "Email": "dev@example.org"
+                "Email": "mr.x.l.r.8.pride@gmail.com",
+                "Name": "Aditya Gaurav"
             }
         ],
-        "EnabledByDefault": false
+        "BugReportUrl": "https://github.com/adi-IL/ticking-plasmoid/issues",
+        "Category": "Date and Time",
+        "Description": "Precision horizon tracker and AI quote companion.",
+        "Icon": "chronometer",
+        "Id": "org.adi_il.ticking",
+        "License": "GPL-3.0-or-later",
+        "Name": "Ticking: Horizon and Time HUD",
+        "Version": "1.5.1",
+        "Website": "https://github.com/adi-IL/ticking-plasmoid"
     },
     "X-Plasma-API-Minimum-Version": "6.0"
 }
 ```
 
-#### Valid Categories in Plasma 6
-- `Accessibility`
-- `Application Launchers`
-- `Astronomy`
-- `Date and Time`
-- `Development Tools`
-- `Education`
-- `Environment and Weather`
-- `File System`
-- `Fun and Games`
-- `Graphics`
-- `Language`
-- `Mapping`
-- `Miscellaneous`
-- `Multimedia`
-- `Online Services`
-- `System Information`
-- `Utilities`
-- `Windows and Tasks`
+## Modern Plasma 6 QML and Kirigami API
 
----
+### Unversioned module imports
 
-## 4. Modern Plasma 6 QML & Kirigami API
+In Qt 6 and KF6, all QML imports must omit version numbers.
 
-### Module Import Migrations (Plasma 5 -> Plasma 6)
+| Obsolete Plasma 5 import | Modern Plasma 6 import |
+| :--- | :--- |
+| `import QtQuick 2.15` | `import QtQuick` |
+| `import QtQuick.Layouts 1.1` | `import QtQuick.Layouts` |
+| `import QtQuick.Controls 2.5 as QQC2` | `import QtQuick.Controls as QQC2` |
+| `import org.kde.plasma.plasmoid 2.0` | `import org.kde.plasma.plasmoid` |
+| `import org.kde.plasma.core 2.0 as PlasmaCore` | `import org.kde.plasma.core as PlasmaCore` |
+| `import org.kde.plasma.components 3.0 as PC3` | `import org.kde.plasma.components as PlasmaComponents` |
+| `import org.kde.plasma.extras 2.0 as Extras` | `import org.kde.plasma.extras as PlasmaExtras` |
+| `import org.kde.kirigami 2.20 as Kirigami` | `import org.kde.kirigami as Kirigami` |
+| `import org.kde.kcmutils 1.0 as KCM` | `import org.kde.kcmutils as KCM` |
+| `import org.kde.ksvg 1.0 as KSvg` | `import org.kde.ksvg as KSvg` |
+| `import org.kde.kitemmodels 1.0` | `import org.kde.kitemmodels as KItemModels` |
 
-In Qt 6 / KF6, **all imports are unversioned**. Do not specify numbers like `2.0` or `3.0`.
+### Critical QML syntax rules
 
-| Obsolete Plasma 5 Import | Modern Plasma 6 / KF6 Import | Notes |
-| :--- | :--- | :--- |
-| `import QtQuick 2.15` | `import QtQuick` | Unversioned |
-| `import QtQuick.Layouts 1.1` | `import QtQuick.Layouts` | Unversioned |
-| `import QtQuick.Controls 2.5 as QQC2` | `import QtQuick.Controls as QQC2` | Unversioned |
-| `import org.kde.plasma.plasmoid 2.0` | `import org.kde.plasma.plasmoid` | Unversioned |
-| `import org.kde.plasma.core 2.0 as PlasmaCore` | `import org.kde.plasma.core as PlasmaCore` | `PlasmaCore` is trimmed; Svg/Icons moved. |
-| `import org.kde.plasma.components 3.0 as PC3` | `import org.kde.plasma.components as PlasmaComponents` | Plasma styling on top of QtQuick Controls |
-| `import org.kde.plasma.extras 2.0 as Extras` | `import org.kde.plasma.extras as PlasmaExtras` | Extra Plasma components (e.g. Menu, Heading) |
-| `import org.kde.kirigami 2.20 as Kirigami` | `import org.kde.kirigami as Kirigami` | Core UI guidelines, theme, icons |
-| `import org.kde.kcmutils 1.0 as KCM` | `import org.kde.kcmutils as KCM` | Mandatory for configuration pages |
-| `import org.kde.ksvg 1.0 as KSvg` | `import org.kde.ksvg as KSvg` | Replaces `PlasmaCore.Svg` and `FrameSvgItem` |
-| `import org.kde.kitemmodels 1.0` | `import org.kde.kitemmodels as KItemModels` | Replaces `PlasmaCore.SortFilterModel` |
+1. **Root object requirement.** The root item in `contents/ui/main.qml` must be `PlasmoidItem`. Plain `Item` or `Rectangle` causes load failures in Plasma 6.
+2. **Configuration page requirement.** The root item of settings pages must be `KCM.SimpleKCM`.
+3. **Action priority names.** PlasmaCore action priority uses `PlasmaCore.Action.LowPriority`, `NormalPriority`, or `HighPriority`. The names `LowPriorityAction` and `NormalPriorityAction` are invalid.
+4. **Font assignment restrictions.** Never assign a whole font object and then set a subproperty in the same block. QML rejects double font assignment.
+5. **Object literal binding restrictions.** Property bindings defined as object literals cannot embed `var` or `return` statements. Compute those values in separate properties.
+6. **No em dashes.** User facing QML strings must avoid Unicode em dashes to maintain clean typography. Use commas or periods instead.
 
-### Root Object: `PlasmoidItem`
-
-The root object of `contents/ui/main.qml` **must be `PlasmoidItem`**.
-
-#### Properties Division: `PlasmoidItem` vs `Plasmoid` Attached Property
-
-| Scope | Member | Type | Purpose / Behavior |
-| :--- | :--- | :--- | :--- |
-| **`PlasmoidItem`** (Root Item) | `compactRepresentation` | `Component` | Compact icon/widget view (used in panels or collapsed states) |
-| **`PlasmoidItem`** | `fullRepresentation` | `Component` | Expanded popup or full canvas view |
-| **`PlasmoidItem`** | `preferredRepresentation` | `Representation` | Set to `fullRepresentation` or `compactRepresentation` |
-| **`PlasmoidItem`** | `compactRepresentationItem` | `Item` (readonly) | Reference to instantiated compact view |
-| **`PlasmoidItem`** | `fullRepresentationItem` | `Item` (readonly) | Reference to instantiated full view |
-| **`PlasmoidItem`** | `switchWidth` | `int` | Horizontal size threshold to trigger full representation on desktop |
-| **`PlasmoidItem`** | `switchHeight` | `int` | Vertical size threshold to trigger full representation on desktop |
-| **`PlasmoidItem`** | `toolTipMainText` | `string` | Primary headline in the widget tooltip |
-| **`PlasmoidItem`** | `toolTipSubText` | `string` | Secondary descriptive text in the tooltip |
-| **`PlasmoidItem`** | `toolTipItem` | `Component` | Custom QML component for rich tooltips |
-| **`PlasmoidItem`** | `hideOnWindowDeactivate` | `bool` | Auto-close popup when focus changes (default: `true`) |
-| **`Plasmoid`** (Attached) | `Plasmoid.title` | `string` | User-visible widget title |
-| **`Plasmoid`** | `Plasmoid.icon` | `string` | Freedesktop theme icon name |
-| **`Plasmoid`** | `Plasmoid.configuration` | `KConfigGroup` | Dynamic configuration key-value store from `main.xml` |
-| **`Plasmoid`** | `Plasmoid.formFactor` | `enum` | `Horizontal`, `Vertical`, `Planar` (Desktop), `Application` |
-| **`Plasmoid`** | `Plasmoid.location` | `enum` | `Floating`, `Desktop`, `TopEdge`, `BottomEdge`, `LeftEdge`, `RightEdge` |
-| **`Plasmoid`** | `Plasmoid.expanded` | `bool` | Read/write toggle state for popup visibility |
-| **`Plasmoid`** | `Plasmoid.busy` | `bool` | Displays standard Plasma busy spinner overlay when `true` |
-| **`Plasmoid`** | `Plasmoid.contextualActions` | `list<Action>` | List of `PlasmaCore.Action` objects added to context menu |
-| **`Plasmoid`** | `Plasmoid.backgroundHints` | `enum` | `DefaultBackground`, `NoBackground`, `ConfigurableBackground` |
-
-### Production `main.qml` Implementation
+### Production main.qml implementation
 
 ```qml
 import QtQuick
@@ -272,9 +218,11 @@ import org.kde.kirigami as Kirigami
 PlasmoidItem {
     id: root
 
-    // Sizing and Representation Strategy
-    switchWidth: Kirigami.Units.gridUnit * 12
-    switchHeight: Kirigami.Units.gridUnit * 12
+    switchWidth: Kirigami.Units.gridUnit * 14
+    switchHeight: Kirigami.Units.gridUnit * 14
+
+    // Remove the default Plasma frame when drawing custom card surfaces
+    Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
 
     preferredRepresentation: {
         if (Plasmoid.formFactor === PlasmaCore.Types.Planar) {
@@ -283,18 +231,16 @@ PlasmoidItem {
         return compactRepresentation;
     }
 
-    // Tooltip Integration
     toolTipMainText: Plasmoid.title
     toolTipSubText: Plasmoid.configuration.showSubtext
-        ? i18n("Tracking active metrics (%1s interval)", Plasmoid.configuration.refreshInterval)
+        ? i18n("Active interval: %1s", Plasmoid.configuration.refreshInterval)
         : ""
 
-    // Context Menu Custom Actions
     Plasmoid.contextualActions: [
         PlasmaCore.Action {
-            text: i18nc("@action:inmenu", "Refresh Now")
+            text: i18nc("@action:inmenu", "Refresh metrics")
             icon.name: "view-refresh"
-            priority: PlasmaCore.Action.LowPriorityAction
+            priority: PlasmaCore.Action.LowPriority
             onTriggered: root.triggerRefresh()
         }
     ]
@@ -305,15 +251,12 @@ PlasmoidItem {
         }
     }
 
-    // Compact (Panel) Representation
     compactRepresentation: CompactRepresentation {}
-
-    // Full (Popup / Desktop) Representation
     fullRepresentation: FullRepresentation {}
 }
 ```
 
-### Production `CompactRepresentation.qml`
+### Production CompactRepresentation.qml
 
 ```qml
 import QtQuick
@@ -338,7 +281,7 @@ Item {
         anchors.centerIn: parent
         width: Math.min(parent.width, parent.height)
         height: width
-        source: Plasmoid.icon || "utilities-system-monitor"
+        source: Plasmoid.icon || "chronometer"
         active: mouseArea.containsMouse
     }
 
@@ -352,110 +295,15 @@ Item {
 }
 ```
 
-### Production `FullRepresentation.qml`
+## Configuration architecture with KConfigXT and KCMUtils
 
-```qml
-import QtQuick
-import QtQuick.Layouts
-import org.kde.plasma.plasmoid
-import org.kde.plasma.components as PlasmaComponents
-import org.kde.kirigami as Kirigami
+Configuration synchronization uses three linked files:
 
-Item {
-    id: fullRoot
+1. `contents/config/main.xml`: Type-safe XML schema compiled into default storage.
+2. `contents/config/config.qml`: Category registration model.
+3. `contents/ui/configGeneral.qml`: UI page using `KCM.SimpleKCM` with `cfg_<name>` property aliases.
 
-    Layout.minimumWidth: Kirigami.Units.gridUnit * 18
-    Layout.minimumHeight: Kirigami.Units.gridUnit * 14
-    Layout.preferredWidth: Kirigami.Units.gridUnit * 22
-    Layout.preferredHeight: Kirigami.Units.gridUnit * 16
-
-    property int refreshCounter: 0
-
-    function refresh() {
-        refreshCounter++;
-    }
-
-    Timer {
-        id: refreshTimer
-        interval: Math.max(5, Plasmoid.configuration.refreshInterval) * 1000
-        running: Plasmoid.expanded || Plasmoid.formFactor === PlasmaCore.Types.Planar
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: fullRoot.refresh()
-    }
-
-    ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: Kirigami.Units.largeSpacing
-        spacing: Kirigami.Units.smallSpacing
-
-        // Header
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: Kirigami.Units.smallSpacing
-
-            Kirigami.Icon {
-                source: Plasmoid.icon
-                Layout.preferredWidth: Kirigami.Units.iconSizes.smallMedium
-                Layout.preferredHeight: Layout.preferredWidth
-            }
-
-            PlasmaComponents.Label {
-                text: Plasmoid.configuration.customTitle || Plasmoid.title
-                font.weight: Font.DemiBold
-                Layout.fillWidth: true
-                elide: Text.ElideRight
-            }
-
-            PlasmaComponents.ToolButton {
-                icon.name: "view-refresh"
-                text: i18nc("@action:button", "Refresh")
-                display: PlasmaComponents.AbstractButton.IconOnly
-                onClicked: fullRoot.refresh()
-            }
-        }
-
-        Kirigami.Separator {
-            Layout.fillWidth: true
-        }
-
-        // Content Area
-        PlasmaComponents.ScrollView {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            ColumnLayout {
-                width: parent.width
-                spacing: Kirigami.Units.smallSpacing
-
-                PlasmaComponents.Label {
-                    text: i18n("Active Updates: %1", fullRoot.refreshCounter)
-                    color: Kirigami.Theme.textColor
-                    Layout.fillWidth: true
-                }
-
-                Kirigami.InlineMessage {
-                    Layout.fillWidth: true
-                    visible: Plasmoid.configuration.showAlert
-                    type: Kirigami.MessageType.Information
-                    text: i18n("Notifications and live alerts are active.")
-                }
-            }
-        }
-    }
-}
-```
-
----
-
-## 5. Configuration Architecture (KConfigXT & KCMUtils)
-
-Plasma 6 configuration is built on three synchronizing components:
-1. `contents/config/main.xml`: The type-safe schema compiled into default storage.
-2. `contents/config/config.qml`: Registers the pages/tabs loaded into the Settings dialog.
-3. `contents/ui/config<Page>.qml`: The UI page implementing `KCM.SimpleKCM` with `cfg_<name>` property aliases.
-
-### 1. `contents/config/main.xml`
+### 1. contents/config/main.xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -477,17 +325,17 @@ Plasma 6 configuration is built on three synchronizing components:
         </entry>
         <entry name="showSubtext" type="Bool">
             <default>true</default>
-            <label>Whether to show status subtext in tooltip</label>
+            <label>Display status subtext in tooltip</label>
         </entry>
-        <entry name="showAlert" type="Bool">
-            <default>false</default>
-            <label>Display status banner in full view</label>
+        <entry name="themeMode" type="String">
+            <default>obsidian</default>
+            <label>Visual styling mode</label>
         </entry>
     </group>
 </kcfg>
 ```
 
-### 2. `contents/config/config.qml`
+### 2. contents/config/config.qml
 
 ```qml
 import QtQuick
@@ -502,12 +350,7 @@ ConfigModel {
 }
 ```
 
-### 3. `contents/ui/configGeneral.qml`
-
-The root element **must be `KCM.SimpleKCM`** (from `import org.kde.kcmutils as KCM`).
-
-> **Rule for Configuration Binding:**
-> The KCM engine automatically inspects the root page for properties named with the `cfg_` prefix (e.g. `cfg_refreshInterval`). It reads initial values from `plasmoid.configuration.<name>`, enables the "Apply" button when edited, and serializes updates when saved.
+### 3. contents/ui/configGeneral.qml
 
 ```qml
 import QtQuick
@@ -519,17 +362,15 @@ import org.kde.kcmutils as KCM
 KCM.SimpleKCM {
     id: configPage
 
-    // Bindings must match main.xml entry names prefixed with cfg_
     property alias cfg_customTitle: titleField.text
     property alias cfg_refreshInterval: intervalSpin.value
     property alias cfg_showSubtext: subtextCheck.checked
-    property alias cfg_showAlert: alertCheck.checked
 
     Kirigami.FormLayout {
         QQC2.TextField {
             id: titleField
             Kirigami.FormData.label: i18nc("@label:textbox", "Custom title:")
-            placeholderText: i18n("Enter title…")
+            placeholderText: i18n("Enter title...")
             Layout.fillWidth: true
         }
 
@@ -547,367 +388,487 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18nc("@label:checkbox", "Tooltip options:")
             text: i18n("Show subtext in tooltip")
         }
-
-        QQC2.CheckBox {
-            id: alertCheck
-            Kirigami.FormData.label: i18nc("@label:checkbox", "Banner:")
-            text: i18n("Show status alert banner")
-        }
     }
 }
 ```
 
----
+## Obsidian glass theme and visual design standards
 
-## 6. Native C++ Plasmoid Architecture
+Custom desktop widgets must adhere to the Obsidian glass visual hierarchy:
 
-When developing high-performance widgets or complex model-view integrations, build a native C++ QML extension plugin using CMake and KDE Frameworks 6.
+1. **Card foundation.** Use `Kirigami.ShadowedRectangle` with rounded corners (radius 12), dark translucent fill (`Qt.rgba(0.03, 0.03, 0.03, 0.88)`), subtle 1px border (`Qt.rgba(1, 1, 1, 0.09)`), and deep drop shadows.
+2. **Interactive specular glint.** Render a 1px specular beam along the top edge using a horizontal gradient. Position the brightest stop dynamically to follow `mouseArea.mouseX`.
+3. **Pulsing live badge.** Display an indicator pill with subtle border and text. An inner circle pulses using `SequentialAnimation on opacity` running only when the widget is visible.
+4. **Adaptive grid units.** All widths, heights, margins, and paddings must derive from `Kirigami.Units.gridUnit`, `Kirigami.Units.smallSpacing`, and `Kirigami.Units.largeSpacing`. Never hardcode raw pixel values.
+5. **Text wrapping and graceful downsizing.** Long quotes or titles must enable `Text.Wrap`. Drop font sizes to `Kirigami.Theme.smallFont.pointSize` when string length exceeds 120 characters to prevent clipping.
 
-### CMake Build Definition (`CMakeLists.txt`)
-
-```cmake
-cmake_minimum_required(VERSION 3.20)
-project(org.example.myplasmoid VERSION 1.0.0 LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-find_package(ECM 6.0.0 REQUIRED NO_MODULE)
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
-
-include(KDEInstallDirs)
-include(KDECMakeSettings)
-include(KDECompilerSettings NO_POLICY_SCOPE)
-include(FeatureSummary)
-
-find_package(Qt6 6.6.0 REQUIRED COMPONENTS Core Gui Qml Quick)
-find_package(KF6 6.0.0 REQUIRED COMPONENTS CoreAddons I18n)
-find_package(Plasma 6.0.0 REQUIRED)
-
-# 1. Install pure QML / KPackage components
-plasma_install_package(contents org.example.myplasmoid)
-
-# 2. Build C++ QML Extension Plugin (Optional backend engine)
-add_library(myplasmoidbackend SHARED
-    src/backendplugin.cpp
-    src/backendplugin.h
-    src/systemdatasource.cpp
-    src/systemdatasource.h
-)
-
-target_link_libraries(myplasmoidbackend
-    PRIVATE
-        Qt6::Core
-        Qt6::Gui
-        Qt6::Qml
-        Qt6::Quick
-        KF6::CoreAddons
-        KF6::I18n
-        Plasma::Plasma
-)
-
-install(TARGETS myplasmoidbackend DESTINATION ${KDE_INSTALL_QMLDIR}/org/example/myplasmoid/backend)
-install(FILES src/qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/example/myplasmoid/backend)
+```qml
+// Example specular beam implementation
+Rectangle {
+    id: specularBeam
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.margins: 1
+    height: 1
+    radius: 1
+    gradient: Gradient {
+        orientation: Gradient.Horizontal
+        GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.04) }
+        GradientStop {
+            position: Math.max(0.05, Math.min(0.95, mouseTracker.mouseX / Math.max(1, parent.width)))
+            color: mouseTracker.containsMouse ? Qt.rgba(1, 1, 1, 0.45) : Qt.rgba(1, 1, 1, 0.20)
+        }
+        GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.04) }
+    }
+}
 ```
 
-### C++ QML Extension Plugin (`src/backendplugin.h` & `src/backendplugin.cpp`)
+## Sub-second ticker and timer architecture
 
-```cpp
-// src/backendplugin.h
-#pragma once
-#include <QQmlEngineExtensionPlugin>
+Widgets that render high-frequency time updates (such as countdown centiseconds or stopwatch split-times) must throttle timer intervals according to visibility and tab selection.
 
-class BackendPlugin : public QQmlEngineExtensionPlugin {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID QQmlEngineExtensionInterface_iid)
-public:
-    BackendPlugin() = default;
-};
+### Multi-mode throttling rules
+
+1. **Hidden or collapsed state.** When `Plasmoid.expanded` is false and form factor is not planar, interval drops to 30,000ms or 60,000ms. If a background stopwatch is actively running, throttle to 1,000ms. Never tick at sub-second rates when hidden.
+2. **Active stopwatch view.** When visible and measuring elapsed time, tick at 40ms (25 frames per second).
+3. **Active countdown centisecond view.** When visible and displaying fractional seconds, tick at 100ms (10 frames per second).
+4. **Standard clock view.** Tick at 1,000ms (1 frame per second).
+
+```qml
+Timer {
+    id: tickerTimer
+    interval: {
+        var isVisible = (Plasmoid.expanded || Plasmoid.formFactor === PlasmaCore.Types.Planar);
+        if (!isVisible) {
+            if (root.stopwatchRunning) {
+                return 1000;
+            }
+            return (Plasmoid.configuration.showPanelBadge !== false) ? 30000 : 60000;
+        }
+        if (root.currentViewIndex === 2) {
+            return root.stopwatchRunning ? 40 : 1000;
+        }
+        if (root.currentViewIndex === 0) {
+            return Plasmoid.configuration.showMilliseconds ? 100 : 1000;
+        }
+        return 1000;
+    }
+    running: true
+    repeat: true
+    triggeredOnStart: true
+    onTriggered: root.updateAllMetrics()
+}
 ```
 
-```cpp
-// src/systemdatasource.h
-#pragma once
-#include <QObject>
-#include <QtQml/qqmlregistration.h>
+## AI service and network integration doctrine
 
-class SystemDataSource : public QObject {
-    Q_OBJECT
-    QML_ELEMENT
-    Q_PROPERTY(double cpuLoad READ cpuLoad NOTIFY cpuLoadChanged)
+When connecting desktop widgets to remote LLM endpoints (such as OpenCode Zen at `https://opencode.ai/zen/v1/chat/completions`), apply these operational safeguards.
 
-public:
-    explicit SystemDataSource(QObject *parent = nullptr);
-    double cpuLoad() const;
+### 1. Mandatory session header
 
-    Q_INVOKABLE void requestImmediateScan();
+Free tier models (such as `nemotron-3-ultra-free` and `nemotron-3.5-lightning-free`) require the `x-session-id` header on every HTTP request. Omission causes HTTP 400 with the error message `MissingSessionID`.
 
-Q_SIGNALS:
-    void cpuLoadChanged();
-
-private:
-    double m_cpuLoad = 0.0;
-};
+```javascript
+xhr.setRequestHeader("x-session-id", "ticking-" + Date.now());
 ```
 
-```
-# src/qmldir
-module org.example.myplasmoid.backend
-plugin myplasmoidbackend
-```
+### 2. Model whitelisting and fallback cascade
 
----
+Paid models return HTTP 401 `CreditsError` when called with free API keys. Whitelist candidate models and cascade across them before falling back to local curated storage:
 
-## 7. External Process, D-Bus & Python Integration
-
-When Python or an external script is required, design it as an **independent D-Bus service**.
-
-### Architecture: D-Bus Daemon + QML
-
-```
-┌──────────────────────────────────────┐
-│       Plasma QML UI Layer            │
-│  (DBus client via QML / C++ helper)  │
-└──────────────────┬───────────────────┘
-                   │ Session D-Bus (e.g. org.example.SystemMonitor)
-                   ▼
-┌──────────────────────────────────────┐
-│      Independent Python Daemon       │
-│    (systemd user unit / script)      │
-└──────────────────────────────────────┘
+```javascript
+var REMOTE_MODELS = [
+    "nemotron-3-ultra-free",
+    "nemotron-3.5-lightning-free"
+];
 ```
 
-### 1. Standalone Python D-Bus Service (`daemon.py`)
+### 3. Error envelopes inside HTTP 200
 
-```python
-#!/usr/bin/env python3
-"""Isolated system monitoring service publishing data over Session D-Bus."""
+Proxy services occasionally return HTTP status 200 containing a JSON error envelope. Always verify the payload does not contain an `error` key before reading completions:
 
-import sys
-import psutil
-from pydbus import SessionBus
-from gi.repository import GLib
-
-class SystemService:
-    """
-    <node>
-        <interface name='org.example.SystemMonitor'>
-            <method name='GetCpuUsage'>
-                <arg type='d' name='usage' direction='out'/>
-            </method>
-            <method name='GetMemoryUsage'>
-                <arg type='d' name='usage' direction='out'/>
-            </method>
-        </interface>
-    </node>
-    """
-
-    def GetCpuUsage(self) -> float:
-        return float(psutil.cpu_percent(interval=None))
-
-    def GetMemoryUsage(self) -> float:
-        return float(psutil.virtual_memory().percent)
-
-def main():
-    bus = SessionBus()
-    loop = GLib.MainLoop()
-    bus.publish("org.example.SystemMonitor", SystemService())
-    try:
-        loop.run()
-    except KeyboardInterrupt:
-        sys.exit(0)
-
-if __name__ == "__main__":
-    main()
+```javascript
+var res = JSON.parse(xhr.responseText);
+if (res.error) {
+    console.warn("Upstream error on model", modelName, res.error.message);
+    tryNextModel();
+    return;
+}
 ```
 
-### 2. Auto-Activation Configuration
-Place a D-Bus service file at `~/.local/share/dbus-1/services/org.example.SystemMonitor.service`:
-```ini
-[D-BUS Service]
-Name=org.example.SystemMonitor
-Exec=/usr/bin/python3 /path/to/daemon.py
+### 4. Author commentary sanitization
+
+Reasoning models frequently append commentary, explanations, or disclaimers to the author field. The parser must clean this string:
+
+- Remove `<think>` blocks and preamble phrases.
+- Cut off sentences continuing after the author name at the first period, unless the text matches an abbreviated initial such as `C.S. Lewis`.
+- Cut off trailing explanatory phrases after commas or dashes.
+- Reject attribution commentary such as `Attributed to high-performance coaching circles`.
+- If the sanitized author name is empty or longer than 45 characters, discard the result and try the next candidate.
+
+```javascript
+function cleanQuoteAuthor(author) {
+    if (!author || typeof author !== "string") return "";
+    var cleaned = author.trim();
+
+    cleaned = cleaned.replace(/^["'\u201c\u201d\u00ab\u00bb]+|["'\u201c\u201d\u00ab\u00bb]+$/g, "").trim();
+
+    if (/^(attributed to|possibly|maybe|this is|that's|probably|unknown|an? \w+ quote|not fitting|unattributed|anonymous|n\/a)/i.test(cleaned)) {
+        return "";
+    }
+
+    var periodIdx = cleaned.indexOf(". ");
+    if (periodIdx !== -1) {
+        var beforePeriod = cleaned.substring(0, periodIdx).trim();
+        if (!/^[A-Z]\.?\s*[A-Z]?\.?$/.test(beforePeriod)) {
+            cleaned = beforePeriod;
+        }
+    }
+
+    cleaned = cleaned.replace(/,\s*(?:which|who|that|a|an|the|as|noting|explaining|saying)[\s\S]*$/i, "");
+    cleaned = cleaned.replace(/\s+-\s+.*$/, "");
+    cleaned = cleaned.replace(/[.\-,;:\s]+$/, "").trim();
+
+    if (cleaned.length > 45 || cleaned.length === 0) {
+        return "";
+    }
+    return cleaned;
+}
 ```
 
----
+### 5. Topic rotation and negative constraints
 
-## 8. Performance, Lifecycle & Memory Rules
+Static prompts cause LLMs to generate identical quotes on every refresh. Rotate subtopics randomly within the active archetype, and inject the currently displayed quote as a negative constraint in the prompt:
 
-### Critical Performance DOs and DON'Ts
-
-| Anti-Pattern (DO NOT DO) | Correct Pattern (DO THIS) | Technical Reason |
-| :--- | :--- | :--- |
-| Running timers while the popup is closed. | Bind `Timer.running: Plasmoid.expanded \|\| Plasmoid.formFactor === PlasmaCore.Types.Planar` | Inactive timers wake the CPU and drain laptop batteries. |
-| Synchronous file I/O or CLI execution in QML JS. | Perform background reads via C++ `QThreadPool` or async D-Bus calls. | Synchronous calls freeze the entire `plasmashell` UI thread. |
-| Complex imperative loops inside property bindings. | Use computed properties or cache values in Qt properties. | Re-evaluating large JS blocks causes frame drops. |
-| Hardcoding pixel sizes (e.g. `width: 320`). | Use `Kirigami.Units.gridUnit * 16` and `Kirigami.Units.smallSpacing`. | Hardcoded pixel values break on HiDPI / 4K fractional scaling. |
-| Directly updating `plasmoid.configuration` on every keystroke. | Let the KCM `cfg_` property aliases buffer changes until "Apply" is clicked. | Rapid disk writes to `plasma-org.kde.plasma.desktop-appletsrc`. |
-
----
-
-## 9. Security & Sandboxing Constraints
-
-1. **Subprocess Execution Safety:**
-   - **Never** pass concatenated strings to `sh -c` or shell interpreters.
-   - In C++, use `QProcess::start(program, QStringList{arg1, arg2})` without shell wrapping.
-2. **Secrets & Credentials Management:**
-   - **Never** store passwords, OAuth tokens, or API secrets in `main.xml` or `plasmoid.configuration`.
-   - `plasma-org.kde.plasma.desktop-appletsrc` is stored unencrypted in plaintext.
-   - Use `KF6::Wallet` (`KWallet`) or SecretStorage D-Bus APIs for credentials.
-3. **Network Content:**
-   - Enforce HTTPS for all network calls.
-   - Validate JSON schemas before accessing nested keys to prevent `TypeError` exceptions.
-
----
-
-## 10. Localization & Internationalization (Ki18n)
-
-### QML Translation Rules
-- Always use double quotes for strings inside `i18n()` to ensure proper extraction:
-  - `i18n("Active")` (Simple string)
-  - `i18nc("@action:button", "Save")` (With context for translators)
-  - `i18np("%1 item", "%1 items", count)` (Plural form)
-  - `i18ncp("@info:status", "%1 error", "%1 errors", count)` (Context + plural)
-
-### Automated Translation Pipeline
-
-```bash
-# 1. Extract strings from QML files into a PO template
-xgettext --from-code=UTF-8 \
-         --language=JavaScript \
-         --keyword=i18n:1 \
-         --keyword=i18nc:1c,2 \
-         --keyword=i18np:1,2 \
-         --keyword=i18ncp:1c,2,3 \
-         -o template.pot \
-         contents/ui/*.qml
-
-# 2. Compile translated .po files to binary .mo format
-msgfmt -o contents/locale/fr/LC_MESSAGES/plasma_applet_org.example.myplasmoid.mo fr.po
+```javascript
+var prompt = "Famous quote about " + topic + ".";
+if (currentQuote.length > 10) {
+    var quoteSnippet = currentQuote.replace(/["\n]/g, "").slice(0, 35);
+    prompt += " Do NOT provide the quote: \"" + quoteSnippet + "...\"";
+    if (currentAuthor.length > 0) {
+        prompt += " or any quote by " + currentAuthor;
+    }
+    prompt += ".";
+}
+prompt += " 1 line only: \"Quote\" - Author Name";
 ```
 
----
+## Developer tooling and automation templates
 
-## 11. Testing, Debugging & Diagnostic Toolchain
-
-### 1. Isolated Execution with `plasmawindowed`
-Launches the widget in a standalone test window:
-```bash
-# Run installed widget by ID
-plasmawindowed org.example.myplasmoid
-
-# Run with QML JS Debugger enabled
-plasmawindowed --qmljsdebugger=port:1234,block org.example.myplasmoid
-```
-
-### 2. Multi-Form-Factor Simulation with `plasmoidviewer`
-Tests panel vs desktop sizing, constraints, and locations:
-```bash
-# Test as a Desktop (floating planar) widget
-plasmoidviewer -a org.example.myplasmoid -l floating -f planar
-
-# Test as a Bottom Panel (horizontal) widget
-plasmoidviewer -a org.example.myplasmoid -l bottomedge -f horizontal
-
-# Test in High-DPI mode (2x scaling)
-QT_SCALE_FACTOR=2 plasmoidviewer -a org.example.myplasmoid -l floating -f planar
-```
-
-### 3. Live Plasma Shell Reloading
-```bash
-# Recommended on modern systemd-based sessions (Fedora KDE):
-systemctl --user restart plasma-plasmashell.service
-
-# Alternative direct replacement:
-plasmashell --replace &
-```
-
-### 4. Real-time Debug Logs
-```bash
-# Stream plasmashell runtime logs
-journalctl --user -u plasma-plasmashell.service -f
-
-# Enable Qt debug output
-export QT_LOGGING_RULES="*.debug=true;kf.*.debug=true"
-```
-
----
-
-## 12. Quality Gates & Automated Validation Checklist
-
-Run this deterministic validation suite before publishing or tagging a release:
+### 1. Local installation helper: scripts/install.sh
 
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "[1/4] Validating metadata.json schema..."
-jq -e . metadata.json > /dev/null
-jq -e '.KPlugin.Id and .KPlugin.Name and .KPlugin.Version and .KPlugin.License' metadata.json > /dev/null
-test "$(jq -r '.KPackageStructure' metadata.json)" = "Plasma/Applet"
-test "$(jq -r '."X-Plasma-API-Minimum-Version"' metadata.json)" = "6.0"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
 
-echo "[2/4] Linting QML files with qmllint-qt6..."
-qmllint-qt6 $(find contents/ui/ -name "*.qml")
+ID="$(python3 -c 'import json; print(json.load(open("metadata.json"))["KPlugin"]["Id"])')"
+TARGET_DIR="${HOME}/.local/share/plasma/plasmoids/${ID}"
 
-echo "[3/4] Verifying KPackage structure with kpackagetool6..."
-kpackagetool6 -t Plasma/Applet --show org.example.myplasmoid || true
+RESTART=false
+VIEWER=false
 
-echo "[4/4] Validation successful!"
+for arg in "$@"; do
+    case "$arg" in
+        --restart|-r)
+            RESTART=true
+            ;;
+        --viewer|-v)
+            VIEWER=true
+            ;;
+        *)
+            echo "Usage: $0 [--restart|-r] [--viewer|-v]"
+            exit 1
+            ;;
+    esac
+done
+
+echo "==> Syncing files to ${TARGET_DIR}..."
+mkdir -p "${TARGET_DIR}"
+cp -f metadata.json "${TARGET_DIR}/"
+cp -rf contents "${TARGET_DIR}/"
+if [[ -d po ]]; then
+    cp -rf po "${TARGET_DIR}/"
+fi
+
+echo "==> Clearing QML bytecode cache..."
+rm -rf ~/.cache/plasmashell/qmlcache
+
+echo "==> Updating KDE system configuration cache..."
+kbuildsycoca6 --noincremental > /dev/null 2>&1 || true
+
+if [ "$RESTART" = true ]; then
+    echo "==> Restarting plasma-plasmashell service..."
+    systemctl --user restart plasma-plasmashell.service
+fi
+
+if [ "$VIEWER" = true ]; then
+    echo "==> Launching plasmoidviewer..."
+    plasmoidviewer -a "${TARGET_DIR}"
+fi
+
+echo "==> Finished."
 ```
 
-### Release Packaging (.plasmoid)
-
-A `.plasmoid` file is a ZIP archive containing `metadata.json` and `contents/` at the root:
+### 2. Release packaging tool: scripts/package.sh
 
 ```bash
-# Build release archive
-zip -r org.example.myplasmoid-1.0.0.plasmoid metadata.json contents/
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Verify archive structure (must show metadata.json at archive root)
-unzip -l org.example.myplasmoid-1.0.0.plasmoid
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+ID="$(python3 -c 'import json; print(json.load(open("metadata.json"))["KPlugin"]["Id"])')"
+VER="$(python3 -c 'import json; print(json.load(open("metadata.json"))["KPlugin"]["Version"])')"
+OUT="${ID}-${VER}.plasmoid"
+
+STAGE="$(mktemp -d)"
+cleanup() { rm -rf "$STAGE"; }
+trap cleanup EXIT
+
+mkdir -p "$STAGE/$ID"
+cp metadata.json "$STAGE/$ID/"
+cp -a contents "$STAGE/$ID/"
+if [[ -d po ]]; then
+    cp -a po "$STAGE/$ID/"
+fi
+
+rm -f "$OUT"
+(
+    cd "$STAGE"
+    zip -r -q "$ROOT/$OUT" "$ID"
+)
+
+echo "Wrote $OUT ($(du -h "$OUT" | cut -f1))"
 ```
 
----
+### 3. Deterministic static safeguards: scripts/ci-check.py
 
-## 13. AI Coding Agent Operational Protocol
+```python
+#!/usr/bin/env python3
+"""Static safeguards for Plasma 6 plasmoids."""
+from __future__ import annotations
 
-When working with KDE Plasma 6 widget codebases, agents must follow this strict sequence:
+import json
+import re
+import sys
+import xml.etree.ElementTree as ET
+from pathlib import Path
 
-### Diagnostic Troubleshooting Tree
+ROOT = Path(__file__).resolve().parents[1]
+errors: list[str] = []
+warnings: list[str] = []
+
+def fail(msg: str) -> None:
+    errors.append(msg)
+
+def warn(msg: str) -> None:
+    warnings.append(msg)
+
+def check_metadata() -> dict | None:
+    path = ROOT / "metadata.json"
+    if not path.is_file():
+        fail("metadata.json missing")
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        fail(f"metadata.json is not valid JSON: {exc}")
+        return None
+
+    if data.get("KPackageStructure") != "Plasma/Applet":
+        fail('metadata.json KPackageStructure must be "Plasma/Applet"')
+
+    plugin = data.get("KPlugin") or {}
+    for key in ("Id", "Name", "Version", "License", "Authors"):
+        if key not in plugin:
+            fail(f"metadata.json missing KPlugin.{key}")
+
+    plugin_id = plugin.get("Id", "")
+    if not plugin_id.startswith("org.adi_il."):
+        warn(f'plugin Id "{plugin_id}" does not use org.adi_il prefix')
+
+    version = str(plugin.get("Version", ""))
+    if not re.fullmatch(r"\d+\.\d+\.\d+", version):
+        fail(f'version "{version}" is not semver X.Y.Z')
+
+    api = data.get("X-Plasma-API-Minimum-Version")
+    if not api or not str(api).startswith("6"):
+        fail(f"X-Plasma-API-Minimum-Version must be 6.x (got {api!r})")
+
+    return data
+
+def check_no_em_dash_in_qml() -> None:
+    em = "\u2014"
+    for path in sorted((ROOT / "contents").rglob("*.qml")):
+        for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            if em in line:
+                rel = path.relative_to(ROOT)
+                fail(f"{rel}:{i}: em dash found in QML; use comma or period")
+
+def check_qml_action_priority() -> None:
+    bad = re.compile(r"PlasmaCore\.Action\.(LowPriorityAction|NormalPriorityAction|HighPriorityAction)")
+    for path in sorted((ROOT / "contents").rglob("*.qml")):
+        text = path.read_text(encoding="utf-8")
+        for i, line in enumerate(text.splitlines(), 1):
+            if bad.search(line):
+                rel = path.relative_to(ROOT)
+                fail(f"{rel}:{i}: invalid Action priority name (use LowPriority or NormalPriority)")
+
+def check_qml_font_double_assign() -> None:
+    pair_re = re.compile(r"^\s*font\s*:")
+    sub_re = re.compile(r"^\s*font\.")
+    for path in sorted((ROOT / "contents").rglob("*.qml")):
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for i, line in enumerate(lines):
+            if not pair_re.match(line):
+                continue
+            for j in range(i + 1, min(i + 8, len(lines))):
+                nxt = lines[j]
+                if not nxt.strip() or nxt.strip().startswith("//"):
+                    continue
+                if sub_re.match(nxt):
+                    rel = path.relative_to(ROOT)
+                    fail(f"{rel}:{i + 1}: whole font assigned then font subproperty set at line {j + 1}")
+                break
+
+def main() -> int:
+    check_metadata()
+    check_no_em_dash_in_qml()
+    check_qml_action_priority()
+    check_qml_font_double_assign()
+
+    for w in warnings:
+        print(f"WARNING: {w}")
+    if errors:
+        print(f"FAILED ({len(errors)} error(s)):")
+        for e in errors:
+            print(f"  - {e}")
+        return 1
+
+    print("OK: all static safeguards passed.")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
+```
+
+### 4. GitHub Actions release workflow: .github/workflows/release.yml
+
+```yaml
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Build package only without uploading release"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run static safeguards
+        run: python3 scripts/ci-check.py
+
+      - name: Resolve version and package name
+        id: ver
+        run: |
+          set -euo pipefail
+          META_VER=$(python3 -c 'import json; print(json.load(open("metadata.json"))["KPlugin"]["Version"])')
+          ID=$(python3 -c 'import json; print(json.load(open("metadata.json"))["KPlugin"]["Id"])')
+          TAG="${GITHUB_REF_NAME:-}"
+          if [[ "${GITHUB_REF_TYPE:-}" == "tag" ]]; then
+            TAG_VER="${TAG#v}"
+            if [[ "$TAG_VER" != "$META_VER" ]]; then
+              echo "Tag $TAG does not match metadata version $META_VER" >&2
+              exit 1
+            fi
+          fi
+          echo "version=$META_VER" >> "$GITHUB_OUTPUT"
+          echo "id=$ID" >> "$GITHUB_OUTPUT"
+          echo "artifact=${ID}-${META_VER}.plasmoid" >> "$GITHUB_OUTPUT"
+
+      - name: Build plasmoid archive
+        run: |
+          chmod +x scripts/package.sh
+          ./scripts/package.sh
+          test -f "${{ steps.ver.outputs.artifact }}"
+
+      - name: Publish GitHub release
+        if: (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="v${{ steps.ver.outputs.version }}"
+          ART="${{ steps.ver.outputs.artifact }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$ART" --clobber
+          else
+            gh release create "$TAG" "$ART" \
+              --title "${{ steps.ver.outputs.id }} v${{ steps.ver.outputs.version }}" \
+              --generate-notes \
+              --verify-tag
+          fi
+```
+
+## Diagnostic troubleshooting tree
 
 ```
-QML Load Failure / Blank Output
+QML Load Failure or Blank Output
 ├── 1. Check metadata.json
 │   ├── "X-Plasma-API-Minimum-Version": "6.0" present?
 │   └── "KPackageStructure": "Plasma/Applet" present?
 ├── 2. Inspect root element of contents/ui/main.qml
-│   └── Is it PlasmoidItem? (Plain Item/Rectangle will fail in Plasma 6)
-├── 3. Audit QML Module Imports
-│   └── Remove all version numbers (e.g. org.kde.plasma.core 2.0 -> org.kde.plasma.core)
-└── 4. Inspect live shell logs
-    └── Run: journalctl --user -u plasma-plasmashell.service -f
+│   └── Is it PlasmoidItem? (Plain Item or Rectangle will fail in Plasma 6)
+├── 3. Audit QML module imports
+│   └── Remove all version numbers (e.g. org.kde.plasma.core)
+├── 4. Clear bytecode cache
+│   └── rm -rf ~/.cache/plasmashell/qmlcache
+└── 5. Inspect live shell logs
+    └── journalctl --user -u plasma-plasmashell.service -f
 ```
 
-### Strict Agent Directives
+## Strict agent directives
 
-- **NEVER** use obsolete versioned imports (e.g. `import org.kde.plasma.core 2.0`).
-- **NEVER** use `PlasmaCore.IconItem` (use `Kirigami.Icon`).
-- **NEVER** use `PlasmaCore.Svg` or `FrameSvgItem` (use `import org.kde.ksvg as KSvg`).
-- **NEVER** use `PlasmaCore.SortFilterModel` (use `import org.kde.kitemmodels as KItemModels`).
-- **NEVER** use `Item` as the root of a configuration page (must use `KCM.SimpleKCM`).
-- **NEVER** execute raw concatenated shell strings.
-- **ALWAYS** test changes using `plasmawindowed` or `plasmoidviewer`.
-- **ALWAYS** check runtime logs using `journalctl --user -u plasma-plasmashell.service -f`.
+- Never use versioned QML imports.
+- Never use `PlasmaCore.IconItem`. Use `Kirigami.Icon`.
+- Never use `PlasmaCore.Svg` or `FrameSvgItem`. Use `import org.kde.ksvg as KSvg`.
+- Never use `PlasmaCore.SortFilterModel`. Use `import org.kde.kitemmodels as KItemModels`.
+- Never use plain `Item` as the root of a configuration page. Use `KCM.SimpleKCM`.
+- Never assign whole `font:` objects and subproperties in the same element.
+- Never execute raw shell string concatenation.
+- Always verify changes locally using `scripts/install.sh --viewer` or `scripts/install.sh --restart`.
+- Always verify logs using `journalctl --user -u plasma-plasmashell.service -f`.
 
----
+## Authoritative references
 
-## 14. Authoritative References
-
-- [KDE Developer Documentation: Plasma Widget Tutorial](https://develop.kde.org/docs/plasma/widget/)
-- [KDE Developer Documentation: Porting Plasmoids to KF6](https://develop.kde.org/docs/plasma/widget/porting_kf6/)
-- [KDE Developer Documentation: Configuration with KConfigXT](https://develop.kde.org/docs/features/configuration/)
-- [KDE Developer Documentation: Kirigami Guidelines](https://develop.kde.org/docs/kirigami/)
-- [KDE API Reference (libplasma / AppletInterface)](https://api.kde.org/plasma-index.html)
-- [Official Plasma Desktop Applets Repository](https://invent.kde.org/plasma/plasma-desktop/-/tree/master/applets)
-- [Official KDE Plasma Add-ons Repository](https://invent.kde.org/plasma/kdeplasma-addons)
+- KDE Developer Documentation: https://develop.kde.org/docs/plasma/widget/
+- Porting Plasmoids to KF6: https://develop.kde.org/docs/plasma/widget/porting_kf6/
+- Configuration with KConfigXT: https://develop.kde.org/docs/features/configuration/
+- Kirigami UI Guidelines: https://develop.kde.org/docs/kirigami/
+- libplasma API Reference: https://api.kde.org/plasma-index.html
+- Official KDE Plasma Desktop Applets: https://invent.kde.org/plasma/plasma-desktop/-/tree/master/applets
+- Official KDE Plasma Add-ons: https://invent.kde.org/plasma/kdeplasma-addons
