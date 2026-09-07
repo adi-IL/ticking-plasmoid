@@ -95,19 +95,28 @@ Copy only `metadata.json` and `contents/`. Do not copy `assets/`, `scripts/`, or
 
 ---
 
-## Development
+## Development & Contributing
+
+Comprehensive architectural documentation, state persistence details, QML guidelines, and troubleshooting notes are available in **[DEV_NOTES.md](DEV_NOTES.md)**.
+
+### Quick Inner Loop
 
 ```bash
-plasmawindowed org.adi_il.ticking
-python3 scripts/extract-messages.py
+# Sync local changes and clear QML cache:
+./scripts/install.sh
+
+# Sync local changes and restart plasmashell:
+./scripts/install.sh --restart
+
+# Run isolated in plasmoidviewer without touching your desktop:
+./scripts/install.sh --viewer
+
+# Run automated tests and static CI guards:
+node scripts/test-quotes.js
 python3 scripts/ci-check.py
+
+# Package production .plasmoid bundle:
 ./scripts/package.sh
-```
-
-After editing an already-installed applet, restart the shell:
-
-```bash
-systemctl --user restart plasma-plasmashell.service
 ```
 
 ---
