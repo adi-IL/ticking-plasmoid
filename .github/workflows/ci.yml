@@ -20,10 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -58,7 +58,7 @@ jobs:
     needs: static-guards
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Build .plasmoid zip
         run: |
@@ -90,7 +90,7 @@ jobs:
           echo "artifact=$ART bytes=$BYTES"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ticking-plasmoid
           path: "*.plasmoid"
@@ -103,7 +103,7 @@ jobs:
     needs: static-guards
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: List and size-gate QML
         run: |
@@ -126,7 +126,7 @@ jobs:
     needs: static-guards
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: pot exists and has strings
         run: |
